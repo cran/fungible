@@ -1,0 +1,42 @@
+\name{summary.monte1}
+\alias{summary.monte1}
+\alias{print.summary.monte1}
+\title{Summary Method for an Object of Class Monte1}
+\description{
+summary method for class "monte1"
+}
+\usage{
+\method{summary}{monte1}(object, digits=3, \dots)
+}
+\arguments{
+\item{object}{An object of class \code{monte1}, usually, a result of a call to \code{monte1}.}
+\item{digits}{Number of significant digits to print in final results.}
+\item{\dots}{Additional argument affecting the summary produced.}
+}
+\value{
+Various descriptive statistics will be computed including"
+\enumerate{
+  \item{Expected correlation matrix.}
+  \item{Observed correlation matrix.}
+  \item{Expected indicator skewness values.}
+  \item{Observed indicator skewness values.}
+  \item{Expected indicator kurtosis values.}
+  \item{Observed indicator kurtosis values.}
+ }
+}
+\examples{
+## Generate dimensional data for 4 variables. 
+## All correlations = .60; all variable
+## skewness = 1.75; 
+## all variable kurtosis = 3.75
+
+cormat <- matrix(.60, 4, 4)
+diag(cormat) <- 1
+
+nontaxon.dat <- monte1(seed = 123, nsub = 100000, nvar = 4, skewvec = rep(1.75, 4),
+                 kurtvec = rep(3.75, 4), cormat = cormat)
+
+summary(nontaxon.dat)
+}
+
+

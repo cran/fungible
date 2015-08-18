@@ -1,0 +1,45 @@
+\name{rcone}
+\alias{rcone}
+\title{Generate a Cone of Regression Coefficient Vectors}
+\description{
+Compute a cone of regression vectors with a constant R-squared around a target vector. 
+}
+\usage{
+rcone(R,Rsq,b,axis1,axis2,deg,Npoints=360)
+}
+\arguments{
+ \item{R}{Predictor correlation matrix.}
+ \item{Rsq}{Coefficient of determination.}
+ \item{b}{Target vector of OLS regression coefficients.}
+ \item{axis1}{1st axis of rotation plane.}
+ \item{axis2}{2nd axis of rotation plane.}
+ \item{deg}{All vectors b.i will be `deg' degrees from b.}
+ \item{Npoints}{Number of rotation vectors, default = 360.}
+}
+\value{
+ \item{b.i}{Npoints values of b.i} 
+}
+\references{
+Waller, N. G. & Jones, J. A. (2011). Investigating the performance of alternate regression weights by studying all possible criteria in regression models with a fixed set of predictors. \emph{Psychometrika, 76}, 410-439.
+}
+\author{Niels Waller and Jeff Jones}
+\examples{
+R <- matrix(.5, 4, 4)
+diag(R) <- 1
+
+Npoints <- 1000
+Rsq <- .40
+NumDeg <- 20
+V <- eigen(R)$vectors
+
+## create b parallel to v[,3]
+## rotate in the 2 - 4 plane
+b <- V[,3]
+bsq <- t(b) \%*\% R \%*\% b 
+b <- b * sqrt(Rsq/bsq)                
+b.i <- rcone(R, Rsq,b, V[,2], V[,4], deg = NumDeg, Npoints)
+
+t(b.i[,1]) \%*\% R \%*\% b.i[,1]
+t(b.i[,25]) \%*\% R \%*\% b.i[,25]
+}
+\keyword{datagen}% at least one, from doc/KEYWORDS

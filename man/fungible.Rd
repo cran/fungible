@@ -1,0 +1,64 @@
+\name{fungible}
+\alias{fungible}
+\title{Generate Fungible Regression Weights}
+\description{
+Generate fungible weights for OLS Regression Models. 
+}
+\usage{
+fungible(R.X, rxy, r.yhata.yhatb, sets, print = TRUE)
+}
+\arguments{
+ \item{R.X}{p x p Predictor correlation matrix.}
+ \item{rxy}{p x 1 Vector of predictor-criterion correlations.}
+ \item{r.yhata.yhatb}{Correlation between least squares (yhatb) and alternate-weight (yhata) composites.} 
+ \item{sets}{Number of returned sets of fungible weights.}
+ \item{print}{Logical, if TRUE then print 5-point summaries of alternative 
+   weights.}
+}
+\value{
+  \item{a}{Number of sets x p matrix of fungible weights.}
+  \item{k}{Number of sets x p matrix of k weights.}
+  \item{b}{p x 1 vector of LS weights.}
+  \item{u}{p x 1 vector of u weights.}
+  \item{r.yhata.yhatb}{Correlation between yhata and yhatb.}
+  \item{r.y.yhatb}{Correlation between y and yhatb.}
+  \item{cov.a}{Expected covariance matrix for a.}
+  \item{cor.a}{Expected correlation matrix for a.}
+}
+\references{
+Waller, N. (2008). Fungible weights in multiple regression.
+   \emph{Psychometrika, 73}, 69--703.
+}
+\author{Niels Waller}
+\examples{
+
+## Predictor correlation matrix
+R.X <- matrix(c(1.00,   .56,  .77,
+                 .56,  1.00,  .73,
+                 .77,   .73, 1.00), 3, 3)
+ 
+## vector of predictor-criterion correlations 
+rxy <- c(.39, .34, .38)
+ 
+ 
+## OLS standardized regression coefficients
+b <- solve(R.X) \%*\% rxy
+ 
+## Coefficient of determination (Rsq)
+OLSRSQ <- t(b) \%*\% R.X \%*\% b
+
+## theta controls the correlation between 
+## yhatb: predicted criterion scores using OLS coefficients
+## yhata: predicted criterion scores using alternate weights
+theta <- .01
+
+## desired correlation between yhata and yhatb 
+r.yhata.yhatb <- sqrt( 1 - (theta)/OLSRSQ)
+
+## number of returned sets of fungible weight vectors
+Nsets <- 50
+
+output <- fungible(R.X, rxy, r.yhata.yhatb, sets = Nsets, print = TRUE)
+}
+\keyword{fungible}% at least one, from doc/KEYWORDS
+

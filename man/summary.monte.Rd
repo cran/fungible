@@ -1,0 +1,62 @@
+\name{summary.monte}
+\alias{summary.monte}
+\alias{print.summary.monte}
+\title{Summary Method for an Object of Class Monte}
+\description{
+summary method for class ``monte"
+}
+\usage{
+\method{summary}{monte}(object, digits = 3, compute.validities = FALSE, Total.stats=TRUE, \dots)
+}
+\arguments{
+\item{object}{An object of class \code{monte}, usually, a result of a call to \code{monte}.}
+\item{digits}{Number of digits to print. Default = 3.}
+\item{compute.validities}{Logical: If TRUE then the program will calculate the indicator validities (eta^2) for the generated data.}
+\item{Total.stats}{Logical: If TRUE then the program will return the following statistics for the total sample: (1) indicator correlation matrix, (2) indicator skewness, (3) indicator kurtosis.}
+\item{\dots}{Optional arguments.}
+}
+\value{
+Various descriptive statistics will be computed within groups including"
+\enumerate{ 
+ \item{clus.size}{ Number of objects within each group.}
+ \item{centroids} { Group centroids.}
+ \item{var.matrix}{ Within group variances.}
+ \item{Ratio of within group variances (currently printed but not saved.}
+ \item{cor.list}{ Expected within group correlations.}
+ \item{obs.cor}{ Observed within group correlations.}
+ \item{skew.list}{ Expected within group indicator skewness values.}
+ \item{obs.skew}{ Observed within group indicator skewness values.}
+ \item{kurt.list}{ Expected within group indicator kurtosis values.}
+ \item{obs.kurt}{ Observed within group indicator kurtosis values.}
+ \item{validities}{ Observed indicator validities.}
+ \item{Total.cor}{ Total sample correlation matrix.}
+ \item{Total.skew}{ Total sample indicator skewness.}
+ \item{Total.kurt}{ Total sample indicator kurtosis.}
+ }
+}
+\examples{
+## set up a 'monte' run for the Fisher iris data
+
+sk.lst <- list(c(0.120,  0.041,  0.106,  1.254),                     #
+                c(0.105, -0.363, -0.607, -0.031),
+                c(0.118,  0.366,  0.549, -0.129) )
+              
+              
+kt.lst <- list(c(-0.253, 0.955,  1.022,  1.719),
+                c(-0.533,-0.366,  0.048, -0.410),
+                c( 0.033, 0.706, -0.154, -0.602))
+                
+cormat <- lapply(split(iris[,1:4],iris[,5]), cor)
+
+my.iris <- monte(seed = 123, nvar = 4, nclus = 3, cor.list = cormat, 
+	              clus.size = c(50, 50, 50),
+                eta2 = c(0.619, 0.401, 0.941, 0.929), 
+                random.cor = FALSE,
+                skew.list = sk.lst, kurt.list = kt.lst, 
+                secor = .3, 
+                compactness = c(1, 1, 1), 
+                sortMeans = TRUE)
+summary(my.iris)
+}
+
+

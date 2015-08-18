@@ -1,0 +1,77 @@
+\name{fungibleL}
+\alias{fungibleL}
+\title{Generate Fungible Logistic Regression Weights}
+\description{
+Generate fungible weights for Logistic Regression Models. 
+}
+\usage{
+fungibleL(X, y, Nsets = 1000, method = "LLM", RsqDelta = 0.01, rLaLb = NULL, s = .3)
+}
+\arguments{
+\item{X}{An n by nvar matrix of predictor scores without the leading column of ones.}
+\item{y}{An n by 1 vector of dichotomous criterion scores.}
+\item{Nsets}{The desired number of fungible coefficient vectors.} 
+\item{method}{Character: "LLM" = Log-Likelihood method. "EM" = Ellipsoid Method. Default: method = "LLM".}
+\item{RsqDelta}{The desired decrement in the pseudo-R-squared - used when method = "LLM".}
+\item{rLaLb}{The desired correlation between the logits - used when method = "EM".}
+\item{s}{Scale factor for random deviates. s controls the range of random start values for the 
+optimization routine. Recommended 0 <= s < 1. Default: s = 0.3.}
+}
+\details{
+fungibleL provides two methods for evaluating parameter sensitivity in logistic regression models by computing fungible logistic regression weights. For for additional information on the underlying theory of these methods see Jones and Waller (in press).
+}
+\value{
+\item{model}{A glm model object.}
+\item{call}{The function call to glm().}
+\item{ftable}{A data frame with the mle estimates and the minimum and maximum fungible coefficients.}
+\item{lnLML}{The maximum likelihood log likelihood value.}
+\item{lnLf}{The decremented, fungible log likelihood value.}
+\item{pseudoRsq}{The pseudo R-squared.}
+\item{fungibleRsq}{The fungible pseudo R-squared.}
+\item{fungiblea}{The Nsets by Nvar + 1 matrix of fungible (alternate) coefficients.}
+}
+\references{
+Jones, J. A. & Waller, N. G. (in press). Fungible weights in logistic regression.
+\emph{Psychological Methods}.
+}
+\author{Jeff Jones and Niels Waller}
+\examples{
+# Example: Low Birth Weight Data from Hosmer Jr, D. W. & Lemeshow, S.(2000).         
+# low : low birth rate (0 >= 2500 grams, 1 < 2500 grams)
+# race: 1 = white, 2 = black, 3 = other
+# ftv : number of physician visits during the first trimester
+
+library(MASS)
+attach(birthwt)
+
+race <- factor(race, labels = c("white", "black", "other"))
+predictors <- cbind(lwt, model.matrix(~ race)[, -1])
+
+# compute mle estimates
+BWght.out <- glm(low ~ lwt + race, family = "binomial")
+
+# compute fungible coefficients
+fungible.LLM <- fungibleL(X = predictors, y = low, method = "LLM", 
+                          Nsets = 10, RsqDelta = .005, s = .3)
+
+# Compare with Table 2.3 (page 38) Hosmer Jr, D. W. & Lemeshow, S.(2000). 
+# Applied logistic regression.  New York, Wiley.  
+
+print(summary(BWght.out))
+print(fungible.LLM$call)
+print(fungible.LLM$ftable)
+cat("\nMLE log likelihod       = ", fungible.LLM$lnLML,
+    "\nfungible log likelihood = ", fungible.LLM$lnLf)
+cat("\nPseudo Rsq              = ", round(fungible.LLM$pseudoRsq, 3))
+cat("\nfungible Pseudo Rsq     = ", round(fungible.LLM$fungibleRsq, 3))
+
+
+fungible.EM <- fungibleL(X = predictors, y = low, method = "EM" , 
+                         Nsets = 10, rLaLb = 0.99)
+
+print(fungible.EM$call)
+print(fungible.EM$ftable)
+
+cat("\nrLaLb = ", round(fungible.EM$rLaLb, 3))
+}
+\keyword{fungible}% at least one, from doc/KEYWORDS

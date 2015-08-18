@@ -1,0 +1,18 @@
+# Export all names
+exportPattern(".")
+
+# Import all packages listed as Imports or Depends
+import(
+  e1071,
+  mvtnorm
+)
+S3method(plot, monte)
+S3method(print, summary.monte)
+S3method(print,summary.monte1)
+S3method(summary,monte)
+S3method(summary,monte1)
+importFrom("methods", "is")
+importFrom("stats", "coef", "cor", "cov", "glm", "lm", "logLik",
+           "optim", "princomp", "qnorm", "qt", "rchisq", "resid",
+           "rnorm", "runif", "var", "vcov")
+importFrom("utils", "setTxtProgressBar", "txtProgressBar")
