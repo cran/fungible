@@ -29,22 +29,6 @@
 
 fungible <- function(R.X,rxy,r.yhata.yhatb,sets,print=TRUE){
 
-#    GenU.BAK <- function(mat,u){
-#         ## Generate U matrix via Gram Schmidt
-#         p <- ncol(mat)
-#         n <- nrow(mat)
-#         oData <-matrix(0,n,p+1)
-#         oData[,1]<-u
-# 
-#         for(i in 2:(p+1)){
-#            oData[,i] <- resid(lm(mat[,(i-1)]~-1+oData[,1:(i-1)]))
-#         }
-# 
-#         U<-oData[,2:(p+1)]
-#         d <- diag(1/sqrt(diag(crossprod(U))))
-#         U <- U%*%d
-#         U
-#     }#end GenU
 
 ##~~~~~~~~~~~~~Generate U matrix via QR Decomposition~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
    GenU <- function(mat,u){

@@ -102,54 +102,64 @@ seBetaCor <- function(R, rxy, Nobs, alpha = .05, digits = 3,
   }  # End cor.covariance
 #~~~~~~~~~~~~~~~~~~~~~~ End Internal Functions ~~~~~~~~~~~~~~~~~~~~~~#
   
+  R <- as.matrix(R)
+  
   p <- ncol(R)
   Rinv <- solve(R)
-
-# Covarianc matrix of predictor and predictor-criterion correlations
-  sR <- rbind(cbind(R, rxy),c(rxy, 1))
   
-  if(is(covmat)[1] == 'matrix') Sigma <- covmat
-  else Sigma <- cor.covariance(sR, Nobs)
+  if(p == 1) {
+  	beta.cov <- ((1 - rxy^2)^2)/(Nobs - 3)
+  	ses <- sqrt(beta.cov)
+  } else {
 
-# Create symmetric transition matrix (see Nel, 1985)
-  Kp <- solve(t(Dp(p)) %*% Dp(p)) %*% t(Dp(p))
+  # Covarianc matrix of predictor and predictor-criterion correlations
+    sR <- rbind(cbind(R, rxy),c(rxy, 1))
+  
+    if(is(covmat)[1] == 'matrix') Sigma <- covmat
+    else Sigma <- cor.covariance(sR, Nobs)
 
-# Create correlation transition matrix (see Browne & Shapiro, 1986).
-  Kpc <- as.matrix(Kp[-row.remove(p),] )
-  if(ncol(Kpc) == 1) Kpc <- t(Kpc)
+  # Create symmetric transition matrix (see Nel, 1985)
+    Kp <- solve(t(Dp(p)) %*% Dp(p)) %*% t(Dp(p))
 
-# Derivatives of beta wrt predictor correlations (Rxx)  
-  db.drxx <- -2 * ( ( t( rxy ) %*% Rinv) %x% Rinv ) %*% t(Kpc)
+  # Create correlation transition matrix (see Browne & Shapiro, 1986).
+    Kpc <- as.matrix(Kp[-row.remove(p),] )
+    if(ncol(Kpc) == 1) Kpc <- t(Kpc)
 
-# Derivatives of beta wrt predictor-criterion correlations (rxy)
-  db.drxy <- Rinv
+  # Derivatives of beta wrt predictor correlations (Rxx)  
+    db.drxx <- -2 * ( ( t( rxy ) %*% Rinv) %x% Rinv ) %*% t(Kpc)
 
-# Concatenate derivatives
-  jacob <- cbind(db.drxx,db.drxy)
+  # Derivatives of beta wrt predictor-criterion correlations (rxy)
+    db.drxy <- Rinv
 
-# Reorder derivatives to match the order of covariances and 
-# variances in Sigma
+  # Concatenate derivatives
+    jacob <- cbind(db.drxx,db.drxy)
 
-  rxx.nms <- matrix(0,p,p)
-  rxy.nms <- c(rep(0,p+1))
-  for(i in 1:p) for(j in 1:p) rxx.nms[i,j] <- paste("rx",i,"rx",j,sep='')
-  for(i in 1:p+1) rxy.nms[i] <- paste("rx",i,"y",sep='')
+  # Reorder derivatives to match the order of covariances and 
+  # variances in Sigma
 
-  nm.mat <- rbind(cbind(rxx.nms,rxy.nms[-(p+1)]),rxy.nms)
-  old.ord <- nm.mat[lower.tri(nm.mat)]
-  new.ord <- c(rxx.nms[lower.tri(rxx.nms)],rxy.nms)
+    rxx.nms <- matrix(0,p,p)
+    rxy.nms <- c(rep(0,p+1))
+    for(i in 1:p) for(j in 1:p) rxx.nms[i,j] <- paste("rx",i,"rx",j,sep='')
+    for(i in 1:p+1) rxy.nms[i] <- paste("rx",i,"y",sep='')
 
-  jacobian <- jacob[,match(old.ord,new.ord)]  
+    nm.mat <- rbind(cbind(rxx.nms,rxy.nms[-(p+1)]),rxy.nms)
+    old.ord <- nm.mat[lower.tri(nm.mat)]
+    new.ord <- c(rxx.nms[lower.tri(rxx.nms)],rxy.nms)
 
-# Create covariance matrix of standardized regression coefficients 
-# using the (Nobs-3) correction suggested by Yuan and Chan (2011)  
+    jacobian <- jacob[,match(old.ord,new.ord)]  
 
-  beta.cov <- jacobian %*% Sigma %*% t(jacobian) * Nobs/(Nobs-3)
-  beta.nms <- NULL   
-  for(i in 1:p) beta.nms[i] <- paste("beta",i,sep='')
-  rownames(beta.cov) <- colnames(beta.cov) <- beta.nms
+  # Create covariance matrix of standardized regression coefficients 
+  # using the (Nobs-3) correction suggested by Yuan and Chan (2011)  
 
-  ses <- sqrt(diag(beta.cov))
+    beta.cov <- jacobian %*% Sigma %*% t(jacobian) * Nobs/(Nobs-3)
+    beta.nms <- NULL   
+    for(i in 1:p) beta.nms[i] <- paste("beta",i,sep='')
+    rownames(beta.cov) <- colnames(beta.cov) <- beta.nms
+
+    ses <- sqrt(diag(beta.cov))
+  
+  }
+  
   CIs <- as.data.frame(matrix(0, p, 3))
   colnames(CIs) <- c("lbound", "estimate", "ubound")
   for(i in 1:p) rownames(CIs)[i] <- paste("beta_", i, sep='')

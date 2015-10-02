@@ -1,47 +1,50 @@
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-# Code to accompany Jones & Waller: The Normal-Theory  #
-# and Asymptotic Distribution-Free (ADF) Covariance    #
-# Matrix of Standardized Regression Coefficients:      #
-# Theoretical Extensions and Finite Sample Behavior    #
-#                                                      #
-# This function uses the delta method to construct     #  
-# normal-theory and ADF confidence intervals for       #
-# standardized regression coefficients.                #
-#                                                      #
-# version 1.1   August 6, 2015 adf cov fixed           #
-#                                                      #   
-# Arguments:                                           #   
-# X            - matrix of predictor scores            #   
-# y            - vector of criterion scores            #   
-# cov.x        - covariance matrix for predictors      #     
-# cov.xy       - vector of covariances between         #   
-#                predictors and criterion              #   
-# var.y        - criterion variance                    #   
-# Nobs         - number of observations                #  
-# alpha        - desired Type I error rate             #  
-#                default = .05                         # 
-# ADF          - Logical (TRUE/FALSE) to select ADF    #
-#                confidence intervals - requires raw X #
-#                and y; default = TRUE                 #  
-# digits       - number of significant digits to       # 
-#                print; default = 3                    # 
-#                                                      #   
-# This function accepts either (1) raw data, or (2)    #    
-# second-order moments (covariances) and sample size.  #  
-#                                                      # 
-# Output                                               # 
-# cov.mat  - normal-theory or ADF covariance matrix of #
-#            standardized regression coefficients      #
-# SEs      - normal-theory or ADF standard errors for  #
-#            standardized regression coefficients      #
-# alpha    - desired Type I error rate                 #
-# CIs      - normal-theory or ADF confidence intervals #
-#            for standardized regression coefficients  # 
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+# Code to accompany Jones & Waller: The Normal-Theory   #
+# and Asymptotic Distribution-Free (ADF) Covariance     #
+# Matrix of Standardized Regression Coefficients:       #
+# Theoretical Extensions and Finite Sample Behavior     #
+#                                                       #
+# This function uses the delta method to construct      #  
+# normal-theory and ADF confidence intervals for        #
+# standardized regression coefficients.                 #
+#                                                       #
+# August 6, 2015 adf cov fixed                          #
+# Sept 29, 2015                                         #
+# Version 1.1 - added p = 1 functionality               #
+#                                                       #   
+# Arguments:                                            #   
+# X            - matrix of predictor scores             #   
+# y            - vector of criterion scores             #   
+# cov.x        - covariance matrix for predictors       #     
+# cov.xy       - vector of covariances between          #   
+#                predictors and criterion               #   
+# var.y        - criterion variance                     #   
+# Nobs         - number of observations                 #  
+# alpha        - desired Type I error rate              #  
+#                default = .05                          # 
+# estimator    - 'ADF' or 'Normal' confidence           #
+#                intervals - requires raw X and y;      #
+#                default = 'ADF'                        #  
+# digits       - number of significant digits to        # 
+#                print; default = 3                     # 
+#                                                       #   
+# This function accepts either (1) raw data, or (2)     #    
+# second-order moments (covariances) and sample size.   #  
+#                                                       # 
+# Output                                                # 
+# cov.mat   - normal-theory or ADF covariance matrix of #
+#             standardized regression coefficients      #
+# SEs       - normal-theory or ADF standard errors for  #
+#             standardized regression coefficients      #
+# alpha     - desired Type I error rate                 #
+# CIs       - normal-theory or ADF confidence intervals #
+#             for standardized regression coefficients  #
+# estimator - 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 seBeta <- function(X = NULL, y = NULL,
                    cov.x = NULL, cov.xy = NULL,
                    var.y = NULL, Nobs = NULL,
-                   alpha = .05, ADF = TRUE,
+                   alpha = .05, estimator = 'ADF',
                    digits = 3) {
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~Internal Functions~~~~~~~~~~~~~~~~~~~~~~~~~~#
 # Computes the ADF covariance matrix of covariances
@@ -120,10 +123,19 @@ adfCOV <- function(X, y) {
     mat[upper.tri(mat)] <- t(mat)[upper.tri(mat)]
     outer(c(mat), index, function(x, y ) ifelse(x == y, 1, 0))
   } 
+
+## Modified DIAG function will not return an identity matrix
+## We use this to account for single predictor models
+
+  DIAG <- function (x = 1, nrow, ncol) {
+    if(length(x) == 1) x <- as.matrix(x)
+    if(is.matrix(x)) return(diag(x)) else return(diag(x, nrow, ncol))
+  }
+
 #~~~~~~~~~~~~~~~~~~~~~~~~~~End Define Internal Functions~~~~~~~~~~~~~~~#
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~ Error Checking ~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
-  if((is.null(X) | is.null(y)) & ADF) stop("\nYou need to supply both X and y for ADF Estimation\n") 
+  if((is.null(X) | is.null(y)) & estimator == 'ADF') stop("\nYou need to supply both X and y for ADF Estimation\n") 
 
   if(is.null(X) & !is.null(y))
     stop("\n y is not defined\n Need to specify both X and y\n")
@@ -137,12 +149,14 @@ adfCOV <- function(X, y) {
     p <- nrow(cov.x)
 
   } else {
+  # if a vector is supplied it will be turned into a matrix
+    X <- as.matrix(X); y <- as.matrix(y)
     scov <- cov(cbind(X,y))
     N <- length(y)
     p <- ncol(X)
   }
 
-  if(ADF) {
+  if(estimator == 'ADF') {
     cov.cov <- adfCOV(X,y)
   } else {  
 # create normal-theory covariance matrix of covariances
@@ -155,14 +169,18 @@ adfCOV <- function(X, y) {
   ncovs <- length(param)
 
 # find vector element numbers for variances of X
-  v.x.pl <- c(1, rep(0, p - 1))
-  for(i in 2:p) v.x.pl[i] <- v.x.pl[i - 1] + p - (i - 2)
+  if(p == 1) {
+    v.x.pl <- 1 
+  } else {
+    v.x.pl <- c(1, rep(0, p - 1))
+    for(i in 2:p) v.x.pl[i] <- v.x.pl[i - 1] + p - (i - 2)
+  }
 
 # store covariances and variances 
   cx  <- scov[1:p, 1:p]
   cxy <- scov[1:p, p+1]
   vy  <- scov[p+1, p+1]
-  sx <- sqrt(diag(cx))
+  sx <- sqrt(DIAG(cx))
   sy <- sqrt(vy)
   bu <- solve(cx) %*% cxy
   ncx <- length(vech(cx))
@@ -173,11 +191,11 @@ adfCOV <- function(X, y) {
   V <- matrix(0, p, ncx)
   V[as.matrix(cbind(1:p, v.x.pl))] <- 1
   
-  db[, 1:ncx] <- (diag(c(solve(diag(2 * sx * sy)) %*% bu)) %*% V -
-                  diag(sx / sy) %*% (t(bu) %x% solve(cx)) %*% Dn(p))
+  db[, 1:ncx] <- (DIAG(c(solve(DIAG(2 * sx * sy)) %*% bu)) %*% V -
+                  DIAG(sx / sy) %*% (t(bu) %x% solve(cx)) %*% Dn(p))
 
-  db[, (ncx+1):(ncx+p)] <- diag(sx / sy) %*% solve(cx)
-  db[,ncovs] <- -diag(sx / (2 * sy^3)) %*% bu 
+  db[, (ncx+1):(ncx+p)] <- DIAG(sx / sy) %*% solve(cx)
+  db[,ncovs] <- -DIAG(sx / (2 * sy^3)) %*% bu 
 
 # re-order derivatives 
   cx.nms <- matrix(0, p, p)
@@ -193,20 +211,23 @@ adfCOV <- function(X, y) {
 
 # compute covariance matrix of standardized   
 # regression coefficients using the Delta Method
-  DEL.cmat <- db %*% cov.cov %*% t(db) / N
+
+  if(p == 1) DEL.cmat <- t(db) %*% cov.cov %*% db / N
+  else       DEL.cmat <- db %*% cov.cov %*% t(db) / N
+  
   b.nms <- NULL
 
   for(i in 1:p) b.nms[i] <- paste("beta_", i, sep='')
   rownames(DEL.cmat) <- colnames(DEL.cmat) <- b.nms
 
 # compute standard errors and confidence intervals
-  DELse <- sqrt(diag(DEL.cmat))
+  DELse <- sqrt(DIAG(DEL.cmat))
   CIs <- as.data.frame(matrix(0, p, 3))
   colnames(CIs) <- c("lbound", "estimate", "ubound")
   for(i in 1:p) rownames(CIs)[i] <- paste("beta_", i, sep='')
 
   tc <- qt(alpha / 2, N - p - 1, lower.tail = F)
-  beta <- diag(sx) %*% bu * sy^-1
+  beta <- DIAG(sx) %*% bu * sy^-1
   for(i in 1:p) {
     CIs[i,] <- c(beta[i] - tc * DELse[i], beta[i], beta[i] + tc * DELse[i])
   }
@@ -214,11 +235,6 @@ adfCOV <- function(X, y) {
      "% CIs for Standardized Regression Coefficients:\n\n", sep='')
   print(round(CIs,digits))
 
-  invisible(list(cov.mat=DEL.cmat,SEs=DELse,alpha=alpha,CIs=CIs))
+  invisible(list(cov.mat = DEL.cmat, SEs = DELse, alpha = alpha,
+                 CIs = CIs, estimator = estimator))
 }  
-
-
-########################################################
-
-                   
-

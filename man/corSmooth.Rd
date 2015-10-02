@@ -2,20 +2,20 @@
 \alias{corSmooth}
 \title{Smooth a Non PD Correlation Matrix}
 \description{
- A function for smoothing a non-positive definite correlation matrix by the method of Knol and Ten Berge (1989).
+ A function for smoothing a non-positive definite correlation matrix by the method of Knol and Berger (1991).
 }
 \usage{
 corSmooth(R, eps = 1E8 * .Machine$double.eps)
 }
 \arguments{
  \item{R}{A non-positive definite correlation matrix.}
- \item{eps}{Small positive number to control the size of the smallest eigenvalue of the smoothed R matrix. Default = 1E8 * .Machine$double.eps}
+ \item{eps}{Small positive number to control the size of the non-scaled smallest eigenvalue of the smoothed R matrix. Default = 1E8 * .Machine$double.eps}
 }
 \value{
 \item{Rsmoothed}{A Smoothed (positive definite) correlation matrix.} 
 }
 \references{
-Knol, D. and Ten Berge, J. (1989). Least-squares approximation of an improper correlation matrix by a proper one. \emph{Psychometrika, 54}, 53-61.
+Knol, D. L., and Berger, M. P. F., (1991). Empirical comparison between factor analysis and multidimensional item response models.\emph{Multivariate Behavioral Research, 26}, 457-477.
 }
 \author{Niels Waller}
 \examples{

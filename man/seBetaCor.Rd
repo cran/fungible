@@ -32,13 +32,20 @@ Yuan, K. and Chan, W. (2011). Biases and standard errors of standardized regress
 }
 \author{Jeff Jones and Niels Waller}
 \examples{
-R <- matrix(c( 1,      .3511, .3661,
-	              .3511, 1,     .4359,
-	              .3661, .4359,  1), 3, 3) 
+R <- matrix(c(1.0000, 0.3511, 0.3661,
+	          0.3511, 1.0000, 0.4359,
+	          0.3661, 0.4359, 1.0000), 3, 3) 
 
-rxy <- c(.5820, .6997, .7621)
+rxy <- c(0.5820, 0.6997, 0.7621)
 Nobs <- 46
 out <- seBetaCor(R = R, rxy = rxy, Nobs = Nobs) 
+
+# 95\% CIs for Standardized Regression Coefficients: 
+#
+#        lbound estimate ubound
+# beta_1  0.107    0.263  0.419
+# beta_2  0.231    0.391  0.552
+# beta_3  0.337    0.495  0.653
 }
 
 \keyword{Statistics}% at least one, from doc/KEYWORDS

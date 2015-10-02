@@ -6,7 +6,7 @@ Computes Normal Theory and ADF Standard Errors and CIs for Standardized Regressi
 }
 \usage{
 seBeta(X, y, cov.x = NULL, cov.xy = NULL, var.y = NULL, Nobs = NULL, 
-alpha = 0.05, ADF = TRUE, digits = 3)		
+alpha = 0.05, estimator = "ADF", digits = 3)		
  }
 \arguments{
  \item{X}{Matrix of predictor scores.}  
@@ -16,7 +16,7 @@ alpha = 0.05, ADF = TRUE, digits = 3)
  \item{var.y}{Criterion variance.}
  \item{Nobs}{Number of observations.}
  \item{alpha}{Desired Type I error rate; default = .05.}
- \item{ADF}{Logical (TRUE/FALSE) to select ADF confidence intervals - requires raw X and raw y; default = TRUE. If ADF = FALSE then the function will compute Normal Theory confidence intervals.}
+ \item{estimator}{'ADF' or 'Normal' confidence intervals - requires raw X and raw y; default = 'ADF'.}
  \item{digits}{Number of significant digits to print; default = 3.}
 }
 \value{
@@ -34,12 +34,23 @@ Distribution-Free (ADF) covariance matrix of standardized regression coefficient
 \author{Jeff Jones and Niels Waller}
 \examples{
 library(MASS)
+
+set.seed(123)
+
 R <- matrix(.5, 3, 3)
 diag(R) <- 1
-X <- mvrnorm(n = 200, mu  =rep(0, 3), Sigma = R, empirical = TRUE)
+X <- mvrnorm(n = 200, mu = rep(0, 3), Sigma = R, empirical = TRUE)
 Beta <- c(.2, .3, .4)
-y <- X \%*\% Beta + .64 * scale(rnorm(200))
-seBeta(X, y, Nobs = 200, alpha = .05, ADF = TRUE)
+y <- X\%*\% Beta + .64 * scale(rnorm(200))
+seBeta(X, y, Nobs = 200, alpha = .05, estimator = 'ADF')
+
+# 95\% CIs for Standardized Regression Coefficients:
+#
+#        lbound estimate ubound
+# beta_1  0.104    0.223  0.341
+# beta_2  0.245    0.359  0.473
+# beta_3  0.245    0.360  0.476
+
 }
 
 \keyword{Statistics}% at least one, from doc/KEYWORDS

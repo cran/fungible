@@ -5,13 +5,14 @@
 Generate fungible correlation matrices. For a given vector of standardized regression coefficients, Beta,  and a user-define R-squared value, Rsq, find predictor correlation matrices, R, such that Beta' R Beta = Rsq. The size of the smallest eigenvalue (Lp) of R can be defined.  
 }
 \usage{
-fungibleR(R, Beta, Lp = .00, eps = 1e-16)
+fungibleR(R, Beta, Lp = .00, eps = 1e-08, Print.Warnings = TRUE)
 }
 \arguments{
  \item{R}{A p x p predictor correlation matrix.}
  \item{Beta}{A p x 1 vector of standardized regression coefficients.}
  \item{Lp}{Controls the size of the smallest eigenvalue of RstarLp.} 
  \item{eps}{Convergence criterion.}
+ \item{Print.Warnings}{Logical, default = TRUE. When TRUE, convergence failures are printed.}
 }
 \value{
   \item{R}{Any input correlation matrix that satisfies Beta' R Beta = Rsq.}
@@ -37,7 +38,7 @@ diag(R) <- 1
 Beta <- rep(.1, 5)
 
 ## change value of Lp to control the size of the smallest eigenvalue of RstarMax
-out <- fungibleR(R, Beta, Lp = 0.12345678, eps = 1e-16)
+out <- fungibleR(R, Beta, Lp = 0.12345678, eps = 1e-08, Print.Warnings = TRUE)
 
 ## R
 print(round(out$R,3)) 
