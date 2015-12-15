@@ -5,7 +5,8 @@
 Generate fungible weights for Logistic Regression Models. 
 }
 \usage{
-fungibleL(X, y, Nsets = 1000, method = "LLM", RsqDelta = 0.01, rLaLb = NULL, s = .3)
+fungibleL(X, y, Nsets = 1000, method = "LLM", RsqDelta = NULL, 
+          rLaLb = NULL, s = .3, Print = TRUE)
 }
 \arguments{
 \item{X}{An n by nvar matrix of predictor scores without the leading column of ones.}
@@ -16,6 +17,7 @@ fungibleL(X, y, Nsets = 1000, method = "LLM", RsqDelta = 0.01, rLaLb = NULL, s =
 \item{rLaLb}{The desired correlation between the logits - used when method = "EM".}
 \item{s}{Scale factor for random deviates. s controls the range of random start values for the 
 optimization routine. Recommended 0 <= s < 1. Default: s = 0.3.}
+\item{Print}{Boolean (TRUE/FALSE) for printing output summary.}
 }
 \details{
 fungibleL provides two methods for evaluating parameter sensitivity in logistic regression models by computing fungible logistic regression weights. For for additional information on the underlying theory of these methods see Jones and Waller (in press).
@@ -29,6 +31,9 @@ fungibleL provides two methods for evaluating parameter sensitivity in logistic 
 \item{pseudoRsq}{The pseudo R-squared.}
 \item{fungibleRsq}{The fungible pseudo R-squared.}
 \item{fungiblea}{The Nsets by Nvar + 1 matrix of fungible (alternate) coefficients.}
+\item{rLaLb}{The correlation between the logits.}
+\item{maxPosCoefChange}{The maximum positive change in a single coefficient holding all other coefficients constant.}
+\item{maxNegCoefChange}{The maximum negative change in a single coefficient holding all other coefficients constant.}
 }
 \references{
 Jones, J. A. & Waller, N. G. (in press). Fungible weights in logistic regression.
