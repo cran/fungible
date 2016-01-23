@@ -1,4 +1,4 @@
-05e6c7bd58faf83f5d4d38d746b059db *DESCRIPTION
+cdedee63cb34c5f0c38ef3f090a92e7b *DESCRIPTION
 af25f2d2ed3c4fb7fdedbac4378fce4c *NAMESPACE
 23e282eb0ee41afa9c9396edd858bc64 *R/adfCor.R
 822e0d92505faf25e8317945bde0fe82 *R/adfCov.R
@@ -33,8 +33,8 @@ fe91b342797f98fcb7d792e9973157d6 *R/seBetaFixed.R
 3d04fdb1122d4efb452a3468784af8ec *R/tetcorQuasi.R
 ef38cfee1ceeee7cf1171289a8594b8b *R/vcos.r
 c0144f4e4856e20bf6a089b37f6f86f5 *R/vnorm.r
-27651e3353b2d4c3ef3f0b9e7a71978e *inst/CITATION
-123d29ab6698490db92ddcdfe0bac4dd *inst/doc/fungible-manual.pdf
+bdf24bc93091318c962f99dcd173ac08 *inst/CITATION
+c77f7c6103399c21fa82dbb726f110b1 *inst/doc/fungible-manual.pdf
 366c671869066b067d1ad22254dbbbfc *man/adfCor.Rd
 a7519c0eeb79fd2d31a2fa9e4dc60e66 *man/adfCov.Rd
 f1d1139dd2ab0034f503c56a209f06ca *man/bigen.Rd
@@ -45,7 +45,7 @@ b5d587c4e1d8da3fa1de0202aec468b4 *man/d2r.Rd
 eb296a830a22ecc4a67c087437aaf81c *man/fungible.Rd
 840a8668738293fa45443504cd7bdc85 *man/fungibleExtrema.Rd
 e66c02d1ec321a0e40d0b5201a1a9116 *man/fungibleL.Rd
-8a9e6ac2278cc9362011ff0e40d3634b *man/fungibleR.Rd
+150eb54071838f9bee782663e3d50ffc *man/fungibleR.Rd
 f9a96bc98cce444d127424ab787793fd *man/genCorr.Rd
 e332edd5659ec85d4e6ae419c2bdf314 *man/kurt.Rd
 373f7f07cf30273feb5649efffa8e99f *man/monte.Rd
