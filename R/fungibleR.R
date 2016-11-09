@@ -6,6 +6,7 @@ fungibleR<-function(R, Beta, Lp = .00, eps=1e-8, Print.Warnings=TRUE){
   # July 23, 2013
   # updated August 14, 2015
   # updated September 19, 2015
+  # updated July 23, 2016
   #
   # Arguments:
   #       R            : a p x p predictor correlation matrix
@@ -32,36 +33,38 @@ fungibleR<-function(R, Beta, Lp = .00, eps=1e-8, Print.Warnings=TRUE){
 
   p <- length(Beta)
   
+
+  max.iterations <- 100
   
 # Fnc: tr -- matrix trace
   tr <- function(X) sum(diag(X))
   
 # Fnc: normF-- Frobenius norm
-  normF <- function(X)   sqrt(tr(t(X) %*% X))  
+  normF <- function(X)   sqrt( tr(t(X) %*% X) )  
 
 # Fnc: vecp
   vecp <- function(X){
-    if(dim(X)[1]!=dim(X)[2]) stop("matrix not square")
-    X[upper.tri(X,diag=FALSE)]       
+    if(dim(X)[1]!=dim(X)[2]) stop( "matrix not square" )
+    X[upper.tri( X, diag=FALSE )]       
   }
 
 # Fnc: vecpInv -- inverse of vecp
   vecpInv <- function(x,p=2,X=NULL) {
-    if(is.null(X)) X<-matrix(0,p,p)
+    if(is.null(X)) X <- matrix(0,p,p)
     X[upper.tri(X,diag=FALSE)] <- x
     X + t(X)
   }
 
 # vector of coefficient cross products
-  b <- vecp(outer(Beta,Beta))
+  b <- vecp(outer( Beta, Beta ))
 
 # generate Z, a p x p-1 matrix of random deviates
   nNull <- (p * (p-1)/2) - 1  # dimension of null space
   
 # When generating VERY large R matrices, restrict Delta 
 # to a manageable subspace
-  if(nNull>25000){
-    Z <- matrix(rnorm( (nNull+1)*100 ),nNull+1,100)
+  if(nNull > 25000){
+    Z <- matrix(rnorm( (nNull+1)*100 ), nNull+1, 100)
     nNull <- 100
   }
   else
@@ -77,7 +80,7 @@ fungibleR<-function(R, Beta, Lp = .00, eps=1e-8, Print.Warnings=TRUE){
   
  
 # w = weights for null space basis vectors
-  w<- rnorm(nNull,0,1)
+  w <- rnorm(nNull, 0, 1)
   w <- w/sqrt(sum(w^2)) 
 
 # generate Delta
@@ -88,10 +91,10 @@ fungibleR<-function(R, Beta, Lp = .00, eps=1e-8, Print.Warnings=TRUE){
 # initialize s from Rayleigh Coefficient
   LpH <- eigen(vecpInv(Delta,p))$val[p]
   LpR <- eigen(R)$val[p]
-  s <-s.init<- (Lp - LpR)/LpH 
+  s <- s.init <-  (Lp - LpR)/LpH 
   
- 
-# for fixed smallest eigenvalue  
+
+# for RstarLp fixed smallest eigenvalue  
 # find sLp by Newton Raphson
 # v.p is last eigenvector of (R + sH)
   H <- vecpInv(Delta,p=p)
@@ -100,10 +103,10 @@ fungibleR<-function(R, Beta, Lp = .00, eps=1e-8, Print.Warnings=TRUE){
   while(crit >= eps){
     v.p<-eigen(R + s*H)$vectors[,p]
     s.old<-s
-    s <- s.old - as.numeric((eigen(R + s.old*H)$values[p] - Lp)/(2*(t(v.p)%*%H%*%v.p)))               
+    s <- s.old -  as.numeric((eigen(R + s.old*H)$values[p] - Lp)/(2*(t(v.p)%*%H%*%v.p)))               
     crit<-abs(s-s.old) 
     it<-it+1
-    if(it>5000) {
+    if(it>max.iterations) {
              converged <- 1
              break()
     }
@@ -128,7 +131,7 @@ fungibleR<-function(R, Beta, Lp = .00, eps=1e-8, Print.Warnings=TRUE){
     s <- s.old - as.numeric((eigen(R + s.old*H)$values[p] - LpZero)/(2*(t(v.p)%*%H%*%v.p)))               
     crit<-abs(s-s.old) 
     it<-it+1
-    if(it>5000) {
+    if(it>max.iterations) {
       converged<-1
       break()
     }
@@ -140,7 +143,8 @@ fungibleR<-function(R, Beta, Lp = .00, eps=1e-8, Print.Warnings=TRUE){
   sLOsHI <-sort( c(sLO, sHI) )
   
 # generate a random PD Rstar 
-  while(TRUE){
+  it<-0
+  for(it in 1:max.iterations){
     s <- runif(1, sLOsHI[1], sLOsHI[2])
     Rstar <- R + s*H
     if(eigen(Rstar)$values[p] > 0) break()
@@ -150,6 +154,16 @@ fungibleR<-function(R, Beta, Lp = .00, eps=1e-8, Print.Warnings=TRUE){
 # compute the Frobenius norm of the difference matrix  
   Fnorm <- normF(R - Rstar)  
   FnormLp <- normF(R - Rstar.Lp) 
+  
+  
+  ##########################################################################
+  ##            Convergence tests
+  ##  1   Newton Raphson failed to converge in max.iterations
+  ##  2   RstarLp correlation > 1 in absolute value
+  ##  3   RstarLp minimum eigenvalue tolerance test failure
+  ##  4   minimum eigenvalue of Rstar < 0   
+  ##  5   Rstar correlation > 1 in absolute value
+  ##  6   s is NA
 
 # convergence test Rstar.Lp: Are all |r_ij|< 1 
   converged<-0 #initialize  
@@ -159,28 +173,31 @@ fungibleR<-function(R, Beta, Lp = .00, eps=1e-8, Print.Warnings=TRUE){
     if(Print.Warnings){
        warning(gettextf("Improper solution: Correlation > 1 in absolute value"), domain = NA)
     }  
-    converged <- 1
+    converged <- 2
   }
  # convergence test: Is minimum eigenvalue correct  
   if(abs(min(eigen(Rstar.Lp)$values) - Lp) > eps) {
     if(Print.Warnings){
        warning(gettextf("Minimum eigenvalue tolerance test failure"), domain = NA)
     }  
-    converged <- 1
+    converged <- 3
   }
   
+  # convergence test: Is minimum eigenvalue of Rstar > 0   
+  if(eigen(Rstar)$values[p] < 0)  converged <- 4
+ 
+  
 # convergence test Rstar: Are all |r_ij|< 1 
-  converged<-0 #initialize  
   Rcheck<-Rstar
   diag(Rcheck)<-0
   if( max(abs(Rcheck)) > 1) {
-    if(Print.Warnings){
+     if(Print.Warnings){
       warning(gettextf("Improper solution: Correlation > 1 in absolute value"), domain = NA)
     }  
-    converged <- 1
+    converged <- 5
   }
   
-  if(is.na(s)) converged<-1
+  if(is.na(s)) converged <- 6
   
   list( R = R,
         Beta = Beta,

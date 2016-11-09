@@ -1,0 +1,49 @@
+\name{eigGen}
+\alias{eigGen}
+\title{Generate eigenvalues for R matrices with underlying component structure}
+\description{
+Generate eigenvalues for R matrices with underlying component structure
+}
+\usage{
+eigGen(nDimensions = 15, nMajorFactors = 5, PrcntMajor = 0.8, threshold = 0.5)
+}
+\arguments{
+ \item{nDimensions}{Total number of dimensions (variables).}
+ \item{nMajorFactors}{Number of major factors.}
+ \item{PrcntMajor}{Percentage of variance accounted for by major factors.}
+ \item{threshold}{Minimm difference in eigenvalues between the last major  factor and the first minor factor.}
+}
+\value{
+ A vector of eigenvalues that satisfies the above criteria.
+}
+\author{Niels Waller}
+\examples{
+## Example
+set.seed(323)
+nDim <- 25   # number of dimensions
+nMaj <- 5    # number of major components
+pmaj <- 0.70 # percentage of variance accounted for
+             # by major components
+thresh <- 1  # eigenvalue difference between last major component 
+             # and first minor component
+ 
+L <- eigGen(nDimensions = nDim, nMajorFactors = nMaj, 
+            PrcntMajor = pmaj, threshold = thresh)
+
+maxy <- max(L+1)
+
+plotTitle <- paste("  n Dimensions = ", nDim, 
+                   ",  n Major Factors = ", nMaj, 
+				           "\\n \% Variance Major Factors = ", pmaj*100, 
+						   "\%", sep = "")
+				 
+plot(1:length(L), L, 
+     type = "b", 
+     main = plotTitle,
+     ylim = c(0, maxy),
+     xlab = "Dimensions", 
+	   ylab = "Eigenvalues",
+	   cex.main = .9)				 
+
+}
+\keyword{Statistics}% at least one, from doc/KEYWORDS

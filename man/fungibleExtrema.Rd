@@ -32,6 +32,7 @@ Waller, N. & Jones, J. (2009). Locating the extrema of fungible regression weigh
 }
 \author{Niels Waller and Jeff Jones}
 \examples{
+\dontrun{
 ## Example 
 ## This is Koopmnan's Table 2 Example
 
@@ -68,6 +69,7 @@ sf <- .68659/vc
 a <- as.numeric(sqrt(sf)) * a
 cat("\nKoopman Scaling\n")
 print(round(a,2))
+}
 }
 
 \keyword{fungible}% at least one, from doc/KEYWORDS

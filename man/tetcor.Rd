@@ -3,7 +3,7 @@
 \title{Compute ML Tetrachoric Correlations}
 \description{Compute ML tetrachoric correlations with optional bias correction and smoothing.}
 \usage{
-tetcor(X, y = NULL, BiasCorrect, stderror, Smooth = TRUE, max.iter)
+tetcor(X, y = NULL, BiasCorrect, stderror, Smooth = TRUE, max.iter, PRINT = TRUE)
 }
 \arguments{
   \item{X}{Either a matrix or vector of (0/1) binary data.}
@@ -13,6 +13,7 @@ tetcor(X, y = NULL, BiasCorrect, stderror, Smooth = TRUE, max.iter)
   \item{Smooth}{A logical which determines whether the tetrachoric correlation matrix should be smoothed. 
   	            A smoothed matrix is always positive definite.}
   \item{max.iter}{Maximum number of iterations. Default = 50.}
+  \item{PRINT}{A logical that determines whether to print progress updates during calculations. Default = TRUE}
 }
 \value{
  If stderror = FALSE, \code{tetcor} returns a matrix of tetrachoric correlations. If \code{stderror} = TRUE then \code{tetcor} returns a list the first component of which is a matrix of tetrachoric correlations and the second component is a matrix of standard errors (see Hamdan, 1970). 
@@ -51,9 +52,9 @@ tetcor(X = xy, BiasCorrect = TRUE,
 # [2,] 0.8552535 1.0000000
 # 
 # $se
-# [,1]       [,2]
-# [1,] 1.00000000 0.01458171
-# [2,] 0.01458171 1.00000000
+# [,1]           [,2]
+# [1,] NA         0.01458171
+# [2,] 0.01458171 NA
 # 
 # $Warnings
 # list()

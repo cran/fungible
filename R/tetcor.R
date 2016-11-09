@@ -1,8 +1,13 @@
-tetcor<-function (X, y=NULL, BiasCorrect=TRUE,stderror=FALSE,Smooth=TRUE, max.iter=5000) 
+tetcor<-function (X, y=NULL, BiasCorrect=TRUE,stderror=FALSE,Smooth=TRUE, max.iter=5000, PRINT = TRUE) 
 {
 # add: cparam=NULL to argument list
 #------------------------------------------------------------#
 # Function: tetcor                                           #
+#                                                            #
+#  April 27, 2016                                            #
+# fixed se's for cases in which two cells are empty          #
+# May 1 2016 define cell counts as.numeric to avoid          #
+#  integer overflow                                          #
 #                                                            #
 #  warning messages updated Sept 2 2004                      # 
 #                                                            #
@@ -81,19 +86,35 @@ x <- X
    stop()
   }  
   
-  
-  r<-matrix(0,nitems,nitems)
+  #--Initialize matrices
+  # an element of seFlagMatrix will be set to 99
+  # if the aymptotic standard error can not 
+  #  be computed due to low cell counts
+  r <- matrix(0,nitems,nitems)
   se <- 99
-  if(stderror==TRUE) se<-r
+  if(stderror==TRUE) se <- seFlagMatrix <- r
   
+
 warning.k<-0  
+
+
+## Function definitions
+#-----compute bivariate normal density----------#
+  bvn <- function(z){
+     1/(2*pi*sqrt(1-rhat^2)) * exp(-(z[1]^2+z[2]^2-2*rhat*z[1]*z[2])
+                                /(2*(1-rhat^2)) ) 
+  }
+
+
 ########################  
 #--MAIN loop begins here
 ########################
 for(iter.row in 2:nitems){
    for(iter.col in 1:(iter.row-1)){
    
-   #cat(c("     Working on correlation: ",iter.row, iter.col, "\n"))   
+   if(PRINT){   
+     cat(c("Working on correlation: ",iter.row, iter.col, "\n"))
+   }   
           
     v1 <- x[,iter.row]
     v2 <- x[,iter.col]
@@ -107,26 +128,31 @@ for(iter.row in 2:nitems){
     v2 <- factor(v2,levels=c("0","1"))
     abcd <- table(v1,v2)  
   
-    cella <- abcd[2,2]
-    cellb <- abcd[2,1]
-    cellc <- abcd[1,2]
-    celld <- abcd[1,1]
+    # use as.numeric to avoid integer overflow when N is very large
+    cella <- as.numeric(abcd[2,2])
+    cellb <- as.numeric(abcd[2,1])
+    cellc <- as.numeric(abcd[1,2])
+    celld <- as.numeric(abcd[1,1])
     
-  
+ 
+    
   
 #----Brown and Benedetti bias correction----------#
 
   if(BiasCorrect==TRUE){
+    # see Brown and Benedetti page 353
+    # when two cells are zero (either diagonal or off diagonal) assign
+    # r of plus or minus 1
        if(cella==0 & celld==0){
          r[iter.row,iter.col]<--1
-         se<-NA
+         seFlagMatrix[iter.row, iter.col] <-  seFlagMatrix[iter.col, iter.row]<-99
          next
        }
        if(cellc==0 & cellb==0){
          r[iter.row,iter.col]<-1
-         se<-NA
+         seFlagMatrix[iter.row, iter.col] <- seFlagMatrix[iter.col, iter.row] <- 99
           next
-       }     
+       }
        if(cella==0 & cellb > 0 & cellc > 0 & celld > 0){   # only cell a is 0.00
          cella<-.5;  cellb<- cellb - .5;  cellc<- cellc - .5;  celld<- celld +.5      
        }
@@ -195,7 +221,8 @@ for(iter.row in 2:nitems){
    Aa<-.5/(1+(h2+k2)*(.12454 - .27102*( 1 - hstar/sqrt(h2+k2) ) ) )
    Bb<-.5/(1+(h2+k2)*(.82281 - 1.03514*( kstar/sqrt(h2+k2) ) ) )
    Cc<- .07557*hstar + (hstar-kstar)^2 * (.51141/(hstar + 2.05793) -.07557/hstar)
-   R<-(cella*celld)/(cellb*cellc)     
+   R<-(cella*celld)/(cellb*cellc) 
+   
    Dd<-h.sign*k.sign*kstar*(.79289 + 4.28981/(1+3.30231*hstar))
    alpha<-Aa+Bb*(-1 + 1/(1+Cc*(log10(R) - Dd)^2))
     
@@ -209,11 +236,7 @@ for(iter.row in 2:nitems){
  
 #-----End Divgi's method for start values -----------------#
 
-#-----compute bivariate normal density----------#
-bvn<-function(z){
-    1/(2*pi*sqrt(1-rhat^2)) * exp(-(z[1]^2+z[2]^2-2*rhat*z[1]*z[2])
-     /(2*(1-rhat^2)) )
-}
+
 
 
 #------------------------
@@ -227,8 +250,8 @@ dLdr<-function(r){
 }
 
 
-eps<-99
-iterations<-0
+eps <- 99
+iterations <- 0
  
 #-----Newton Raphson Loop to improve initial estimate
 
@@ -255,8 +278,8 @@ iterations<-0
    
   
    
-    eps<-abs(rnew-rhat)
-    iterations<-iterations+1 
+    eps <- abs(rnew-rhat)
+    iterations <- iterations + 1 
   
     rhat<-rnew
     if(iterations > max.iter){
@@ -265,29 +288,32 @@ iterations<-0
                       " failed to converge!", sep="")
       # cat(warn.msg,"\n")
        warning.msg[warning.k]<-warn.msg
-       rnew<-51; 
+       rnew <- 51; 
        ## replace with Pearson
        rhat<-cor(x[,c(iter.row,iter.col)])[1,2]
        eps<-.00000001
       }   
     
-}
+} ## End while loop
 
 
-#-------ML estimate of standard error-(Hamdon, 1970)----#
-
+#-------Compute ML estimate of standard error-(Hamdan, 1970)----#
+#  Hamdan, M. A.  (1970).  The Equivalence of Tetrachoric and Maximum 
+#  Likelihood Estimates of r in 2 x 2 Tables.  Biometrika, 57(1), 212-215.  
 if(stderror){
-  se[iter.row,iter.col]<-1/(N*bvn(c(h.x,k.y)))*  (1/cella + 1/cellb + 1/cellc + 1/celld)^-.5
-}  
+  se[iter.row,iter.col] <- 1/(N*bvn(c(h.x,k.y)))*  (1/cella + 1/cellb + 1/cellc + 1/celld)^-.5
+} ## END 0F if(stderror)
 #-------------------------------------------------------#
 
   r[iter.row,iter.col]<-rhat 
-   }
-  }
+   } ## END iter over columns
+  }  ## END iter over rows
 
-r<-r+t(r)
+## fill in upper triangle of r 
+r <-r+t(r)
 diag(r)<-1
 
+## Smooth tetrachoric R matrix
 if(Smooth){
      ULU<-eigen(r)
      U<-ULU$vectors
@@ -305,32 +331,38 @@ if(Smooth){
      }
 }   
 
-if(stderror==FALSE) {
-     list(r=r,Warnings=warning.msg)
-   }
 
-else if (stderror==TRUE){
+
+## Return results
+ if(stderror==FALSE) {
+      list(r=r,Warnings=warning.msg)
+    }
+
+ else if (stderror==TRUE){
        se<-se+t(se)
-       diag(se)<-1
+       diag(se)<-NA
+       ## If a standard error cannot be computed it will be reported as 
+       ## NA.
+       se[seFlagMatrix==99] <-NA
        list(r=r, se=se, Warnings=warning.msg)
   } 
 
-
-}
+} ## End of tetcor function
 
 ######### CHECK #########
 
-# ### generate bivariate normal data
+# ## generate bivariate normal data
 # library(MASS)
 # rho <- .85
-# xy<- mvrnorm(100000, mu = c(0,0), Sigma = matrix(c(1,rho,rho,1),ncol=2))
+# xy<- mvrnorm(50000, mu = c(0,0), Sigma = matrix(c(1,rho,rho,1),ncol=2))
 # 
 # ## dichotomize
-# p1 <- .7
+# p1 <- .95
 # p2 <- .1
 # xy[,1] <- xy[,1] > p1; xy[,2] <- xy[,2] > p2
 # 
-# tetcor(x=xy[,1], y=xy[,2], max.iter=5000)
+# tetcor(X=xy[,1], y=xy[,2], max.iter=5000,
+#        stderror = TRUE)
 
 
 

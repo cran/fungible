@@ -29,7 +29,7 @@ fungibleR(R, Beta, Lp = .00, eps = 1e-08, Print.Warnings = TRUE)
   \item{converged}{An integer code. 0 indicates successful completion.}
 }
 \references{
-Waller, N. (2016). Fungible Correlation Matrices: A method for generating nonsingular, singular, and improper correlation matrices for Monte Carlo research.
+Waller, N. (2016). Fungible Correlation Matrices: A method for generating nonsingular, singular, and improper correlation matrices for Monte Carlo research. Multivariate Behavioral Research.
 }
 \author{Niels Waller}
 \examples{
