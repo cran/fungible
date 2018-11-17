@@ -1,5 +1,5 @@
 
-rMAP <- function (eigenval,eps=1e-12, maxits=5000, Seed=NULL) 
+rMAP <- function (eigenval, eps = 1e-12, maxits = 5000, Seed = NULL) 
 {
   ###################################################################
   ## rMAP: Generate a correlation matrix (R) with a fixed set of 
@@ -56,10 +56,10 @@ rMAP <- function (eigenval,eps=1e-12, maxits=5000, Seed=NULL)
     
     ## test convergence
     delta <- sqrt(sum((eigenval-Lambda)^2))
-    iter < -iter+1
+    iter <- iter + 1
     if(iter > maxits) {
       warning("\nFailed to converge after maxits iterations")
-      delta=0
+      delta = 0
     }  
     ## Project onto symmetric matrix with given spectrum
     S.LambdaStar <- Q %*% LambdaStar %*% t(Q)

@@ -158,7 +158,6 @@ rarc <- function(Rxx,Rsq,b1,b2,Npoints) {
 # cat("\n\nAverage relative performance of r weights across elliptical arc:",
 # 	    round(mean(Rsq.r)/Rsq,3) ) 
 # 
-# postscript(file="~/Desktop/FigArcEx.eps", width=8, height=11)
 # plot(seq(0,90,length=N),Rsq.r, typ="l", 
 #          ylim=c(0,.20),
 #          xlim=c(0,95),
@@ -174,7 +173,6 @@ rarc <- function(Rxx,Rsq,b1,b2,Npoints) {
 #        lty=c(1,2),
 #        lwd=c(4,3),
 #        cex=1.5) 
-# dev.off()               
 # 
 # 
 

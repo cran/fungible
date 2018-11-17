@@ -5,7 +5,7 @@
   Function for generating binary data with population thresholds.
 }
 \usage{
-bigen(data, n, thresholds, seed = NULL)
+bigen(data, n, thresholds = NULL, Smooth = FALSE, seed = NULL)
 }
 \arguments{
  \item{data}{
@@ -15,9 +15,10 @@ bigen(data, n, thresholds, seed = NULL)
   The desired sample size of the simulated data. 
  }
  \item{thresholds}{
- If x is a correlation matrix, thresholds must be a vector of threshold cut points.
- }
- \item{seed}{Default = NULL. Optional seed for random number generator.}
+ If data is a correlation matrix, thresholds must be a vector of threshold cut points.}
+ \item{Smooth}{
+ (logical) Smooth = TRUE will smooth the tetrachoric correltion matrix.}
+ \item{seed}{Default = FALSE. Optional seed for random number generator.}
 }
 \value{
   \item{data}{Simulated binary data}

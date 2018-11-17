@@ -3,6 +3,7 @@
 ##  October 31, 2012
 ##  updated August 12, 2015
 ##  updated  Sept 25 2015
+##  updated July 26, 2017
 ##  Niels Waller
 ##
 ##  Smooth a non-positive definite R matrix by the method of 
@@ -19,6 +20,8 @@ corSmooth <- function(R, eps = 1E8 * .Machine$double.eps){
     
      Rtmp <- K %*% Dplus %*% t(K)
      invSqrtDiagRtmp <- diag(1/sqrt(diag(Rtmp)))
-     invSqrtDiagRtmp %*% Rtmp %*% invSqrtDiagRtmp
+     R<- invSqrtDiagRtmp %*% Rtmp %*% invSqrtDiagRtmp
+     # for perfect symmetry
+     .5*( R + t(R) )
 }
 

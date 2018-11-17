@@ -98,7 +98,6 @@ rcone <- function(R,Rsq,b,axis1,axis2,deg,Npoints=360) {
 # bvec <- c(1,2,6,8)   #8
 # ABCD <- c("A","B","C","D")
 # 
-# #postscript(file="~/Desktop/FigCone.eps", width=8, height=11)
 # par(mfrow=c(2,2))
 # for(plot.num in 1:4){
 # 	# create b parallel to v[plot.num]
@@ -137,5 +136,5 @@ rcone <- function(R,Rsq,b,axis1,axis2,deg,Npoints=360) {
 #    }	      
 #  } # End create plots
 # 
-# #dev.off()       
+#      
 

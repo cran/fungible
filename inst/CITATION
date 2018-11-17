@@ -1,14 +1,13 @@
 citHeader("To cite package 'fungible' in publications use:")
 
 citEntry(entry = "Manual",
-         title = "fungible: Fungible coefficients and Monte Carlo functions.",
-         author = personList(as.person("Niels G. Waller"),
-                    as.person("Jeff A. Jones")),
-         year = "2016",
-         note = "version 1.5",
+         title = "fungible: Psychometric Functions from the Waller Lab.",
+         author = personList(as.person("Niels G. Waller")),
+         year = "2018",
+         note = "version 1.75",
 textVersion = 
- paste("Waller, N. G. &  Jones, J. A. (2016).",
-        "fungible: Fungible coefficients and Monte Carlo functions.
-        R package version 1.5.")
+ paste("Waller, N. G. (2018).",
+        "fungible: Psychometric Functions from the Waller Lab.
+        R package version 1.75.")
 )
 

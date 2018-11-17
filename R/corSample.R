@@ -27,6 +27,7 @@ corSample<- function(R,n){
 	S <- (1/n) * A
 	Dmat<-diag(1/sqrt(diag(A)))
 	R.samp<-Dmat%*%A%*%Dmat
+	R.samp <- .5*(R.samp + t(R.samp))
 	list(cor.sample=R.samp, cov.sample=S)
 }
 

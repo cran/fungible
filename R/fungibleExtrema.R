@@ -1,4 +1,5 @@
 # Version: October 23, 2012
+# August 6, 2018 (updated recycling)
 #                    R Code for fungibleExtrema
 #
 ##  R function: fungibleExtrema
@@ -78,11 +79,11 @@ gradf <- function(sv){
   
    
    if(MaxMin=="MIN") {
-       dfdz <-   dfdz +4*L*(zpz-1)*z  
+       dfdz <-   dfdz +4*L* as.numeric(zpz-1) * z  
        dfdL<-    (zpz - 1)^2  
    }       
    if(MaxMin=="MAX") {
-    dfdz <-   dfdz -4*L*(zpz-1)*z  
+    dfdz <-   dfdz -4 * L * as.numeric(zpz-1)*z  
     dfdL<-   -(zpz - 1)^2    
    } 
     
