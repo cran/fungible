@@ -20,7 +20,7 @@ S3method(print,summary.monte1)
 S3method(summary,monte)
 S3method(summary,monte1)
 importFrom("methods", "is")
-importFrom("stats", "coef", "cor", "cov", "cov2cor", "dnorm", "glm", "lm", "logLik",
+importFrom("stats", "coef", "cor", "cov", "cov2cor", "dnorm", "factanal", "glm", "lm", "logLik",
            "optim", "optimize", "princomp", "qnorm", "qt", "rchisq", "resid",
            "rnorm", "runif", "rWishart", "sd", "var", "vcov", "promax")
 importFrom("utils", "setTxtProgressBar", "txtProgressBar")

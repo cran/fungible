@@ -5,7 +5,7 @@ fals   <- function(R,           ## Correlation matrix
   
  
 
-  # vers: November 16, 2018
+  # vers: November 27, 2018
   # Author: Niels Waller
   #
   # Purpose:       Compute an unweighted least squares factor analysis
@@ -30,8 +30,8 @@ fals   <- function(R,           ## Correlation matrix
   
   NVar <- nrow(R)
   Nparam <- NVar * nfactors
-  
  
+  
   ## ---- Calculate OLS discrepancy function ----
   LS.f <- function(Fmat){
     Fmat <- matrix(Fmat, 
@@ -72,6 +72,7 @@ fals   <- function(R,           ## Correlation matrix
     
   } #END Calculate OLS discrepancy function 
   
+
   
   # ---- Calculate gradient of OLS discrepancy function---- 
   grdFALS <-function(Fmat){
@@ -125,7 +126,7 @@ fals   <- function(R,           ## Correlation matrix
       # Treat Heywood cases in Start Values
       initialH2 <- apply(Fstart^2,1,sum)
       if(max(initialH2) > 1){
-        s <- sqrt(rep(.99, NVar)/h2)
+        s <- sqrt(rep(.99, NVar)/ initialH2)
         Fstart <-diag(s) %*% Fstart 
       }
     
@@ -150,7 +151,7 @@ fals   <- function(R,           ## Correlation matrix
       # Treat Heywood cases in Start Values
       initialH2 <- apply(Fstart^2,1,sum)
       if(max(initialH2) > 1){
-        s <- sqrt(rep(.80, NVar)/h2)
+        s <- sqrt(rep(.80, NVar)/initialH2)
         Fstart <-diag(s) %*% Fstart 
       }
       
@@ -178,8 +179,7 @@ fals   <- function(R,           ## Correlation matrix
       
     } #END if(TreatHeywood == FALSE)
     
-    
-    
+
   # ---- minimize Penalized OLS function----  
   if(TreatHeywood == TRUE){  
      nParam <- NVar * nfactors  

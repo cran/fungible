@@ -3,11 +3,11 @@ citHeader("To cite package 'fungible' in publications use:")
 citEntry(entry = "Manual",
          title = "fungible: Psychometric Functions from the Waller Lab.",
          author = personList(as.person("Niels G. Waller")),
-         year = "2018",
-         note = "version 1.75",
+         year = "2019",
+         note = "version 1.76",
 textVersion = 
- paste("Waller, N. G. (2018).",
+ paste("Waller, N. G. (2019).",
         "fungible: Psychometric Functions from the Waller Lab.
-        R package version 1.75.")
+        R package version 1.76.")
 )
 

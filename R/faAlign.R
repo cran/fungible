@@ -81,7 +81,11 @@ faAlign <- function(F1, F2, Phi2 = NULL, MatchMethod = "LS"){
      FactorMap <- rbind(1:Nfac, Qmatch)
      
      # Find optimal reflections
-     Dsgn <- diag(sign(colSums( F1*F2[,Qmatch]) ))
+     F1noZeros <- F1
+     # This allows a column of F1 to have all zeros
+     F1noZeros[,colSums(F1noZeros)==0]<-1
+     
+     Dsgn <- diag(sign(colSums( F1noZeros*F2[,Qmatch]) ))
      F2 <- F2[ , Qmatch] %*%  Dsgn
 
  }#End LS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
