@@ -15,6 +15,28 @@
 #                                                               #
 #---------------------------------------------------------------#
 
+
+
+#' Compute Normal-Theory Covariances for Correlations
+#' 
+#' Compute normal-theory covariances for correlations
+#' 
+#' 
+#' @param R a p x p matrix of correlations.
+#' @param Nobs Number of observations.
+#' @return A normal-theory covariance matrix of correlations.
+#' @author Jeff Jones and Niels Waller
+#' @seealso \code{\link{adfCor}}
+#' @references Nel, D.G. (1985). A matrix derivation of the asymptotic
+#' covariance matrix of sample correlation coefficients. \emph{Linear algebra
+#' and its applications, 67}, 137--145.
+#' @keywords Statistics
+#' @export
+#' @examples
+#' 
+#' 	data(Harman23.cor)
+#' 	normalCor(Harman23.cor$cov, Nobs = 305)
+#' 
 normalCor <- function(R, Nobs) {
 	
 # Duplicator Matrix (Nel, p. 138).	

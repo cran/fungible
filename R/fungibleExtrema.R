@@ -28,6 +28,76 @@
 
         
 
+
+
+#' Locate Extrema of Fungible Regression Weights
+#' 
+#' Locate extrema of fungible regression weights.
+#' 
+#' 
+#' @param R.X p x p Predictor variable correlation matrix.
+#' @param rxy p x 1 Vector of predictor-criterion correlations.
+#' @param r.yhata.yhatb Correlation between least squares (yhatb) and
+#' alternate-weight (yhata) composites.
+#' @param Nstarts Maximum number of (max) minimizations from random starting
+#' configurations.
+#' @param MaxMin Character: "Max" = maximize cos(a,b); "Min" = minimize
+#' cos(a,b).
+#' @return \item{cos.ab}{cosine between OLS and alternate weights.}
+#' \item{a}{extrema of fungible weights.} \item{k}{k weights.} \item{z}{z
+#' weights: a normalized random vector.} \item{b}{OLS weights.} \item{u}{p x 1
+#' vector of u weights.} \item{r.yhata.yhatb}{Correlation between yhata and
+#' yhatb.} \item{r.y.yhatb}{Correlation between y and yhatb.}
+#' \item{gradient}{Gradient of converged solution.}
+#' @author Niels Waller and Jeff Jones
+#' @references Koopman, R. F.  (1988).  On the sensitivity of a composite to
+#' its weights.  \emph{Psychometrika, 53(4)}, 547--552.
+#' 
+#' Waller, N. & Jones, J. (2009). Locating the extrema of fungible regression
+#' weights in multiple regression. \emph{Psychometrika, 74}, 589--602.
+#' @keywords fungible
+#' @export
+#' @examples
+#' 
+#' \dontrun{
+#' ## Example 
+#' ## This is Koopmnan's Table 2 Example
+#' 
+#' 
+#' R.X <- matrix(c(1.00,  .69,  .49,  .39,
+#'                  .69, 1.00,  .38,  .19,
+#'                  .49,  .38, 1.00,  .27,
+#'                  .39,  .19,  .27, 1.00),4,4)
+#'                  
+#'                  
+#' b <- c(.39, .22, .02, .43)
+#' rxy <- R.X %*% b
+#' 
+#' OLSRSQ <- t(b) %*% R.X %*% b
+#' 
+#' ## theta <- .02
+#' ## r.yhata.yhatb <- sqrt( 1 - (theta)/OLSRSQ)
+#' 
+#' r.yhata.yhatb  <- .90
+#' set.seed(5)
+#' output <- fungibleExtrema(R.X, rxy, r.yhata.yhatb, Nstarts = 500, 
+#'                          MaxMin = "Min")
+#' 
+#' ## Scale to replicate Koopman
+#' a <- output$a
+#' a.old <- a
+#' aRa <- t(a) %*% R.X %*% a
+#' 
+#' ## Scale a such that a' R a = .68659
+#' ## vc = variance of composite
+#' vc <- aRa
+#' ## sf = scale factor
+#' sf <- .68659/vc
+#' a <- as.numeric(sqrt(sf)) * a
+#' cat("\nKoopman Scaling\n")
+#' print(round(a,2))
+#' }
+#' 
 fungibleExtrema <- function(R.X,rxy,r.yhata.yhatb,Nstarts=100,MaxMin="Max"){
  
   # auxiliary function definitions

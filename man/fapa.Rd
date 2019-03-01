@@ -5,7 +5,7 @@
 \title{Iterated Principal Axis Factor Analysis (fapa)}
 \usage{
 fapa(R, numFactors = NULL, epsilon = 1e-04, communality = "SMC",
-  maxITR = 15000, digits = NULL)
+  maxItr = 15000, digits = NULL)
 }
 \arguments{
 \item{R}{(Matrix) A correlation matrix to be analyzed.}
@@ -21,7 +21,7 @@ fapa(R, numFactors = NULL, epsilon = 1e-04, communality = "SMC",
   \item \strong{"unity"}: Initial communalities equal 1.0 for all variables.
 }}
 
-\item{maxITR}{(Numeric) The maximum number of iterations to reach convergence. The default is 15,000.}
+\item{maxItr}{(Numeric) The maximum number of iterations to reach convergence. The default is 15,000.}
 
 \item{digits}{(Scalar) The number of digits with which to round all output.}
 }
@@ -31,11 +31,12 @@ The main output is the matrix of unrotated factor loadings.
   \item \strong{loadings}: (Matrix) A matrix of unrotated factor loadings extracted via iterated principal axis factoring.
   \item \strong{h2}: (Vector) A vector containing the resulting communality values.
   \item \strong{iterations}: (Numeric) The number of iterations required to converge.
+  \item \strong{converged}: (Logical) TRUE if the iterative procedure converged.
   \item \strong{faControl}: (List) A list of the control parameters used to generate the factor structure.
   \itemize{
     \item \strong{epsilon}: (Numeric) The convergence criterion used for evaluating each iteration.
     \item \strong{communality}: (Character) The method for estimating the initial communality values.
-    \item \strong{maxITR}: (Numeric) The maximum number of allowed iterations to reach convergence.
+    \item \strong{maxItr}: (Numeric) The maximum number of allowed iterations to reach convergence.
   }
 }
 }
@@ -89,9 +90,17 @@ all.equal(Out1$loadings, Out2$loadings)
 \references{
 Widaman, K. F., & Herringer, L. G. (1985). Iterative least squares estimates of communality: Initial estimate need not affect stabilized value. \emph{Psychometrika, 50}(4), 469-477.
 }
+\seealso{
+Other Factor Analysis Routines: \code{\link{BiFAD}},
+  \code{\link{SLi}}, \code{\link{SchmidLeiman}},
+  \code{\link{faAlign}}, \code{\link{faMain}},
+  \code{\link{faSort}}, \code{\link{faX}},
+  \code{\link{fals}}, \code{\link{promaxQ}}
+}
 \author{
 \itemize{
   \item Casey Giordano (Giord023@umn.edu)
   \item Niels G. Waller (nwaller@umn.edu)
 }
 }
+\concept{Factor Analysis Routines}

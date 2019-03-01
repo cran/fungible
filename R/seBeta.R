@@ -41,6 +41,60 @@
 #             for standardized regression coefficients  #
 # estimator - 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
+
+#' Standard Errors and CIs for Standardized Regression Coefficients
+#' 
+#' Computes Normal Theory and ADF Standard Errors and CIs for Standardized
+#' Regression Coefficients
+#' 
+#' 
+#' @param X Matrix of predictor scores.
+#' @param y Vector of criterion scores.
+#' @param cov.x Covariance or correlation matrix of predictors.
+#' @param cov.xy Vector of covariances or correlations between predictors and
+#' criterion.
+#' @param var.y Criterion variance.
+#' @param Nobs Number of observations.
+#' @param alpha Desired Type I error rate; default = .05.
+#' @param estimator 'ADF' or 'Normal' confidence intervals - requires raw X and
+#' raw y; default = 'ADF'.
+#' @param digits Number of significant digits to print; default = 3.
+#' @return \item{cov.Beta}{Normal theory or ADF covariance matrix of
+#' standardized regression coefficients.} \item{se.Beta}{standard errors for
+#' standardized regression coefficients.} \item{alpha}{desired Type-I error
+#' rate.} \item{CI.Beta}{Normal theory or ADF (1-alpha)\% confidence intervals
+#' for standardized regression coefficients.} \item{estimator}{estimator =
+#' "ADF" or "Normal".}
+#' @author Jeff Jones and Niels Waller
+#' @references Jones, J. A, and Waller, N. G. (2015). The Normal-Theory and
+#' Asymptotic Distribution-Free (ADF) covariance matrix of standardized
+#' regression coefficients: Theoretical extensions and finite sample behavior.
+#' \emph{Psychometrika, 80}, 365-378.
+#' @keywords Statistics
+#' @export
+#' @import MASS
+#' @examples
+#' 
+#' library(MASS)
+#' 
+#' set.seed(123)
+#' 
+#' R <- matrix(.5, 3, 3)
+#' diag(R) <- 1
+#' X <- mvrnorm(n = 200, mu = rep(0, 3), Sigma = R, empirical = TRUE)
+#' Beta <- c(.2, .3, .4)
+#' y <- X%*% Beta + .64 * scale(rnorm(200))
+#' seBeta(X, y, Nobs = 200, alpha = .05, estimator = 'ADF')
+#' 
+#' # 95% CIs for Standardized Regression Coefficients:
+#' #
+#' #        lbound estimate ubound
+#' # beta_1  0.104    0.223  0.341
+#' # beta_2  0.245    0.359  0.473
+#' # beta_3  0.245    0.360  0.476
+#' 
+#' 
 seBeta <- function(X = NULL, y = NULL,
                    cov.x = NULL, cov.xy = NULL,
                    var.y = NULL, Nobs = NULL,

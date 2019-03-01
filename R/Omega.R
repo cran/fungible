@@ -45,8 +45,6 @@
 #'
 #' @export
 
-
-
 Omega <- function(lambda,
                   genFac = 1,
                   digits = NULL) {

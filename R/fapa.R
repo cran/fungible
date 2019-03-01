@@ -11,7 +11,7 @@
 #'   \item \strong{"maxRsqr"}: Initial communalities equal the largest squared correlation in each column of the correlation matrix.
 #'   \item \strong{"unity"}: Initial communalities equal 1.0 for all variables.
 #'}
-#' @param maxITR (Numeric) The maximum number of iterations to reach convergence. The default is 15,000.
+#' @param maxItr (Numeric) The maximum number of iterations to reach convergence. The default is 15,000.
 #' @param digits (Scalar) The number of digits with which to round all output.
 #'
 #' @details
@@ -29,11 +29,12 @@
 #'   \item \strong{loadings}: (Matrix) A matrix of unrotated factor loadings extracted via iterated principal axis factoring.
 #'   \item \strong{h2}: (Vector) A vector containing the resulting communality values.
 #'   \item \strong{iterations}: (Numeric) The number of iterations required to converge.
+#'   \item \strong{converged}: (Logical) TRUE if the iterative procedure converged.
 #'   \item \strong{faControl}: (List) A list of the control parameters used to generate the factor structure.
 #'   \itemize{
 #'     \item \strong{epsilon}: (Numeric) The convergence criterion used for evaluating each iteration.
 #'     \item \strong{communality}: (Character) The method for estimating the initial communality values.
-#'     \item \strong{maxITR}: (Numeric) The maximum number of allowed iterations to reach convergence.
+#'     \item \strong{maxItr}: (Numeric) The maximum number of allowed iterations to reach convergence.
 #'   }
 #' }
 #'
@@ -43,6 +44,8 @@
 #'   \item Niels G. Waller (nwaller@umn.edu)
 #'}
 #'
+#' @family Factor Analysis Routines
+#' 
 #' @references Widaman, K. F., & Herringer, L. G. (1985). Iterative least squares estimates of communality: Initial estimate need not affect stabilized value. \emph{Psychometrika, 50}(4), 469-477.
 #'
 #' @examples
@@ -84,7 +87,7 @@ fapa <- function(R,
                  numFactors    = NULL,
                  epsilon       = 1e-4,
                  communality   = "SMC",
-                 maxITR        = 15000,
+                 maxItr        = 15000,
                  digits        = NULL) {
 
   ## ~~~~~~~~~~~~~~~~~~ ##
@@ -123,7 +126,7 @@ fapa <- function(R,
   iter <- 1
 
   ## Iterated principal axis factoring
-  while (error > epsilon && iter < maxITR) {
+  while (error > epsilon && iter < maxItr) {
 
     ## Reduced correlation matrix with communalities on diagonal
     diag(R) <- hsq
@@ -159,17 +162,26 @@ fapa <- function(R,
     ## Track number of iterations used
     iter <- iter + 1
 
-  } # END while (error > epsilon && iter < maxITR) {
+  } # END while (error > epsilon && iter < maxItr) {
 
+  if (error > epsilon && iter < maxItr) {
+    ## Did the algorithm converge or hit its max iteration attempts?
+    convergance <- FALSE
+  } else {
+    convergance <- TRUE
+  } # END if (error > epsilon && iter < maxItr)
+  
+  
   ## List of the final output
   list(loadings   = round(Lambda, digits),
        h2         = round(hsq, digits),
        iterations = iter,
+       converged  = convergance,
        faControl  = list(epsilon     = epsilon,
                          communality = communality,
-                         maxITR      = maxITR))
+                         maxItr      = maxItr))
 
-} # END PAF <- function(R, numFactors, epsilon, maxITR) {
+} # END PAF <- function(R, numFactors, epsilon, maxItr) {
 
 
 

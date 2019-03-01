@@ -1,3 +1,5 @@
+#' @export
+
 print.summary.monte1<-function(x,digits=3, ...){
 z<-x
 nvar<-z$nvar

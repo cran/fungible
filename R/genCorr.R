@@ -17,6 +17,53 @@
 #################################################
 
 
+
+
+#' Generate Correlation Matrices with User-Defined Eigenvalues
+#' 
+#' Uses the Marsaglia and Olkin (1984) algorithm to generate correlation
+#' matrices with user-defined eigenvalues.
+#' 
+#' 
+#' @param eigenval A vector of eigenvalues that must sum to the order of the
+#' desired correlation matrix.  For example: if you want a correlation matrix
+#' of order 4, then you need 4 eigenvalues that sum to 4. A warning message
+#' will display if sum(eigenval) != length(eigenval)
+#' @param seed Either a user supplied seed for the random number generator or
+#' `rand' for a function generated seed. Default seed=`rand'.
+#' @return Returns a correlation matrix with the eigen-stucture specified by
+#' eigenval.
+#' @author Jeff Jones
+#' @references Jones, J. A. (2010). GenCorr: An R routine to generate
+#' correlation matrices from a user-defined eigenvalue structure. \emph{Applied
+#' Psychological Measurement, 34}, 68-69.
+#' 
+#' Marsaglia, G., & Olkin, I. (1984). Generating correlation matrices.
+#' \emph{SIAM J. Sci. and Stat. Comput., 5}, 470-475.
+#' @keywords datagen
+#' @export
+#' @examples
+#' 
+#' 
+#' ## Example
+#' ## Generate a correlation matrix with user-specified eigenvalues
+#' set.seed(123)
+#' R <- genCorr(c(2.5, 1, 1, .3, .2))
+#' 
+#' print(round(R, 2))
+#' 
+#' #>       [,1]  [,2]  [,3]  [,4]  [,5]
+#' #> [1,]  1.00  0.08 -0.07 -0.07  0.00
+#' #> [2,]  0.08  1.00  0.00 -0.60  0.53
+#' #> [3,] -0.07  0.00  1.00  0.51 -0.45
+#' #> [4,] -0.07 -0.60  0.51  1.00 -0.75
+#' #> [5,]  0.00  0.53 -0.45 -0.75  1.00
+#' 
+#' print(eigen(R)$values)
+#' 
+#' #[1] 2.5 1.0 1.0 0.3 0.2
+#' 
+#' 
 genCorr <- function(eigenval,seed="rand"){
 	
   if(!isTRUE(all.equal(sum(eigenval),length(eigenval)))) stop("Sum of eigenvalues not equal to Number of Variables\n")

@@ -5,65 +5,113 @@
 \title{Conduct a Schmid-Leiman Iterated (SLi) Target Rotation}
 \usage{
 SLi(R, SL = NULL, rotate = "geominQ", numFactors = NULL,
-  facMethod = "fals", salient = 0.2, urLambda = NULL,
-  freelyEstG = TRUE, gFac = 1, numberStarts = 10, maxITR = 20,
-  digits = NULL, rotateControl = NULL, faControl = NULL)
+  facMethod = "fals", salient = 0.2, urLoadings = NULL,
+  freelyEstG = TRUE, gFac = 1, maxSLiItr = 20, digits = NULL,
+  rotateControl = NULL, faControl = NULL)
 }
 \arguments{
 \item{R}{(Matrix) A correlation matrix}
 
 \item{SL}{(Matrix, NULL) A (rank-deficient) Schmid-Leiman (SL) bifactor solution (e.g., from a Schmid-Leiman or Direct Schmid-Leiman rotation). If NULL, the function will estimate the SL solution using the \code{\link{SchmidLeiman}} function.}
 
-\item{rotate}{(Character) Designate which rotation algorithm to apply. See the \code{\link{rotate}} function for more details about possible rotations. A geomin rotation is the default.}
+\item{rotate}{(Character) Designate which rotation algorithm to apply. See the \code{\link{faMain}} function for more details about possible rotations. A geomin rotation is the default.}
 
 \item{numFactors}{(Vector) The number of latent factors at each level of analysis. For example, c(3, 1) estimates three latent factors in the first-order common factor model and one latent factor in the second-order common factor model (i.e., 3 group factors and 1 general factor).}
 
-\item{facMethod}{(Character) The method used for factor extraction (see \code{\link{faX}} for more details). The supported options are "fals" for unweighted least squares, "faml" for maximum likelihood, and "fapa" for iterated principal axis factoring. The default method is "fals".
+\item{facMethod}{(Character) The method used for factor extraction 
+(\code{\link{faX}}). The supported options are "fals" for unweighted least 
+squares, "faml" for maximum likelihood, "fapa" for iterated principal axis 
+factoring, and "pca" for principal components analysis. The default method 
+is "fals". 
 \itemize{
-  \item \strong{"fals"}: Factors are extracted using the unweighted least squares estimation procedure using the \code{\link[fungible]{fals}} function.
-  \item \strong{"faml"}: Factors are extracted using the maximum likelihood estimation procedure using the \code{\link[stats]{factanal}} function.
-  \item \strong{"fapa"}: Factors are extracted using the iterated principal axis factoring estimation procedure using the \code{\link{fapa}} function.
+  \item \strong{"fals"}: Factors are extracted using the unweighted least 
+  squares estimation procedure using the \code{\link{fals}} function.
+  \item \strong{"faml"}: Factors are extracted using the maximum likelihood 
+  estimation procedure using the \code{\link[stats]{factanal}} function.
+  \item \strong{"fapa"}: Factors are extracted using the iterated principal 
+  axis factoring estimation procedure using the \code{\link{fapa}} function.
+  \item \strong{"pca}: Principal components are extracted. 
 }}
 
 \item{salient}{(Numeric) A threshold parameter used to dichotomize factor loadings to create the target matrix. The default value is .20 (in absolute value) which is based on the Abad et al., 2017 application of this method.}
 
-\item{urLambda}{(Matrix, NULL) A full-rank matrix of unrotated factor loadings to be rotated using the (automatically generated) target matrix. If specified as NULL, a full-rank matrix of factor loadings will be extracted using the \code{\link{faX}} function. An unweighted least squares ("fals") procedure is the default.}
+\item{urLoadings}{(Matrix, NULL) A full-rank matrix of unrotated factor loadings to be rotated using the (automatically generated) target matrix. If specified as NULL, a full-rank matrix of factor loadings will be extracted using the \code{\link{faX}} function. An unweighted least squares ("fals") procedure is the default.}
 
 \item{freelyEstG}{(Logical) Specify whether the general factor loadings are freely estimated (in the partially-specified target matrix). If set to FALSE, only general factor loadings above the salient threshold will be estimated in the partially-specified target rotation.}
 
 \item{gFac}{(Numeric, Vector) The position of the general factor(s) to be estimated. Solutions with multiple general factors may be estimated. Must either (a) freely estimate all loadings on the general factors or (b) only freely estimate general factor loadings that are above the salient threshold. The default column position is 1.}
 
-\item{numberStarts}{(Numeric) The number of random starting configurations used for each iteration of the partially-specified target rotation. Note that if the algorithm requires 5 iterations for convergence, 10 random starts will require a total of 50 partially-specified target rotations. The default value is 10.}
-
-\item{maxITR}{(Numeric) The maximum number of iterations attempted before failing to converge. Typically, 10 iterations is usually sufficient to converge (cf. Abad et al., 2017).}
+\item{maxSLiItr}{(Numeric) The maximum number of iterations for the SLi procedure. Typically, 10 iterations is usually sufficient to converge (cf. Abad et al., 2017). The default is 20 iterations.}
 
 \item{digits}{(Numeric) The number of digits to round all output to. The default is no rounding.}
 
-\item{rotateControl}{(List) A list of control values to pass to the factor rotations in the \code{\link{rotate}} function.
+\item{rotateControl}{(List) A list of control values to pass to the factor rotation algorithms.
 \itemize{
-  \item \strong{gamma}: (Numberic) This is a tuning parameter (between 0 and 1, inclusive) for an oblimin rotation.  See the GPArotation library's oblimin documentation for more details.
-  \item \strong{delta}: (Numberic) This is a tuning parameter for the geomin rotation. It adds a small number (default = .01) to factor loadings before computing the geometric means in the discrepancy function.
-  \item \strong{kappa}: (Numeric) The main parameterization of the Crawford-Ferguson family of factor rotations. Specific values correspond to certain rotations. For instance (adapted from GPArotation's help page), 0=Quartimax, 1/p=varimax, m/(2*p)=Equamax, (m-1)/(p+m-2)=Parsimax, 1=Factor parsimony. Note that 'p' is the number of factor indicators and 'm' is the number of common factors. The default value is 0 (Quartimax).
-  \item \strong{k}: (Numeric) A specific parameter of the simplimax rotation. The default value is nrow(lambda).
-  \item \strong{epsilon}: (Numeric) The rotational convergence criterion to use. The default value is 1e-5.
-  \item \strong{power}: (Numeric) Raise factor loadings the the n-th power in the promax rotation. The default value is 4.
-  \item \strong{norm}: (Logical) A logical value indicating whether to compute Kaiser normalization. Default is FALSE
-  \item \strong{maxITR}: (Numeric) The maximum number of allowed iterations for convergence before stopping the rotation. The default value is 15,000 iterations.
+  \item \strong{numberStarts}: (Numeric) The number of random (orthogonal) 
+  starting configurations for the chosen rotation method (e.g., oblimin). 
+  Defaults to numberStarts = 10. 
+  \item \strong{itemSort}: (Logical) If TRUE, sort the row order of all the following output 
+  such that variables loading on a common factor are grouped together for 
+  ease of interpretation: (a) the global minimum factor loadings, 
+  (b) indicator communalities, (c) factor-loading bootstrap standard errors, 
+  (d) factor-loading bootstrap confidence interval quantiles (both upper and 
+  lower), and (e) the array of all factor-loading bootstrap results. 
+  Defaults to itemSort = FALSE.
+  \item \strong{gamma}: (Numeric) This is a tuning parameter (between 0 
+  and 1, inclusive) for an oblimin rotation.  See the \pkg{GPArotation} 
+  library's oblimin documentation for more details. Defaults to gamma = 0 
+  (i.e., a quartimin rotation).
+  \item \strong{delta}: (Numeric) This is a tuning parameter for the geomin
+   rotation. It adds a small number (default = .01) to the squared factor 
+   loadings before computing the geometric means in the discrepancy function.
+  \item \strong{kappa}: (Numeric) The main parameterization of the 
+  Crawford-Ferguson (CF) rotations (i.e., "cfT" and "cfQ" for orthogonal and 
+  oblique CF rotation, respectively). Defaults to kappa = 0. 
+  \item \strong{k}: (Numeric) A specific parameter of the simplimax rotation. 
+  Defaults to k = the number of observed variables.
+  \item \strong{standardize}: (Character) The standardization routine used 
+  on the unrotated factor structure. The three options are "none", "Kaiser", 
+  and "CM". Defaults to standardize = "none". 
+  \itemize{
+    \item \strong{"none"}: No standardization is applied to the unrotated 
+    factor structure. 
+    \item \strong{"Kaiser"}: Use a factor structure matrix that has been 
+    normed by Kaiser's method (i.e., normalize all rows to have a unit length).
+    \item \strong{"CM"}: Use a factor structure matrix that has been normed
+     by the Cureton-Mulaik method.
+  }
+  \item \strong{epsilon}: (Numeric) The rotational convergence criterion to 
+  use. Defaults to epsilon = 1e-5.
+  \item \strong{power}: (Numeric) Raise factor loadings the the n-th power 
+  in the \code{\link{promaxQ}} rotation. Defaults to power = 4.
+  \item \strong{maxItr}: (Numeric) The maximum number of iterations for the 
+  rotation algorithm. Defaults to maxItr = 15000.
 }}
 
-\item{faControl}{(List) A list of optional parameters passed to the factor extraction (\code{\link{faX}}) function.
+\item{faControl}{(List) A list of optional parameters passed to the factor 
+extraction (\code{\link{faX}}) function.
 \itemize{
-  \item \strong{treatHeywood}: (Logical) In fals, if treatHeywood is true, a penalized least squares function is used to bound the communality estimates below 1.0. The default is TRUE.
-  \item \strong{nStart}: (Numeric) In faml, determine the number of starting values to try. The default is 10 start values.
-  \item \strong{maxCommunality}: (Numeric) In faml, set the maximum communality value for the estimated solution. The default maximum is .995.
-  \item \strong{epsilon}: (Numeric) In fapa, the numeric threshold designating when the algorithm has converged. The default value is 1e-4.
-  \item \strong{communality}: (Character) In fapa, the routine requires an initial communality estimate. Select how communalities are initially estimated. The default is squared multiple correlation ("SMC").
+  \item \strong{treatHeywood}: (Logical) In \code{fals}, if treatHeywood is 
+  true, a penalized least squares function is used to bound the communality 
+  estimates below 1.0. Defaults to treatHeywood = TRUE.
+  \item \strong{nStart}: (Numeric) The number of starting values to be tried 
+  in \code{faml}. Defaults to nStart = 10.
+  \item \strong{maxCommunality}: (Numeric) In \code{faml}, set the maximum 
+  communality value for the estimated solution. Defaults to maxCommunality = .995.
+  \item \strong{epsilon}: (Numeric) In \code{fapa}, the numeric threshold 
+  designating when the algorithm has converged. Defaults to epsilon = 1e-4.
+  \item \strong{communality}: (Character) The method used to estimate the 
+  initial communality values in \code{fapa}. Defaults to communality = 'SMC'.
   \itemize{
-    \item \strong{"SMC"}: Initial communalities are estimated by taking the squared multiple correlations of each indicator after regressing the indicator on the remaining variables. The following equation is employed to find the squared multiple correlation: \eqn{1 - 1 / diag(R^-1)}.
-    \item \strong{"maxRsqr"}: Initial communalities equal the largest squared correlation in each column of the correlation matrix.
+    \item \strong{"SMC"}: Initial communalities are estimated by taking the 
+    squared multiple correlations of each indicator after regressing the 
+    indicator on the remaining variables.
+    \item \strong{"maxRsqr"}: Initial communalities equal the largest squared 
+    correlation in each column of the correlation matrix.
     \item \strong{"unity"}: Initial communalities equal 1.0 for all variables.
   }
-  \item \strong{maxITR}: (Numeric) In fapa, the maximum number of iterations to reach convergence. The default is 15,000
+  \item \strong{maxItr}: (Numeric) In \code{fapa}, the maximum number of 
+  iterations to reach convergence. Defaults to maxItr = 15,000.
 }}
 }
 \value{
@@ -71,7 +119,7 @@ This function iterates the Schmid-Leiman target rotation and returns several rel
 \itemize{
   \item \strong{loadings}: (Matrix) The bifactor solution obtain from the SLi procedure.
   \item \strong{iterations}: (Numeric) The number of iterations required for convergence
-  \item \strong{rotateControl}: (List) A list of the control parameters passed to the \code{\link{rotate}} function.
+  \item \strong{rotateControl}: (List) A list of the control parameters passed to the \code{\link{faMain}} function.
   \item \strong{faControl}: (List) A list of optional parameters passed to the factor extraction (\code{\link{faX}}) function.
 }
 }
@@ -113,9 +161,17 @@ Reise, S. P., Moore, T. M., & Haviland, M. G. (2010). Bifactor models and rotati
 
 Schmid, J., & Leiman, J. M. (1957). The development of hierarchical factor solutions. \emph{Psychometrika, 22}(1), 53-61.
 }
+\seealso{
+Other Factor Analysis Routines: \code{\link{BiFAD}},
+  \code{\link{SchmidLeiman}}, \code{\link{faAlign}},
+  \code{\link{faMain}}, \code{\link{faSort}},
+  \code{\link{faX}}, \code{\link{fals}},
+  \code{\link{fapa}}, \code{\link{promaxQ}}
+}
 \author{
 \itemize{
   \item Casey Giordano (Giord023@umn.edu)
   \item Niels G. Waller (nwaller@umn.edu)
 }
 }
+\concept{Factor Analysis Routines}

@@ -1,4 +1,35 @@
-
+#' Unweighted least squares factor analysis
+#' 
+#' Unweighted least squares factor analysis
+#' 
+#' 
+#' @param R Input correlation matrix.
+#' @param nfactors Number of factors to extract.
+#' @param TreatHeywood If TreatHeywood = TRUE then a penalized least squares
+#' function is used to bound the commonality estimates below 1.0.
+#' Default(TreatHeywood = TRUE).
+#' @return \item{loadings}{Unrotated factor loadings. If a Heywood case is
+#' present in the initial solution then the model is re-estimated via
+#' non-iterated principal axes with max(rij^2) as fixed communaility (h2)
+#' estimates.} \item{h2}{Vector of final commonality estimates.}
+#' \item{uniqueness}{Vector of factor uniquenesses, i.e. (1 - h2).}
+#' \item{Heywood}{(logical) TRUE if a Heywood case was produced in the LS
+#' solution.} \item{TreatHeywood}{(logical) Value of the TreatHeywood
+#' argument.} \item{converged}{(logical) TRUE if all values of the gradient are
+#' sufficiently close to zero.} \item{MaxAbsGrad}{The maximum absolute value of
+#' the gradient at the solution.  }
+#' @author Niels Waller
+#' @keywords Statistics
+#' @family Factor Analysis Routines
+#' @export
+#' @examples
+#' 
+#' 
+#' Rbig <- fungible::rcor(120)
+#' out1 <- fals(R = Rbig, 
+#'              nfactors = 2,
+#'              TreatHeywood = TRUE)
+#' 
 fals   <- function(R,           ## Correlation matrix
                   nfactors,
                   TreatHeywood = TRUE){    ## Number of factors to extract

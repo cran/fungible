@@ -1,43 +1,74 @@
 #' Factor Extraction (faX) Routines
 #'
-#' This function can be used to extract an unrotated factor structure matrix using the following algorithms: (a) unweighted least squares ("fals"); (b) maximum likelihood ("faml"); and (c) iterated principal axis factoring ("fapa").
+#' This function can be used to extract an unrotated factor structure matrix 
+#' using the following algorithms: (a) unweighted least squares ("fals"); 
+#' (b) maximum likelihood ("faml"); (c) iterated principal axis factoring ("fapa");
+#' and (d) principal components analysis ("pca").
 #'
 #' @param R (Matrix) A correlation matrix used for factor extraction.
+#' @param n (Numeric) Sample size associated with the correlation matrix. 
+#' Defaults to n = NULL.
 #' @param numFactors (Numeric) The number of factors to extract for subsequent rotation.
-#' @param facMethod (Character) The method used for factor extraction. The supported options are "fals" for unweighted least squares, "faml" for maximum likelihood, and "fapa" for iterated principal axis factoring. The default method is "fals".
+#' @param facMethod (Character) The method used for factor extraction. The 
+#' supported options are "fals" for unweighted least squares, "faml" for maximum 
+#' likelihood, "fapa" for iterated principal axis factoring, and "pca" for 
+#' principal components analysis. The default method is "fals".
 #' \itemize{
-#'   \item \strong{"fals"}: Factors are extracted using the unweighted least squares estimation procedure using the \code{\link[fungible]{fals}} function.
-#'   \item \strong{"faml"}: Factors are extracted using the maximum likelihood estimation procedure using the \code{\link[stats]{factanal}} function.
-#'   \item \strong{"fapa"}: Factors are extracted using the iterated principal axis factoring estimation procedure using the \code{\link{fapa}} function.
+#'   \item \strong{"fals"}: Factors are extracted using the unweighted least 
+#'   squares estimation procedure using the \code{\link{fals}} function.
+#'   \item \strong{"faml"}: Factors are extracted using the maximum likelihood 
+#'   estimation procedure using the \code{\link[stats]{factanal}} function.
+#'   \item \strong{"fapa"}: Factors are extracted using the iterated principal 
+#'   axis factoring estimation procedure using the \code{\link{fapa}} function.
+#'   \item \strong{"pca}: Principal components are extracted. 
 #' }
-#' @param faControl (List) A list of optional parameters passed to the factor extraction routines.
-#' \itemize{
-#'   \item \strong{treatHeywood}: (Logical) In fals, if treatHeywood is true, a penalized least squares function is used to bound the communality estimates below 1.0. The default is TRUE.
-#'   \item \strong{nStart}: (Numeric) In faml, determine the number of starting values to try. The default is 10 start values.
-#'   \item \strong{maxCommunality}: (Numeric) In faml, set the maximum communality value for the estimated solution. The default maximum is .995.
-#'   \item \strong{epsilon}: (Numeric) In fapa, the numeric threshold designating when the algorithm has converged. The default value is 1e-4.
-#'   \item \strong{communality}: (Character) In fapa, the routine requires an initial communality estimate. Select how communalities are initially estimated. The default is squared multiple correlation ("SMC").
-#'   \itemize{
-#'     \item \strong{"SMC"}: Initial communalities are estimated by taking the squared multiple correlations of each indicator after regressing the indicator on the remaining variables. The following equation is employed to find the squared multiple correlation: \eqn{1 - 1 / diag(R^-1)}.
-#'     \item \strong{"maxRsqr"}: Initial communalities equal the largest squared correlation in each column of the correlation matrix.
-#'     \item \strong{"unity"}: Initial communalities equal 1.0 for all variables.
-#'   }
-#'   \item \strong{maxITR}: (Numeric) In fapa, the maximum number of iterations to reach convergence. The default is 15,000
-#' }
+#' @param faControl (List) A list of optional parameters passed to the factor 
+#' extraction routines.
+#' @inheritParams faMain
 #'
-#' @param digits (Numeric) The number of digits to round all output to.
 #'
 #' @details
 #' \itemize{
-#'   \item \strong{Initial communality estimate}: According to Widaman and Herringer (1985), the initial communality estimate does not have much bearing on the resulting solution \emph{when the a stringent convergence criterion is used}. In their analyses, a convergence criterion of .001 (i.e., slightly less stringent than the default of 1e-4) is sufficiently stringent to produce virtually identical communality estimates irrespective of the initial estimate used. It should be noted that all four methods for estimating the initial communality in Widaman and Herringer (1985) are the exact same used in this function. Based on their findings, it is not recommended to use a convergence criterion lower than 1e-3.
+#'   \item \strong{Initial communality estimate}: According to Widaman and 
+#'   Herringer (1985), the initial communality estimate does not have much 
+#'   bearing on the resulting solution \emph{when the a stringent convergence 
+#'   criterion is used}. In their analyses, a convergence criterion of .001 
+#'   (i.e., slightly less stringent than the default of 1e-4) is sufficiently 
+#'   stringent to produce virtually identical communality estimates irrespective 
+#'   of the initial estimate used. It should be noted that all four methods for 
+#'   estimating the initial communality in Widaman and Herringer (1985) are the 
+#'   exact same used in this function. Based on their findings, it is not 
+#'   recommended to use a convergence criterion lower than 1e-3.
 #' }
 #'
 #' @return This function returns a list of output relating to the extracted factor loadings.
 #' \itemize{
 #'   \item \strong{loadings}: (Matrix) An unrotated factor structure matrix.
-#'   \item \strong{h2}: (Vector) A vector containing the item communality estimates.
-#'   \item \strong{uniqueness}: (Vector) A vector of the item uniqueness estimates (1 - h2).
-#'   \item \strong{Heywood}: (Logical) Whether a Heywood case (i.e., a communality value > 1.0) was detected.
+#'   \item \strong{h2}: (Vector) Vector of final communality estimates.
+#'   \item \strong{faFit}: (List) A list of additional factor extraction output.
+#'   \itemize{
+#'     \item \strong{facMethod}: (Character) The factor extraction routine.
+#'     \item \strong{df}: (Numeric) Degrees of Freedom from the maximum 
+#'     likelihood factor extraction routine.
+#'     \item \strong{n}: (Numeric) Sample size associated with the correlation matrix.
+#'     \item \strong{objectiveFunc}: (Numeric) The evaluated objective function for the 
+#'     maximum likelihood factor extraction routine. 
+#'     \item \strong{RMSEA}: (Numeric) Root mean squared error of approximation 
+#'     from Steiger & Lind (1980). Note that bias correction is computed if the 
+#'     sample size is provided.
+#'     \item \strong{testStat}: (Numeric) The significance test statistic for the maximum 
+#'     likelihood procedure. Cannot be computed unless a sample size is provided. 
+#'     \item \strong{pValue}: (Numeric) The p value associated with the significance test 
+#'     statistic for the maximum likelihood procedure. Cannot be computed unless 
+#'     a sample size is provided. 
+#'     \item \strong{gradient}: (Matrix) The solution gradient for the least squares factor 
+#'     extraction routine. 
+#'     \item \strong{maxAbsGradient}: (Numeric) The maximum absolute value of the 
+#'     gradient at the least squares solution. 
+#'     \item \strong{Heywood}: (Logical) TRUE if a Heywood case was produced.
+#'     \item \strong{converged}: (Logical) TRUE if the least squares or 
+#'     principal axis factor extraction routine converged. 
+#'   }
 #' }
 #'
 #' @author
@@ -46,7 +77,14 @@
 #'   \item Niels G. Waller (nwaller@umn.edu)
 #' }
 #'
-#' @references Widaman, K. F., & Herringer, L. G. (1985). Iterative least squares estimates of communality: Initial estimate need not affect stabilized value. \emph{Psychometrika, 50}(4), 469-477.
+#' @family Factor Analysis Routines
+#' 
+#' @references Steiger, J. H., & Lind, J. (1980). Paper presented at the annual 
+#' meeting of the Psychometric Society. \emph{Statistically-based tests for the 
+#' number of common factors.}
+#' @references Widaman, K. F., & Herringer, L. G. (1985). Iterative least squares 
+#' estimates of communality: Initial estimate need not affect stabilized value. 
+#' \emph{Psychometrika, 50}(4), 469-477.
 #'
 #' @examples
 #' ## Generate an example factor structure matrix
@@ -81,90 +119,127 @@
 #' @export
 
 faX <- function(R,
+                n          = NULL,
                 numFactors = NULL,
                 facMethod  = "fals",
                 faControl  = NULL,
                 digits     = NULL) {
-
+  
   ## ~~~~~~~~~~~~~~~~~~ ##
   #### Error Checking ####
   ## ~~~~~~~~~~~~~~~~~~ ##
-
+  
   ## Check R
-
+  
   ## Symmetrical?
   if ( !isSymmetric(R) ) {
     stop("'R' is not a symmetric correlation matrix.")
   } # END if ( !isSymmetric(R) ) {
-
-  ## Unit diagonal?
-  if ( all.equal(diag(R), rep(1, ncol(R)), check.attributes = FALSE) != TRUE ) {
-    stop("'R' must have a unit diagonal")
-  } # END if ( any(diag(R) != 1) )
-
+  
+  
   ## Positive definite
   eigs <- eigen(R)$values
   if ( min(eigs) <= 0 ) {
-    stop("'R' is not a positive definite correlation matrix. ")
+    warning("R (or Cov) is not a positive definite matrix.")
   } # END if ( min(eigs) <= 0 )
-
+  
+  ## Check n
+  
+  if ( is.null(n) ) {
+    n <- NA
+  } # END if ( is.null(n) ) 
+  
   ## Check facMethod
-
+  
   ## Specified correctly?
-  facMethodOptions <- c("fals", "faml", "fapa")
+  facMethodOptions <- c("fals", "faml", "fapa", "pca")
   if ( (facMethod %in% facMethodOptions) == FALSE ) {
-    stop("The method of factor extraction is incorrectly specified. Select either 'fals', 'faml', or 'fapa'.")
+    stop("The method of factor extraction is incorrectly specified. Select either 'fals', 'faml', 'fapa', or 'pca'.")
   } # END if ( (facMethod %in% facMethodOptions) == FALSE )
-
+  
   ## Check numFactors
-
+  
   ## Specified?
   if ( is.null(numFactors) ) {
     stop("The 'numFactors' argument must be specified.")
   } # END if ( is.null(numFactors) )
-
+  
   ## Check faControl
-
+  
   ## Assert the default options
   cnFA <- list(treatHeywood   = TRUE,
                nStart         = 10,
                maxCommunality = .995,
                epsilon        = 1e-4,
                communality    = "SMC",
-               maxITR         = 15000)
-
+               maxItr         = 15000)
+  
   ## Correctly specified?
   if ( !is.null(faControl) ) {
-
+    
     ## Total number of correct names
     cnFALength <- length( names(cnFA) )
-
+    
     ## Total number of all names supplied
     allcnFALength <- length( unique( c( names(faControl), names(cnFA) ) ) )
-
+    
     ## If lengths differ, something is mis-specified
     if (cnFALength != allcnFALength) {
-
+      
       ## Find which are incorrect
       incorrectFAArgs <- which( (names(faControl) %in% names(cnFA)) == FALSE)
-
+      
       stop(paste("The following arguments are not valid inputs for the list of factor analysis control arguments:", paste(c(names(faControl)[incorrectFAArgs]), collapse = ", "), collapse = ": " ) )
-
+      
     } # END if (cnFALength != allcnFALength)
-
+    
+    ## Reassign values to the user-specified ones
+    cnFA[names(faControl)] <- faControl
+    
   } # END if ( !is.null(faControl) )
-
+  
   ## Check digits
-
+  
   ## If not specified, give it a value
   if ( is.null(digits) ) {
-    digits <- 100
+    digits <- options()$digits
   } # END if ( is.null(digits) )
-
+  
+  ## ~~~~~~~~~~~~~~~~~~~~~~~ ##
+  #### Define Utility Func ####
+  ## ~~~~~~~~~~~~~~~~~~~~~~~ ##
+  
+  RMSEA <- function(discVal, DF, N = NULL) {
+    ## Purpose: Compute root mean squared error of approximation
+    ##          See Steiger & Lind (1980) & Browne & Cudeck (1993)
+    ##
+    ## Args:
+    ##          discVal: Discrepency value from ML fac estimation
+    ##          DF:      Degrees of freedom
+    ##          N:       Scalar, sample size, used for bias correction
+    ## 
+    ## Output:
+    ##          RMSEA: Scalar, RMSEA output
+    
+    ## If a sample size is listed, do bias correction
+    if ( is.numeric(N) ) {
+      ## Correct the discrepancy function for bias
+      Discrepancy <- discVal - ( DF / N )
+      
+      ## Bias correct *can* produce negative values. Ensure value >= 0
+      F0 <- max(Discrepancy, 0)
+    } else {
+      ## If no sample size, no bias-correction performed
+      F0 <- discVal
+    } # END if (is.numeric(N)) {
+    
+    RMSEA <- sqrt(F0 / DF)
+  } # END SLRMSEA <- function(FAOutput, N = NULL) {
+  
   ## ~~~~~~~~~~~~~~~~~~ ##
   #### Begin Function ####
   ## ~~~~~~~~~~~~~~~~~~ ##
-
+  
   Out <- switch(facMethod,
                 "fals" = {
                   fals(R            = R,
@@ -174,6 +249,7 @@ faX <- function(R,
                 "faml" = {
                   factanal(covmat   = R,
                            factors  = numFactors,
+                           n.obs    = n,
                            rotation = "none",
                            control  = list(nstart = cnFA$nStart,
                                            lower  = 1 - cnFA$maxCommunality))
@@ -183,42 +259,90 @@ faX <- function(R,
                        numFactors   = numFactors,
                        epsilon      = cnFA$epsilon,
                        communality  = cnFA$communality,
-                       maxITR       = cnFA$maxITR)
+                       maxItr       = cnFA$maxItr)
+                }, 
+                "pca" = {
+                  
+                  ## Extract eigen vectors and values
+                  VLV <- eigen(R)
+                  
+                  ## Eivenvectors
+                  # V <- VLV$vectors
+                  V <- VLV$vectors[, seq_len(numFactors)]
+                  
+                  ## Eigenvalues
+                  # L <- VLV$values
+                  L <- VLV$values[seq_len(numFactors)]
+                  
+                  ## Find all principal components
+                  loadings <- V %*% diag(sqrt(L))
+                  
+                  ## Compute communalities
+                  h2 <- apply(loadings^2, 1, sum)
+                  
+                  ## Return output
+                  list(loadings  = loadings,
+                       h2        = h2,
+                       converged = TRUE)
                 })
-
-  ## Compute the estimated communality values
-  hsq <- apply(Out$loadings^2, 1, sum)
-
-  ## Compute the uniqueness values
-  uniqueness <- (1 - hsq)
-
-  ## Check for Heywood cases
-  Heywood <- FALSE
-  if ( any(hsq > 1) ) {
-    Heywood <- TRUE
-    warning("A Heywood case was detected in the extracted factor structure matrix.")
-
-  } # END if ( any(hsq > 1) )
-
-
-  list(loadings   = round(Out$loadings, digits),
-       h2         = round(hsq,          digits),
-       uniqueness = round(uniqueness,   digits),
-       Heywood    = Heywood)
-
+  
+  ## ------- Model Fit Indices -------- ## 
+  
+  modelFit <- list()
+  
+  ## Which factor extraction routine is used
+  modelFit$facMethod <- facMethod
+  
+  ## Communalities
+  modelFit$h2 <- diag(tcrossprod(Out$loadings))
+  
+  ## Maximum likelihood indicies
+  ## Degrees of freedom
+  modelFit$df <- ifelse(facMethod == "faml", Out$dof, NA)
+  ## Sample size
+  modelFit$n  <- ifelse( !is.null(n), n, NA)
+  ## Value of the objective function to be maximized
+  modelFit$objectiveFunc <- ifelse(facMethod == "faml", 
+                                   Out$criteria["objective"], NA)
+  ## Steiger & Lind's root mean squared error of approximation
+  modelFit$RMSEA <- ifelse(facMethod == "faml", 
+                           RMSEA(discVal = modelFit$objectiveFunc,
+                                 DF      = modelFit$df,
+                                 N       = modelFit$n),
+                           NA)
+  ## ML test statistic
+  modelFit$testStat <- ifelse(facMethod == "faml" && is.numeric(n), 
+                              Out$STATISTIC, 
+                              NA)
+  ## ML test statistic's p value
+  modelFit$pValue   <- ifelse(facMethod == "faml" && is.numeric(n), 
+                              Out$PVAL, 
+                              NA)
+  
+  ## Least squares indices
+  
+  ## Gradient 
+  if (facMethod == "fals") {
+    modelFit$gradient       <- Out$grdFALS
+    modelFit$maxAbsGradient <- Out$MaxAbsGrad
+  } else {
+    modelFit$gradient       <- NA
+    modelFit$maxAbsGradient <- NA
+  } # END if (facMethod == "fals") 
+  
+  ## Were any Heywood cases detected
+  modelFit$Heywood <- any(modelFit$h2 > 1)
+  
+  ## Did the extraction procedure converge
+  modelFit$converged <- Out$converged
+  
+  if (modelFit$converged == FALSE) {
+    warning("The factor extraction method failed to converge.")
+  } # END if (modelFit$converged == FALSE) 
+  
+  list(loadings = round(Out$loadings[], digits),
+       h2       = modelFit$h2,
+       faFit    = modelFit)
+  
 } # END factExtract
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

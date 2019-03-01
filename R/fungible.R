@@ -27,6 +27,62 @@
 ##  cor.a   Expected correlation matrix for a
 ####################################################################
 
+
+
+#' Generate Fungible Regression Weights
+#' 
+#' Generate fungible weights for OLS Regression Models.
+#' 
+#' 
+#' @param R.X p x p Predictor correlation matrix.
+#' @param rxy p x 1 Vector of predictor-criterion correlations.
+#' @param r.yhata.yhatb Correlation between least squares (yhatb) and
+#' alternate-weight (yhata) composites.
+#' @param sets Number of returned sets of fungible weights.
+#' @param print Logical, if TRUE then print 5-point summaries of alternative
+#' weights.
+#' @return \item{a}{Number of sets x p matrix of fungible weights.}
+#' \item{k}{Number of sets x p matrix of k weights.} \item{b}{p x 1 vector of
+#' LS weights.} \item{u}{p x 1 vector of u weights.}
+#' \item{r.yhata.yhatb}{Correlation between yhata and yhatb.}
+#' \item{r.y.yhatb}{Correlation between y and yhatb.} \item{cov.a}{Expected
+#' covariance matrix for a.} \item{cor.a}{Expected correlation matrix for a.}
+#' @author Niels Waller
+#' @references Waller, N. (2008). Fungible weights in multiple regression.
+#' \emph{Psychometrika, 73}, 69--703.
+#' @keywords fungible
+#' @export
+#' @examples
+#' 
+#' 
+#' ## Predictor correlation matrix
+#' R.X <- matrix(c(1.00,   .56,  .77,
+#'                  .56,  1.00,  .73,
+#'                  .77,   .73, 1.00), 3, 3)
+#'  
+#' ## vector of predictor-criterion correlations 
+#' rxy <- c(.39, .34, .38)
+#'  
+#'  
+#' ## OLS standardized regression coefficients
+#' b <- solve(R.X) %*% rxy
+#'  
+#' ## Coefficient of determination (Rsq)
+#' OLSRSQ <- t(b) %*% R.X %*% b
+#' 
+#' ## theta controls the correlation between 
+#' ## yhatb: predicted criterion scores using OLS coefficients
+#' ## yhata: predicted criterion scores using alternate weights
+#' theta <- .01
+#' 
+#' ## desired correlation between yhata and yhatb 
+#' r.yhata.yhatb <- sqrt( 1 - (theta)/OLSRSQ)
+#' 
+#' ## number of returned sets of fungible weight vectors
+#' Nsets <- 50
+#' 
+#' output <- fungible(R.X, rxy, r.yhata.yhatb, sets = Nsets, print = TRUE)
+#' 
 fungible <- function(R.X,rxy,r.yhata.yhatb,sets,print=TRUE){
 
 

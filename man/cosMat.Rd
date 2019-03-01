@@ -18,9 +18,9 @@ cosMat(A, B, align = FALSE, digits = NULL)
 \value{
 A vector of cosines will be returned. When comparing two vectors, only one cosine can be computed. When comparing matrices, one cosine is computed per column.
 \itemize{
-  \item \strong{cosine}: (Matrix) A matrix of cosines between the two inputs. The number of cosines is equal to the number of columns in the two inputs.
+  \item \strong{cosine}: (Matrix) A matrix of cosines between the two inputs. 
   \item \strong{A}: (Matrix) The A input matrix.
-  \item \strong{B}: (Matrix) The B input matrix. Note that matrix B may be transposed to be conformable to matrix A.
+  \item \strong{B}: (Matrix) The B input matrix. 
   \item \strong{align}: (Logical) Whether Matrix B was aligned to A.
 }
 }
@@ -29,8 +29,8 @@ This function will compute the cosines (i.e., the angle) between two vectors or 
 }
 \details{
 \itemize{
-  \item \strong{Chance Congruence}: Factor cosines were originally described by Burt and later popularized by Tucker. Several authors have noted the tendency for two factors to have spuriously large factor cosines. Paunonen (1997) provides a good overview and describes how factor cosines between two vectors of random numbers can appear to be congruent.
-  \item \strong{Effect Size Benchmarks}: When computing congruence coefficients (cosines) in factor analytic studies, it can be useful to know what constitutes large versus small congruence. Lorenzo-Seva and ten Berge (2006) currently provide the most popular (i.e., most frequently cited) recommended benchmarks for congruence. "A value in the range .85-.94 means that the two factors compared display \emph{fair} similarity. This result should prevent congruence below .85 from being interpreted as indicative of any factor similarity at all. A value higher than .95 means that the two factors or components compared can be considered equal. That is what we have called a \emph{good} similarity in our study" (Lorenzo-Seva & ten Berge, 2006, p. 61, emphasis theirs).
+  \item \strong{Chance Congruence}: Factor cosines were originally described by Burt (1948) and later popularized by Tucker (1951). Several authors have noted the tendency for two factors to have spuriously large factor cosines. Paunonen (1997) provides a good overview and describes how factor cosines between two vectors of random numbers can appear to be congruent.
+  \item \strong{Effect Size Benchmarks}: When computing congruence coefficients (cosines) in factor analytic studies, it can be useful to know what constitutes large versus small congruence. Lorenzo-Seva and ten Berge (2006) currently provide the most popular (i.e., most frequently cited) recommended benchmarks for congruence. ``A value in the range .85-.94 means that the two factors compared display \emph{fair} similarity. This result should prevent congruence below .85 from being interpreted as indicative of any factor similarity at all. A value higher than .95 means that the two factors or components compared can be considered equal. That is what we have called a \emph{good} similarity in our study'' (Lorenzo-Seva & ten Berge, 2006, p. 61, emphasis theirs).
 }
 }
 \examples{
@@ -50,7 +50,7 @@ cosMat(A, B)
 \references{
 Burt, C. (1948). The factorial study of temperament traits. \emph{British Journal of Psychology, Statistical Section, 1}, 178-203.
 
-Lorenzo-Seva, U., & ten Berge, J. M. F. (2006). Tucker's Congruence Coefficient as a Meaningful Index of Factor Similarity. \emph{Methodology, 2}(2), 57-64.
+Lorenzo-Seva, U., & ten Berge, J. M. F. (2006). Tuckers Congruence Coefficient as a meaningful index of factor similarity. \emph{Methodology, 2}(2), 57-64.
 
 Paunonen, S. V. (1997). On chance and factor congruence following orthogonal Procrustes rotation. \emph{Educational and Psychological Measurement}, 57, 33-59.
 

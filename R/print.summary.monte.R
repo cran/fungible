@@ -1,3 +1,7 @@
+
+#' @export
+
+
 print.summary.monte<-function(x,digits=3, ...){
 z<-x
 nclus<-nrow(z$obs.skew)

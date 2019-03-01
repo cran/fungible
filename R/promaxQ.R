@@ -3,37 +3,21 @@
 #' This function is an extension of the \code{\link[stats]{promax}} function. This function will extract the unrotated factor loadings (with three algorithm options, see \code{\link{faX}}) if they are not provided. The factor intercorrelations (Phi) are also computed within this function.
 #'
 #' @param R (Matrix) A correlation matrix.
-#' @param lambda (Matrix) An unrotated factor structure matrix. If one is not provided, one will be extracted from the provided correlation matrix.
-#' @param facMethod (Character) The method used for factor extraction. The supported options are "fals" for unweighted least squares, "faml" for maximum likelihood, and "fapa" for iterated principal axis factoring. The default method is "fals".
-#' \itemize{
-#'   \item \strong{"fals"}: Factors are extracted using the unweighted least squares estimation procedure using the \code{\link[fungible]{fals}} function.
-#'   \item \strong{"faml"}: Factors are extracted using the maximum likelihood estimation procedure using the \code{\link[stats]{factanal}} function.
-#'   \item \strong{"fapa"}: Factors are extracted using the iterated principal axis factoring estimation procedure using the \code{\link{fapa}} function.
-#' }
 #' @param numFactors (Scalar) The number of factors to extract if the lambda matrix is not provided.
 #' @param power (Scalar) The power with which to raise factor loadings for minimizing trivial loadings. The default value is 4.
-#' @param norm (Logical) Whether to perform Kaiser normalization before implementing the varimax rotation. The default value is TRUE. Note that it is recommended to normalize factor loadings when doing varimax rotation (cf. Gorsuch, 1983; Mulaik, 2009).
-#' @param epsilon (Scalar) The convergence criterion used for evaluating the varimax rotation. The default value is 1e-4 (i.e., .0001).
-#' @param maxITR (Scalar) The maximum number of iterations allowed for computing the varimax rotation. The default value is 15,000 iterations.
-#' @param digits (Scalar) The number of digits in which to round the resulting solutions.
-#' @param faControl (List) A list of optional parameters passed to the factor extraction routines.
+#' @param standardize (Character) Which standardization routine is used on the unrotated factor structure. The three options are "none", "Kaiser", and "CM". The default option is "Kaiser" as is recommended by Kaiser and others.
 #' \itemize{
-#'   \item \strong{treatHeywood}: (Logical) In fals, if treatHeywood is true, a penalized least squares function is used to bound the communality estimates below 1.0. The default is TRUE.
-#'   \item \strong{nStart}: (Numeric) In faml, determine the number of starting values to try. The default is 10 start values.
-#'   \item \strong{maxCommunality}: (Numeric) In faml, set the maximum communality value for the estimated solution. The default maximum is .995.
-#'   \item \strong{epsilon}: (Numeric) In fapa, the numeric threshold designating when the algorithm has converged. The default value is 1e-4.
-#'   \item \strong{communality}: (Character) In fapa, the routine requires an initial communality estimate. Select how communalities are initially estimated. The default is squared multiple correlation ("SMC").
-#'   \itemize{
-#'     \item \strong{"SMC"}: Initial communalities are estimated by taking the squared multiple correlations of each indicator after regressing the indicator on the remaining variables. The following equation is employed to find the squared multiple correlation: \eqn{1 - 1 / diag(R^-1)}.
-#'     \item \strong{"maxRsqr"}: Initial communalities equal the largest squared correlation in each column of the correlation matrix.
-#'     \item \strong{"unity"}: Initial communalities equal 1.0 for all variables.
-#'   }
-#'   \item \strong{maxITR}: (Numeric) In fapa, the maximum number of iterations to reach convergence. The default is 15,000
+#'   \item \strong{"none"}: Do \emph{not} rotate the normalized factor structure matrix.
+#'   \item \strong{"Kaiser"}: Use a factor structure matrix that has been normed by Kaiser's method (i.e., normalize all rows to have a unit length).
+#'   \item \strong{"CM"}: Use a factor structure matrix that has been normed by the Cureton-Mulaik method.
 #' }
+#' @param epsilon (Scalar) The convergence criterion used for evaluating the varimax rotation. The default value is 1e-4 (i.e., .0001).
+#' @param maxItr (Scalar) The maximum number of iterations allowed for computing the varimax rotation. The default value is 15,000 iterations.
+#' @inheritParams faMain
 #'
 #' @details
 #' \itemize{
-#'   \item \strong{Varimax Normalization}: When conducting the varimax rotation, it is recommended to normalize the factor loadings using Kaiser's normalization (i.e., rescaling the factor indicators [rows] so that the vectors have unit length). The normalization occurs by pre-multiplying the unrotated factor structure, \strong{A}, by the inverse of \strong{H}, where \strong{H}^2 is a diagonal matrix with the communality estimates on the diagonal. A varimax rotation is then applied to the normalized, unrotated factor structure. Then, the varimax-rotated factor structure is rescaled to its original metric by pre-multiplying the varimax factor structure by \strong{H}. For details, see Mulaik (2009).
+#'   \item \strong{Varimax Standardization}: When conducting the varimax rotation, it is recommended to standardize the factor loadings using Kaiser's normalization (i.e., rescaling the factor indicators [rows] so that the vectors have unit length). The standardization/normalization occurs by pre-multiplying the unrotated factor structure, \strong{A}, by the inverse of \strong{H}, where \strong{H}^2 is a diagonal matrix with the communality estimates on the diagonal. A varimax rotation is then applied to the normalized, unrotated factor structure. Then, the varimax-rotated factor structure is rescaled to its original metric by pre-multiplying the varimax factor structure by \strong{H}. For details, see Mulaik (2009).
 #'   \item \strong{Oblique Procrustes Rotation of the Varimax Solution}: According to Hendrickson & White (1964), an unrestricted (i.e., oblique) Procrustes rotation is applied to the orthogonal varimax solution. Specifically, a target matrix is generated by raising the varimax factor loadings to the user-specified power (typically, power = 4) (must retain the signs of the original factor loadings). This should quickly diminish trivial factor loadings while retaining larger factor loadings. The Procrustes rotation takes the varimax solution and rotates it toward the promax-generated target matrix. For a modern description of this approach, see Mulaik (2009, ch. 12, p. 342-343).
 #'   \item \strong{Choice of a Power}: Changing the power in which varimax factor loadings are raised will change the target matrix in the oblique Procrustes rotation. After raising factor loadings to some power, there will be a larger discrepancy between high and low loadings than before (e.g., squaring factor loadings of .6 and .7 yields loadings of .36 and .49 and cubing yields loadings of .216 and .343). Furthermore, increasing the power will increase the number of near-zero loadings, resulting in larger factor intercorrelations. Many (cf. Gorsuch, 1983; Hendrickson & White, 1964; Mulaik, 2009) advocate for raising varimax loadings to the fourth power (the default) but some (e.g., Gorsuch) advocate for trying power = 2 and power = 6 to see if there is an improvement in the simple structure without overly inflating factor correlations.
 #' }
@@ -48,11 +32,13 @@
 #'   \item \strong{tuningParams}: (List) A list containing (a) the power parameter used, (b) whether the varimax rotation used Kaiser normalization, (c) the varimax epsilon convergence criterion, and (d) the maximum number of iterations specified.
 #'   \itemize{
 #'     \item \strong{power}: The power in which the varimax-rotated factor loadings are raised.
-#'     \item \strong{norm}: Whether Kaiser normalization was applied to the varimax rotation.
+#'     \item \strong{standardize}: Which standardization routine was used.
 #'     \item \strong{epsilon}: The convergence criterion set for the varimax rotation.
-#'     \item \strong{maxITR}: The maximum number of iterations allowed for reaching convergence in the varimax rotation.
+#'     \item \strong{maxItr}: The maximum number of iterations allowed for reaching convergence in the varimax rotation.
 #'   }
 #' }
+#' 
+#' @family Factor Analysis Routines
 #'
 #' @references Gorsuch, R. L. (1983). \emph{Factor Analysis}, 2nd. Hillsdale, NJ: LEA.
 #' @references Hendrickson, A. E., & White, P. O. (1964). Promax: A quick method for rotation to oblique simple structure. \emph{British Journal of Statistical Psychology, 17}(1), 65-70.
@@ -65,7 +51,6 @@
 #'}
 #'
 #' @import stats
-#' @importFrom fungible fals
 #'
 #' @examples
 #' ## Generate an orthgonal factor model
@@ -87,153 +72,168 @@
 #' diag(R) <- 1
 #'
 #' ## Start from just a correlation matrix
-#' Out1 <- promaxQ(R          = R,
-#'                 facMethod  = "fals",
-#'                 numFactors = 3,
-#'                 power      = 4,
-#'                 norm       = TRUE)$loadings
+#' Out1 <- promaxQ(R           = R,
+#'                 facMethod   = "fals",
+#'                 numFactors  = 3,
+#'                 power       = 4,
+#'                 standardize = "Kaiser")$loadings
 #'
 #' ## Iterate the promaxQ rotation using the rotate function
-#' Out2 <- rotate(R             = R,
+#' Out2 <- faMain(R             = R,
 #'                facMethod     = "fals",
 #'                numFactors    = 3,
 #'                rotate        = "promaxQ",
-#'                rotateControl = list(power = 4,
-#'                                     norm  = TRUE))$loadings
+#'                rotateControl = list(power       = 4,
+#'                                     standardize = "Kaiser"))$loadings
+#'
+#' ## Align the factors to have the same orientation
+#' Out1 <- faAlign(F1 = Out2,
+#'                 F2 = Out1)$F2
 #'
 #' ## Show the equivalence of factor solutions from promaxQ and rotate
-#' all.equal(Out1, Out2)
+#' all.equal(Out1, Out2, check.attributes = FALSE)
 #'
 #' @export
 
 promaxQ <- function(R           = NULL,
-                    lambda      = NULL,
+                    urLoadings  = NULL,
                     facMethod   = "fals",
                     numFactors  = NULL,
                     power       = 4,
-                    norm        = TRUE,
+                    standardize = "Kaiser",
                     epsilon     = 1e-4,
-                    maxITR      = 15000,
+                    maxItr      = 15000,
                     digits      = NULL,
                     faControl   = NULL) {
-
+  
   ## ~~~~~~~~~~~~~~~~~~ ##
   #### Error Checking ####
   ## ~~~~~~~~~~~~~~~~~~ ##
-
+  
   ## Must give corr mat or unrotated factor loadings matrix
-  if ( is.null(R) & is.null(lambda) ) {
-    stop("Either the 'R' or 'lambda' arguments must be specified.")
-  } # END if (is.null(R) & is.null(lambda)) {
-
-  if ( is.null(lambda) & is.null(numFactors) ) {
+  if ( is.null(R) & is.null(urLoadings) ) {
+    stop("Either the 'R' or 'urLoadings' arguments must be specified.")
+  } # END if (is.null(R) & is.null(urLoadings)) {
+  
+  if ( is.null(urLoadings) & is.null(numFactors) ) {
     stop("An unrotated factor matrix is not provided, please specify the number of factors to extract to generate this loadings matrix.")
-  } # END if ( is.null(lambda) & is.null(numFactors) )
-
-  ## Give warning if varimax is not normalized (as per Mulaik, 2009, p. 311)
-  if (norm == FALSE) {
-    warning("It is recommended to normalize the factor loadings before performing the varimax rotation.")
-  } # END if (norm == FALSE)
-
+  } # END if ( is.null(urLoadings) & is.null(numFactors) )
+  
   ## Check digits
-
+  
   ## If digits is not specified, give an arbitrarily big value
   if ( is.null(digits) ) {
-    digits <- 100
+    digits <- options()$digits
   } # END if ( is.null(digits) )
-
+  
   ## Check faControl
-
+  
   ## If faControl is not specified, give it the defaults (used for func output)
   if ( is.null(faControl) ) {
-
+    
     ## Set the default values of all control agruments
     cnFA <- list(treatHeywood   = TRUE,
                  nStart         = 10,
                  maxCommunality = .995,
                  epsilon        = 1e-4,
                  communality    = "SMC",
-                 maxITR         = 15000)
-
+                 maxItr         = 15000)
+    
     ## Used as func output, if it is NULL, need to specify
     ## Full error checking takes place in faX()
     faControl <- cnFA
-
+    
   } # END if ( is.null(faControl) )
-
-
-
+  
+  
+  
   ## ~~~~~~~~~~~~~~~~~~ ##
   #### Begin function ####
   ## ~~~~~~~~~~~~~~~~~~ ##
-
-
+  
+  
   ## Find unrotated factor loadings if matrix is not provided
-  if ( is.null(lambda) ) {
-
+  if ( is.null(urLoadings) ) {
+    
     ## Extract the unrotated factor structure matrix
     faOut <- faX(R          = R,
                  numFactors = numFactors,
                  facMethod  = facMethod,
                  faControl  = faControl)
-
+    
     ## Save the factor loadings
-    lambda <- faOut$loadings[]
-
-  } # END if ( is.null(lambda) )
-
+    urLoadings <- faOut$loadings[]
+    
+  } # END if ( is.null(urLoadings) )
+  
+  ## ------- Standardize -------- ##
+  
+  ## Standardize using either none, Kaiser, or Cureton-Mulaik
+  stnd <- Standardize(method = standardize,
+                      lambda = urLoadings)
+  
+  ## Update urLoadings to be standardized urLoadings
+  lambda <- stnd$lambda
+  
   ## Start with a varimax rotation
   VarimaxOutput <-
     GPArotation::Varimax(L         = lambda,
-                         normalize = norm,
+                         normalize = FALSE,
                          eps       = epsilon,
-                         maxit     = maxITR)
-
+                         maxit     = maxItr)
+  
+  ## Did varimax converge?
+  convergence <- VarimaxOutput$convergence
+  
+  ## Unstandardize the varimax solution for promax
+  VarimaxOutput$loadings[] <- stnd$DvInv %*% VarimaxOutput$loadings[]
+  
   ## Retain the value of the minimized varimax discrepancy function
   VMaxDisc <- min( VarimaxOutput$Table[, 2] )
-
+  
   ## Extract the factor loadings
   VMaxLoadings <- Loadings <- VarimaxOutput$loadings[]
-
+  
   ## Find the approximated oblique target via eqn 12.42 in Mulaik (2009, p. 342)
   signTarget <- sign(Loadings)
-
+  
   ## Find the approximated oblique target via eqn 12.42 in Mulaik (2009, p. 342)
   ObliqueTarg <- abs(Loadings)^power * signTarget
-
+  
   ## Defunct creation of Oblique target (taken from Mulaik, see above instead)
   # ObliqueTarg <- (abs(Loadings)^(power+1)) / Loadings
-
+  
   ## Find the transformation matrix to minimize the distance between Loadings and Target
   TMatrix <- solve( t(Loadings) %*% Loadings ) %*% t(Loadings) %*% ObliqueTarg
-
+  
   ## If the varimax has not been un-normalized, must rescale T to correct metric
-
+  
   ## Find the diagonal matrix to rescale the TMatrix
   D2 <- diag( solve( t(TMatrix) %*% TMatrix ) )
-
+  
   ## Used for rescaling
   Dmat <- diag(sqrt(D2))
-
+  
   ## Rescale the TMatrix using the sqrt of D2
   rescaledTMatrix <- TMatrix %*% Dmat
-
+  
   ## Transform the varimax loadings into the promax solution
   PromaxLoadings <- Loadings %*% rescaledTMatrix
-
+  
   ## From the transformation matrix, find the factor correlations (Phi)
   Phi <- solve( t(rescaledTMatrix) %*% rescaledTMatrix )
-
+  
   ## Return a list with all the output
   list(loadings        = round(PromaxLoadings,  digits),
        vmaxLoadings    = round(VMaxLoadings,    digits),
        rotMatrix       = round(rescaledTMatrix, digits),
        Phi             = round(Phi,             digits),
        vmaxDiscrepancy = round(VMaxDisc,        digits),
-       rotateControl   = list(power   = power,
-                              norm    = norm,
-                              epsilon = epsilon,
-                              maxITR  = maxITR))
-
+       convergence     = convergence,
+       rotateControl   = list(power       = power,
+                              standardize = standardize,
+                              epsilon     = epsilon,
+                              maxItr      = maxItr))
+  
 } # END promaxQ
 

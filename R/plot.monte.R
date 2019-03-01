@@ -1,3 +1,20 @@
+#' Plot Method for Class Monte
+#' 
+#' plot method for class "monte"
+#' 
+#' 
+#' @param x An object of class 'monte', usually, a result of a call to
+#' \code{monte}.
+#' @param \dots Optional arguments passed to plotting function.
+#' @return The function \code{plot.monte} creates a scatter plot of matrices
+#' plot (a splom plot).  Cluster membership is denoted by different colors in
+#' the plot.
+#' @import lattice
+#' @export
+#' @examples
+#' 
+#' #plot(monte.object)
+#' 
 plot.monte<-function(x,...){
 #library(lattice)
 z<-x   #monte.object

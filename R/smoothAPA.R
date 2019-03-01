@@ -1,3 +1,111 @@
+#' Smooth a NPD R matrix to PD using the Alternating Projection Algorithm
+#' 
+#' Smooth a Non positive defnite (NPD) correlation matrix to PD using the
+#' Alternating Projection Algorithm with Dykstra's correction via Theory
+#' described in Higham 2002.
+#' 
+#' 
+#' @param R A p x p indefinite matrix.
+#' @param delta Desired value of the smallest eigenvalue of smoothed matrix,
+#' RAPA. (Default = 1e-06).
+#' @param fixR User-supplied integer list that instructs the program to
+#' constrain elements in RAPA to equal corresponding elements in RAPA. For
+#' example if fixR = c(1,2) then smoothed matrix, RAPA[1:2,1:2] = R[1:2,1:2].
+#' Default (fixR = NULL).
+#' @param Wghts A p-length vector of weights for differential variable
+#' weighting. Default (Wghts = NULL).
+#' @param maxTries Maximum number of iterations in the alternating projections
+#' algorithm. Default (maxTries = 1000).
+#' @return \item{RAPA}{A smoothed matrix.} \item{delta}{User-supplied delta
+#' value.} \item{Wghts}{User-supplied weight vector.} \item{fixR}{User-supplied
+#' integer list that instructs the program to constrain elements in RAPA to
+#' equal corresponding elements in R.} \item{convergence}{A value of 0
+#' indicates that the algorithm located a feasible solution. A value of 1
+#' indicates that no feasible solution was located within maxTries.}
+#' @author Niels Waller
+#' @keywords statistics
+#' @export
+#' @examples
+#' 
+#' data(BadRKtB)
+#' 
+#' ###################################################################
+#' ##  Replicate analyses in Table 2 of Knol and ten Berge (1989).
+#' ###################################################################
+#' 
+#' ## n1 = 0,1
+#' out<-smoothAPA(R = BadRKtB, delta = .0, fixR = NULL, Wghts = NULL, maxTries=1e06)
+#' S <- out$RAPA
+#' round(S - BadRKtB,3)
+#' normF(S - BadRKtB)
+#' eigen(S)$val
+#' 
+#' ## n1 = 2
+#' out<-smoothAPA(R = BadRKtB, fixR =c(1,2), delta=.0, Wghts = NULL, maxTries=1e06)
+#' S <- out$RAPA
+#' round(S - BadRKtB,3)
+#' normF(S - BadRKtB)
+#' eigen(S)$val
+#' 
+#' ## n1 = 4
+#' out<-smoothAPA(R = BadRKtB, fixR = 1:4, delta=.0, Wghts = NULL, maxTries=1e06)
+#' S <- out$RAPA
+#' round(S - BadRKtB,3)
+#' normF(S - BadRKtB)
+#' eigen(S)$val
+#' 
+#' ## n1 = 5
+#' out<-smoothAPA(R = BadRKtB, fixR = 1:5, delta=0, Wghts = NULL, maxTries=1e06)
+#' S <- out$RAPA
+#' round(S - BadRKtB,3)
+#' normF(S - BadRKtB)
+#' eigen(S)$val
+#' 
+#' ###################################################################
+#' ##  Replicate analyses in Table 3 of Knol and ten Berge (1989).
+#' ###################################################################
+#' 
+#' ## n1 = 0,1
+#' out<-smoothAPA(R = BadRKtB, delta = .05, fixR = NULL, Wghts = NULL, maxTries=1e06)
+#' S <- out$RAPA
+#' round(S - BadRKtB,3)
+#' normF(S - BadRKtB)
+#' eigen(S)$val
+#' 
+#' ## n1 = 2
+#' out<-smoothAPA(R = BadRKtB, fixR =c(1,2), delta=.05, Wghts = NULL, maxTries=1e06)
+#' S <- out$RAPA
+#' round(S - BadRKtB,3)
+#' normF(S - BadRKtB)
+#' eigen(S)$val
+#' 
+#' ## n1 = 4
+#' out<-smoothAPA(R = BadRKtB, fixR = 1:4, delta=.05, Wghts = NULL, maxTries=1e06)
+#' S <- out$RAPA
+#' round(S - BadRKtB,3)
+#' normF(S - BadRKtB)
+#' eigen(S)$val
+#' 
+#' ## n1 = 5
+#' out<-smoothAPA(R = BadRKtB, fixR = 1:5, delta=.05, Wghts = NULL, maxTries=1e06)
+#' S <- out$RAPA
+#' round(S - BadRKtB,3)
+#' normF(S - BadRKtB)
+#' eigen(S)$val
+#' 
+#' ###################################################################
+#' ## This example illustrates differential variable weighting.
+#' ## 
+#' ## Imagine a scenerio in which variables 1 & 2 were collected with 
+#' ## 5 times more subjects than variables 4 - 6 then . . .
+#' ###################################################################
+#' ## n1 = 2
+#' out<-smoothAPA(R = BadRKtB, delta=.0, fixR = NULL, Wghts = c(5, 5, rep(1,4)), maxTries=1e5)
+#' S <- out$RAPA
+#' round(S - BadRKtB,3)
+#' normF(S - BadRKtB)
+#' eigen(S)$val
+#' 
 smoothAPA <- function(R, delta = 1e-06, fixR = NULL, Wghts = NULL, maxTries = 1000){
   ## Modified Alternating Projection algorithm with Dykstra's 
   ## correction based on theory described in:

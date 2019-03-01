@@ -1,3 +1,22 @@
+#' Calculate Univariate Skewness for a Vector or Matrix
+#' 
+#' Calculate univariate skewness for vector or matrix (algorithm G1 in Joanes &
+#' Gill, 1998).
+#' 
+#' 
+#' @param x Either a vector or matrix of numeric values.
+#' @return \item{Skewness for each column in x.}{}
+#' @author Niels Waller
+#' @seealso \code{\link{kurt}}
+#' @references Joanes, D. N. & Gill, C. A. (1998). Comparing measures of sample
+#' skewness and kurtosis. \emph{The Statistician, 47}, 183-189.
+#' @keywords Statistics
+#' @export
+#' @examples
+#' 
+#' x <- matrix(rnorm(1000), 100, 10)
+#' skew(x)
+#' 
 skew<-function(x){
                      
           sk <- function(xx){

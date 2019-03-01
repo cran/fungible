@@ -1,6 +1,31 @@
-
-
-
+#' Smooth a Non PD Correlation Matrix
+#' 
+#' A function for smoothing a non-positive definite correlation matrix by the
+#' method of Knol and Berger (1991).
+#' 
+#' 
+#' @param R A non-positive definite correlation matrix.
+#' @param eps Small positive number to control the size of the non-scaled
+#' smallest eigenvalue of the smoothed R matrix. Default = 1E8 *
+#' .Machine$double.eps
+#' @return \item{RKB}{A Smoothed (positive definite) correlation matrix.}
+#' \item{eps}{Small positive number to control the size of the non-scaled
+#' smallest eigenvalue of the smoothed R matrix.}
+#' @author Niels Waller
+#' @references Knol, D. L., & Berger, M. P. F., (1991). Empirical comparison
+#' between factor analysis and multidimensional item response
+#' models.\emph{Multivariate Behavioral Research, 26}, 457-477.
+#' @keywords Statistics
+#' @export
+#' @examples
+#' 
+#' data(BadRLG)
+#' 
+#' ## RKB = smoothed R
+#' RKB<-smoothKB(R=BadRLG, eps = 1E8 * .Machine$double.eps)$RKB
+#' print(eigen(RKB)$values)
+#' 
+#' 
 smoothKB <- function(R, eps = 1E8 * .Machine$double.eps){
   ##--------------------------------------#
   ##  October 31, 2012
