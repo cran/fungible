@@ -392,11 +392,11 @@ faMain <-
     #### Error checking ####
     ## ~~~~~~~~~~~~~~~~~~ ##
     
-    ## Check rotation
+    ## Check rotate
     
-    ## That a rotation is specified
+    ## Is a correct rotation is specified
     if ( !is.character(rotate) ) {
-      stop("The 'rotate' argument must be a character string. See ?rotate for available options.")
+      stop("The 'rotate' argument must be a character string. See ?faMain for available options.")
     } # END if ( !is.character(rotate) ) 
     
     ## Character string of all available rotate options
@@ -413,6 +413,9 @@ faMain <-
     if ( rotate %in% PlausibleRotations == FALSE ) {
       stop("The 'rotate' argument is incorrectly specified. Check for spelling errors (case sensitive).")
     } # END if (rotate %in% PlausibleRotations == FALSE) {
+    
+    ## If only 1 factor, rotate must equal "none"
+    if ( is.null(urLoadings) && numFactors == 1 ) rotate <- "none"
     
     ## Check R
     
@@ -531,7 +534,7 @@ faMain <-
       switch(rotation,
              "none" = {
                list(loadings = lambda,
-                    Phi      = NULL)
+                    Phi      = diag( matrixDim ) ) ## Identity matrix
              },
              "oblimin" = {
                GPArotation::oblimin(lambda,
@@ -704,40 +707,6 @@ faMain <-
              })
     } # END internalRotate
     
-    ## Function to re-order the factor loading/correlation matrices
-    orderFactors <- function(Lambda,
-                             PhiMat) {
-      ## Purpose: Sort the factors into conventional order
-      ##
-      ## Args: Lambda: (Matrix) Factor loading matrix
-      ##       PhiMat: (Matrix) Factor correlation matrix
-
-      ## Wipe out low loadings (semi-arbitrarily)
-      F0 <- Lambda
-      F0[abs(Lambda) < .3] <- 0
-
-      ## Flip poorly keyed factors (and associated factor correlations)
-      FsgnMat <- diag(sign(apply(F0, 2, sum)))
-      Lambda  <- Lambda %*% FsgnMat
-      Phi     <- FsgnMat %*% PhiMat %*% FsgnMat
-
-      ## Vector used to re-order the factor loading/correlation matrices
-      ## Based on sum of squared loadings
-      Lambda.SS <- sort.list( apply(F0^2, 2, sum), decreasing = TRUE )
-
-      ## Sort the keyed factor loadings
-      Lambda <- Lambda[, Lambda.SS]
-
-      ## Sort the keyed factor correlations
-      I   <- diag(ncol(Lambda))
-      Phi <- I[Lambda.SS, ] %*% Phi %*% I[, Lambda.SS]
-
-      ## Return a list of the output
-      list(Lambda = Lambda,
-           PhiMat = Phi)
-
-    }  #END orderFactors
-    
     ## Compute Guttman's factor determinacy indices
     GuttmanIndices <- function(Lambda, 
                                PhiMat) {
@@ -835,8 +804,8 @@ faMain <-
     #### ------- STANDARDIZATION -------- ####
     
     ## Call standardize function
-    Stnd <- Standardize(method = cnRotate$standardize,
-                        lambda = urLoadings)
+    Stnd <- faStandardize(method = cnRotate$standardize,
+                          lambda = urLoadings)
     
     ## Extract DvInv for later unstandardization
     lambda <- Stnd$lambda
@@ -878,17 +847,17 @@ faMain <-
     ##    finds the minimum criterion value across each attempt
     
     ## Evaluate the minimum disc functions to find smallest value
-    if (rotate == "promaxQ") {
-      
-      ## For each random start, find the evaluated discrepancy function
-      DiscrepFunc <- sapply(starts, function(attempt) attempt$vmaxDiscrepancy)
-      
-    } else {
+    if (rotate != "none") {
       
       ## For each random start, find the evaluated discrepancy function
       DiscrepFunc <- sapply(starts, function(attempt) min(attempt$Table[, 2]))
       
-    } # END if (rotate == "promaxQ")
+    } # if (rotate != "none") 
+    
+    ## No discrepancy function to evaluate when rotate = "none"
+    if (rotate == "none") {
+      DiscrepFunc <- rep(1, cnRotate$numberStarts)
+    } # END if (rotate == "none") {
     
     ## Find the sort order (minimum first)
     sortOrder <- order(DiscrepFunc)
@@ -908,8 +877,11 @@ faMain <-
       #### ------- FACTOR SORT -------- ####
       
       ## sort loadings and Phi matrix
-      sortedSols <- orderFactors(Lambda = selected$loadings,
-                                 PhiMat = selected$Phi)
+      sortedSols <- 
+        orderFactors(Lambda  = selected$loadings,
+                     PhiMat  = selected$Phi,
+                     salient = .29,
+                     reflect = TRUE)
       
       ## Overwrite "selected" list
       selected$loadings <- sortedSols$Lambda
@@ -1013,8 +985,8 @@ faMain <-
                         faControl  = faControl)$loadings
         
         ## Conduct standardization
-        bsStnd <- Standardize(method = cnRotate$standardize,
-                              lambda = bsLambda)
+        bsStnd <- faStandardize(method = cnRotate$standardize,
+                                lambda = bsLambda)
         
         ## Extract the standardized bootstrapped (unrotated) factor loadings
         bsLambda <- bsStnd$lambda
@@ -1045,39 +1017,56 @@ faMain <-
         
         ## Find minimum of bsSolutions
         ## Evaluate the minimum disc functions to find smallest value
-        if (rotate == "promaxQ") {
-          
-          ## For each random start, find the evaluated discrepancy function
-          bsDiscrepFunc <- sapply(bsStarts, function(attempt) attempt$vmaxDiscrepancy)
-          
-        } else {
+        if ( rotate != "none" ) {
           
           ## For each random start, find the evaluated discrepancy function
           bsDiscrepFunc <- sapply(bsStarts, function(attempt) min(attempt$Table[, 2]))
           
-        } # END if (rotate == "promaxQ")
+        }# END if ( rotate != "none" ) 
+        
+        ## If no rotation, no discrepancy value to evaluate
+        if (rotate == "none") bsDiscrepFunc <- rep(1, cnRotate$numberStarts)
         
         ## Of all random configs, determinine which has the lowest criterion value
-        bsLambda <- bsStarts[[which.min(DiscrepFunc)]]$loadings
-        bsPhi    <- bsStarts[[which.min(DiscrepFunc)]]$Phi
+        bsLambda <- bsStarts[[which.min(bsDiscrepFunc)]]$loadings
+        bsPhi    <- bsStarts[[which.min(bsDiscrepFunc)]]$Phi
         
         ## Unstandardize the minimum rotated solution for this bootstrap sample
         bsLambda <- bsStnd$DvInv %*% bsLambda
         
-        ## Align bootstrap sample with global minimum from before
-        Aligned <- faAlign(F1   = minLambda,
-                           F2   = bsLambda,
-                           Phi2 = bsPhi)
+        ## Pre-allocate list
+        Aligned <- list()
+        
+        ## Factor alignment does not work on 1 factor (and doesn't make sense)
+        if (numFactors > 1) {
+          ## Align bootstrap sample with global minimum found earlier
+          Aligned <- faAlign(F1   = minLambda,
+                             F2   = bsLambda,
+                             Phi2 = bsPhi)
+          
+          ## Extract aligned elements
+          AlignedLambda <- Aligned$F2
+          AlignedPhi    <- Aligned$Phi2
+        } # END if (numFactors > 1) 
+        
+        ## Cannot align 1-factor model, but can reflect the factor
+        if (numFactors == 1) {
+          if ( sum(bsLambda) < 0 ) bsLambda <- bsLambda * -1
+          
+          ## Define newly aligned elements
+          AlignedLambda <- bsLambda
+          AlignedPhi    <- bsPhi
+        } # END if (numFactors == 1)
         
         ## Save loadings as the bootstrapped factor loadings
-        fList[[iSample]]   <- Aligned$F2
+        fList[[iSample]]   <- AlignedLambda
         
         ## Save correlations as the bootstrapped factor correlations
-        phiList[[iSample]] <- Aligned$Phi2
+        phiList[[iSample]] <- AlignedPhi
         
         ## Save factor indeterminacy indices
-        FIList[[iSample]] <- GuttmanIndices(Lambda = Aligned$F2,
-                                            PhiMat = Aligned$Phi2)
+        FIList[[iSample]] <- GuttmanIndices(Lambda = AlignedLambda,
+                                            PhiMat = AlignedPhi)
         
       } # END for (iSample in seq_len(numBoot))
       
@@ -1181,8 +1170,11 @@ faMain <-
       names(rotateH2)   <- varNames
     
     ## Name objects to have factor names
-    colnames(minLambda) <- 
-      rownames(minPhi)  <-  
+    ## Change made March 4, 2019 NGW
+    ## handle 1-fac models
+    if(numFactors > 1) colnames(minLambda) <- facNames
+    if(numFactors == 1) dimnames(minLambda) <- list(varNames, facNames)
+    rownames(minPhi)  <-  
       colnames(minPhi)  <- 
       names(facIndeter) <- facNames
     
@@ -1198,17 +1190,17 @@ faMain <-
       sortOrder <- itemSorting$sortOrder
       
       ## Sort items in global min lambda
-      minLambda <- minLambda[sortOrder, ]
-
+      minLambda <- minLambda[sortOrder, , drop=FALSE]
+      
       ## Sort items in rotateH2 (communality of indicators)
       rotateH2 <- rotateH2[sortOrder]
-
+      
       ## If bootstrap is done, re-order factor indicators
       if (bootstrapSE == TRUE) {
-        loadSE       <- loadSE[sortOrder, ]
-        loadCI.upper <- loadCI.upper[sortOrder, ]
-        loadCI.lower <- loadCI.lower[sortOrder, ]
-        loadArray    <- loadArray[sortOrder, , ]
+        loadSE       <- loadSE[sortOrder, , drop=FALSE]
+        loadCI.upper <- loadCI.upper[sortOrder, , drop=FALSE]
+        loadCI.lower <- loadCI.lower[sortOrder, , drop=FALSE]
+        loadArray    <- loadArray[sortOrder, , ,  drop=FALSE]
         
       } # END if (bootstrapSE == TRUE)
       

@@ -4,14 +4,18 @@
 \alias{SchmidLeiman}
 \title{Schmid-Leiman Orthogonalization to a (Rank-Deficient) Bifactor Structure}
 \usage{
-SchmidLeiman(R, numFactors, facMethod = "fals", rotate = "geominQ",
-  rescaleH2 = 0.98, digits = NULL, rotateControl = NULL,
-  faControl = NULL)
+SchmidLeiman(R, numFactors, facMethod = "fals", rotate = "oblimin",
+  rescaleH2 = 0.98, digits = NULL, faControl = NULL,
+  rotateControl = NULL)
 }
 \arguments{
 \item{R}{(Matrix) A correlation matrix.}
 
-\item{numFactors}{(Vector) The number of latent factors at each level of analysis. For example, c(3, 1) estimates three latent factors in the first-order common factor model and one latent factor in the second-order common factor model (i.e., 3 group factors and 1 general factor). This function can orthogonalize up to (and including) a three-order factor solution.}
+\item{numFactors}{(Vector) The number of latent factors at each level of 
+analysis. For example, c(3, 1) estimates three latent factors in the first-order 
+common factor model and one latent factor in the second-order common factor 
+model (i.e., 3 group factors and 1 general factor). This function can 
+orthogonalize up to (and including) a three-order factor solution.}
 
 \item{facMethod}{(Character) The method used for factor extraction 
 (\code{\link{faX}}). The supported options are "fals" for unweighted least 
@@ -28,12 +32,44 @@ is "fals".
   \item \strong{"pca}: Principal components are extracted. 
 }}
 
-\item{rotate}{(Character) Designate which rotation algorithm to apply. See the \code{\link{faMain}} function for more details about possible rotations. A geomin rotation is the default.}
+\item{rotate}{(Character) Designate which rotation algorithm to apply. See 
+the \code{\link{faMain}} function for more details about possible rotations. 
+Defaults to rotate = "oblimin".}
 
-\item{rescaleH2}{(Numeric) If a Heywood case is detected at any level of the higher-order factor analyses, rescale the communality value to continue with the matrix algebra. When a Heywood case occurs, the uniquenesses (i.e., specific-factor variances) will be negative and the SL orthogonalization of the group factors is no longer correct.}
+\item{rescaleH2}{(Numeric) If a Heywood case is detected at any level of the 
+higher-order factor analyses, rescale the communality value to continue with 
+the matrix algebra. When a Heywood case occurs, the uniquenesses (i.e., 
+specific-factor variances) will be negative and the SL orthogonalization of 
+the group factors is no longer correct.}
 
 \item{digits}{(Numeric) Rounds the values to the specified number of decimal 
 places. Defaults to digits = NULL (no rounding).}
+
+\item{faControl}{(List) A list of optional parameters passed to the factor 
+extraction (\code{\link{faX}}) function.
+\itemize{
+  \item \strong{treatHeywood}: (Logical) In \code{fals}, if treatHeywood is 
+  true, a penalized least squares function is used to bound the communality 
+  estimates below 1.0. Defaults to treatHeywood = TRUE.
+  \item \strong{nStart}: (Numeric) The number of starting values to be tried 
+  in \code{faml}. Defaults to nStart = 10.
+  \item \strong{maxCommunality}: (Numeric) In \code{faml}, set the maximum 
+  communality value for the estimated solution. Defaults to maxCommunality = .995.
+  \item \strong{epsilon}: (Numeric) In \code{fapa}, the numeric threshold 
+  designating when the algorithm has converged. Defaults to epsilon = 1e-4.
+  \item \strong{communality}: (Character) The method used to estimate the 
+  initial communality values in \code{fapa}. Defaults to communality = 'SMC'.
+  \itemize{
+    \item \strong{"SMC"}: Initial communalities are estimated by taking the 
+    squared multiple correlations of each indicator after regressing the 
+    indicator on the remaining variables.
+    \item \strong{"maxRsqr"}: Initial communalities equal the largest squared 
+    correlation in each column of the correlation matrix.
+    \item \strong{"unity"}: Initial communalities equal 1.0 for all variables.
+  }
+  \item \strong{maxItr}: (Numeric) In \code{fapa}, the maximum number of 
+  iterations to reach convergence. Defaults to maxItr = 15,000.
+}}
 
 \item{rotateControl}{(List) A list of control values to pass to the factor rotation algorithms.
 \itemize{
@@ -77,51 +113,32 @@ places. Defaults to digits = NULL (no rounding).}
   \item \strong{maxItr}: (Numeric) The maximum number of iterations for the 
   rotation algorithm. Defaults to maxItr = 15000.
 }}
-
-\item{faControl}{(List) A list of optional parameters passed to the factor 
-extraction (\code{\link{faX}}) function.
-\itemize{
-  \item \strong{treatHeywood}: (Logical) In \code{fals}, if treatHeywood is 
-  true, a penalized least squares function is used to bound the communality 
-  estimates below 1.0. Defaults to treatHeywood = TRUE.
-  \item \strong{nStart}: (Numeric) The number of starting values to be tried 
-  in \code{faml}. Defaults to nStart = 10.
-  \item \strong{maxCommunality}: (Numeric) In \code{faml}, set the maximum 
-  communality value for the estimated solution. Defaults to maxCommunality = .995.
-  \item \strong{epsilon}: (Numeric) In \code{fapa}, the numeric threshold 
-  designating when the algorithm has converged. Defaults to epsilon = 1e-4.
-  \item \strong{communality}: (Character) The method used to estimate the 
-  initial communality values in \code{fapa}. Defaults to communality = 'SMC'.
-  \itemize{
-    \item \strong{"SMC"}: Initial communalities are estimated by taking the 
-    squared multiple correlations of each indicator after regressing the 
-    indicator on the remaining variables.
-    \item \strong{"maxRsqr"}: Initial communalities equal the largest squared 
-    correlation in each column of the correlation matrix.
-    \item \strong{"unity"}: Initial communalities equal 1.0 for all variables.
-  }
-  \item \strong{maxItr}: (Numeric) In \code{fapa}, the maximum number of 
-  iterations to reach convergence. Defaults to maxItr = 15,000.
-}}
 }
 \value{
 \itemize{
   \item \strong{L1}: (Matrix) The first-order (oblique) factor pattern matrix.
   \item \strong{L2}: (Matrix) The second-order (oblique) factor pattern matrix.
-  \item \strong{L3}: (Matrix, NULL) The third-order (oblique) factor pattern matrix (if applicable).
+  \item \strong{L3}: (Matrix, NULL) The third-order (oblique) factor pattern 
+  matrix (if applicable).
   \item \strong{Phi1}: (Matrix) The first-order factor correlation matrix.
   \item \strong{Phi2}: (Matrix) The second-order factor correlation matrix.
-  \item \strong{Phi3}: (Matrix, NULL) The third-order factor pattern matrix (if applicable).
+  \item \strong{Phi3}: (Matrix, NULL) The third-order factor pattern matrix 
+  (if applicable).
   \item \strong{Usq1}: (Matrix) The first-order factor uniquenesses (variances).
   \item \strong{Usq2}: (Matrix) The second-order factor uniquenesses (variances).
-  \item \strong{Usq3}: (Matrix, NULL) The third-order factor uniquenesses (variances) (if applicable).
+  \item \strong{Usq3}: (Matrix, NULL) The third-order factor uniquenesses 
+  (variances) (if applicable).
   \item \strong{B}: (Matrix) The resulting Schmid-Leiman transformation.
-  \item \strong{rotateControl}: (List) A list of the control parameters passed to the \code{\link{faMain}} function.
-  \item \strong{faControl}: (List) A list of optional parameters passed to the factor extraction (\code{\link{faX}}) function.
+  \item \strong{rotateControl}: (List) A list of the control parameters 
+  passed to the \code{\link{faMain}} function.
+  \item \strong{faControl}: (List) A list of optional parameters passed to 
+  the factor extraction (\code{\link{faX}}) function.
 }
 }
 \description{
-The Schmid-Leiman (SL) procedure orthogonalizes a higher-order factor structure into a rank-deficient bifactor structure. The Schmid-Leiman method is a generalization of Thomson's orthogonalization routine.
+The Schmid-Leiman (SL) procedure orthogonalizes a higher-order factor 
+structure into a rank-deficient bifactor structure. The Schmid-Leiman method 
+is a generalization of Thomson's orthogonalization routine.
 }
 \examples{
 ## Dataset used in Schmid & Leiman (1957) rounded to 2 decimal places
@@ -169,18 +186,23 @@ Out2 <- SchmidLeiman(R          = R,
 
 }
 \references{
-Abad, F. J., Garcia-Garzon, E., Garrido, L. E., & Barrada, J. R. (2017). Iteration of partially specified target matrices: application to the bi-factor case. \emph{Multivariate Behavioral Research, 52}(4), 416-429.
+Abad, F. J., Garcia-Garzon, E., Garrido, L. E., & Barrada, J. R. 
+(2017). Iteration of partially specified target matrices: application to the 
+bi-factor case. \emph{Multivariate Behavioral Research, 52}(4), 416-429.
 
-Giordano, C. & Waller, N. G. (under review). Recovering bifactor models: A comparison of seven methods.
+Giordano, C. & Waller, N. G. (under review). Recovering bifactor 
+models: A comparison of seven methods.
 
-Schmid, J., & Leiman, J. M. (1957). The development of hierarchical factor solutions. \emph{Psychometrika, 22}(1), 53-61.
+Schmid, J., & Leiman, J. M. (1957). The development of 
+hierarchical factor solutions. \emph{Psychometrika, 22}(1), 53-61.
 }
 \seealso{
 Other Factor Analysis Routines: \code{\link{BiFAD}},
   \code{\link{SLi}}, \code{\link{faAlign}},
   \code{\link{faMain}}, \code{\link{faSort}},
-  \code{\link{faX}}, \code{\link{fals}},
-  \code{\link{fapa}}, \code{\link{promaxQ}}
+  \code{\link{faStandardize}}, \code{\link{faX}},
+  \code{\link{fals}}, \code{\link{fapa}},
+  \code{\link{orderFactors}}, \code{\link{promaxQ}}
 }
 \author{
 \itemize{

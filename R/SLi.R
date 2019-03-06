@@ -275,6 +275,10 @@ SLi <-
       c(paste(rep("g", numFactors[2]), c(1:numFactors[2]), sep = ""),
         paste(rep("F", numFactors[1]), c(1:numFactors[1]), sep = ""))
     
+    ## Reflect all factors by default
+    SLiSign <- diag( sign( colSums(SLi.loadings) ) )
+    SLi.loadings <- SLi.loadings %*% SLiSign
+    
     ## Final output list
     ##    [[1]]: the final iterated Schmid-Leiman matrix of loadings
     ##    [[2]]: number of iterations to achieve final output

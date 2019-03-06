@@ -165,8 +165,9 @@ Schmid, J., & Leiman, J. M. (1957). The development of hierarchical factor solut
 Other Factor Analysis Routines: \code{\link{BiFAD}},
   \code{\link{SchmidLeiman}}, \code{\link{faAlign}},
   \code{\link{faMain}}, \code{\link{faSort}},
-  \code{\link{faX}}, \code{\link{fals}},
-  \code{\link{fapa}}, \code{\link{promaxQ}}
+  \code{\link{faStandardize}}, \code{\link{faX}},
+  \code{\link{fals}}, \code{\link{fapa}},
+  \code{\link{orderFactors}}, \code{\link{promaxQ}}
 }
 \author{
 \itemize{

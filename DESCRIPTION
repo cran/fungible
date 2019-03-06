@@ -1,9 +1,9 @@
 Package: fungible
-Version: 1.79
-Date: 2019-03-01
+Version: 1.80
+Date: 2019-03-05
 Title: Psychometric Functions from the Waller Lab
 Authors@R: c(
-    person("Niels", "Waller", role = c("aut", "cre"), email="nwaller@umn.edu"),
+    person("Niels", "Waller", role = c("aut", "cre"), email="nwaller@umn.edu" ),
     person("Jeff","Jones", role = "ctb"),
     person("Casey","Giordano", role = "ctb"))
 Maintainer: Niels Waller <nwaller@umn.edu>
@@ -25,9 +25,9 @@ License: GPL (>= 2)
 Encoding: UTF-8
 NeedsCompilation: no
 RoxygenNote: 6.1.1
-Packaged: 2019-03-01 17:08:48 UTC; nielswaller
+Packaged: 2019-03-05 23:22:32 UTC; nielswaller
 Author: Niels Waller [aut, cre],
   Jeff Jones [ctb],
   Casey Giordano [ctb]
 Repository: CRAN
-Date/Publication: 2019-03-01 17:30:03 UTC
+Date/Publication: 2019-03-06 16:12:41 UTC

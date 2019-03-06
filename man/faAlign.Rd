@@ -168,8 +168,9 @@ Algorithms and Complexity. Englewood Cliffs: Prentice Hall.
 Other Factor Analysis Routines: \code{\link{BiFAD}},
   \code{\link{SLi}}, \code{\link{SchmidLeiman}},
   \code{\link{faMain}}, \code{\link{faSort}},
-  \code{\link{faX}}, \code{\link{fals}},
-  \code{\link{fapa}}, \code{\link{promaxQ}}
+  \code{\link{faStandardize}}, \code{\link{faX}},
+  \code{\link{fals}}, \code{\link{fapa}},
+  \code{\link{orderFactors}}, \code{\link{promaxQ}}
 }
 \author{
 Niels Waller

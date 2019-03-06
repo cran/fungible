@@ -94,8 +94,9 @@ Widaman, K. F., & Herringer, L. G. (1985). Iterative least squares estimates of 
 Other Factor Analysis Routines: \code{\link{BiFAD}},
   \code{\link{SLi}}, \code{\link{SchmidLeiman}},
   \code{\link{faAlign}}, \code{\link{faMain}},
-  \code{\link{faSort}}, \code{\link{faX}},
-  \code{\link{fals}}, \code{\link{promaxQ}}
+  \code{\link{faSort}}, \code{\link{faStandardize}},
+  \code{\link{faX}}, \code{\link{fals}},
+  \code{\link{orderFactors}}, \code{\link{promaxQ}}
 }
 \author{
 \itemize{

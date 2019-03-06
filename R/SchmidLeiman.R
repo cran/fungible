@@ -1,32 +1,53 @@
 #' Schmid-Leiman Orthogonalization to a (Rank-Deficient) Bifactor Structure
 #'
-#' The Schmid-Leiman (SL) procedure orthogonalizes a higher-order factor structure into a rank-deficient bifactor structure. The Schmid-Leiman method is a generalization of Thomson's orthogonalization routine.
+#' The Schmid-Leiman (SL) procedure orthogonalizes a higher-order factor 
+#' structure into a rank-deficient bifactor structure. The Schmid-Leiman method 
+#' is a generalization of Thomson's orthogonalization routine.
 #'
 #' @param R (Matrix) A correlation matrix.
-#' @param numFactors (Vector) The number of latent factors at each level of analysis. For example, c(3, 1) estimates three latent factors in the first-order common factor model and one latent factor in the second-order common factor model (i.e., 3 group factors and 1 general factor). This function can orthogonalize up to (and including) a three-order factor solution.
-#' @param rotate (Character) Designate which rotation algorithm to apply. See the \code{\link{faMain}} function for more details about possible rotations. A geomin rotation is the default.
-#' @param rescaleH2 (Numeric) If a Heywood case is detected at any level of the higher-order factor analyses, rescale the communality value to continue with the matrix algebra. When a Heywood case occurs, the uniquenesses (i.e., specific-factor variances) will be negative and the SL orthogonalization of the group factors is no longer correct.
+#' @param numFactors (Vector) The number of latent factors at each level of 
+#' analysis. For example, c(3, 1) estimates three latent factors in the first-order 
+#' common factor model and one latent factor in the second-order common factor 
+#' model (i.e., 3 group factors and 1 general factor). This function can 
+#' orthogonalize up to (and including) a three-order factor solution.
+#' @param rotate (Character) Designate which rotation algorithm to apply. See 
+#' the \code{\link{faMain}} function for more details about possible rotations. 
+#' Defaults to rotate = "oblimin".
+#' @param rescaleH2 (Numeric) If a Heywood case is detected at any level of the 
+#' higher-order factor analyses, rescale the communality value to continue with 
+#' the matrix algebra. When a Heywood case occurs, the uniquenesses (i.e., 
+#' specific-factor variances) will be negative and the SL orthogonalization of 
+#' the group factors is no longer correct.
 #' @inheritParams faMain
 #'
 #' @return
 #' \itemize{
 #'   \item \strong{L1}: (Matrix) The first-order (oblique) factor pattern matrix.
 #'   \item \strong{L2}: (Matrix) The second-order (oblique) factor pattern matrix.
-#'   \item \strong{L3}: (Matrix, NULL) The third-order (oblique) factor pattern matrix (if applicable).
+#'   \item \strong{L3}: (Matrix, NULL) The third-order (oblique) factor pattern 
+#'   matrix (if applicable).
 #'   \item \strong{Phi1}: (Matrix) The first-order factor correlation matrix.
 #'   \item \strong{Phi2}: (Matrix) The second-order factor correlation matrix.
-#'   \item \strong{Phi3}: (Matrix, NULL) The third-order factor pattern matrix (if applicable).
+#'   \item \strong{Phi3}: (Matrix, NULL) The third-order factor pattern matrix 
+#'   (if applicable).
 #'   \item \strong{Usq1}: (Matrix) The first-order factor uniquenesses (variances).
 #'   \item \strong{Usq2}: (Matrix) The second-order factor uniquenesses (variances).
-#'   \item \strong{Usq3}: (Matrix, NULL) The third-order factor uniquenesses (variances) (if applicable).
+#'   \item \strong{Usq3}: (Matrix, NULL) The third-order factor uniquenesses 
+#'   (variances) (if applicable).
 #'   \item \strong{B}: (Matrix) The resulting Schmid-Leiman transformation.
-#'   \item \strong{rotateControl}: (List) A list of the control parameters passed to the \code{\link{faMain}} function.
-#'   \item \strong{faControl}: (List) A list of optional parameters passed to the factor extraction (\code{\link{faX}}) function.
+#'   \item \strong{rotateControl}: (List) A list of the control parameters 
+#'   passed to the \code{\link{faMain}} function.
+#'   \item \strong{faControl}: (List) A list of optional parameters passed to 
+#'   the factor extraction (\code{\link{faX}}) function.
 #'}
 #'
-#' @references Abad, F. J., Garcia-Garzon, E., Garrido, L. E., & Barrada, J. R. (2017). Iteration of partially specified target matrices: application to the bi-factor case. \emph{Multivariate Behavioral Research, 52}(4), 416-429.
-#' @references Giordano, C. & Waller, N. G. (under review). Recovering bifactor models: A comparison of seven methods.
-#' @references Schmid, J., & Leiman, J. M. (1957). The development of hierarchical factor solutions. \emph{Psychometrika, 22}(1), 53-61.
+#' @references Abad, F. J., Garcia-Garzon, E., Garrido, L. E., & Barrada, J. R. 
+#' (2017). Iteration of partially specified target matrices: application to the 
+#' bi-factor case. \emph{Multivariate Behavioral Research, 52}(4), 416-429.
+#' @references Giordano, C. & Waller, N. G. (under review). Recovering bifactor 
+#' models: A comparison of seven methods.
+#' @references Schmid, J., & Leiman, J. M. (1957). The development of 
+#' hierarchical factor solutions. \emph{Psychometrika, 22}(1), 53-61.
 #'
 #' @family Factor Analysis Routines
 #' 
@@ -86,11 +107,11 @@ SchmidLeiman <-
   function(R,                         ## Correlation matrix
            numFactors,                ## Number of grp factors per level
            facMethod     = "fals",    ## Factor extraction method
-           rotate        = "geominQ", ## Oblique rotation
+           rotate        = "oblimin", ## Oblique rotation
            rescaleH2     = .98,       ## Rescale communalities
            digits        = NULL,      ## Round all output
-           rotateControl = NULL,      ## Arguments passed to rotate
-           faControl     = NULL){     ## Arguments passed to faX
+           faControl     = NULL,      ## Arguments passed to faX
+           rotateControl = NULL){     ## Arguments passed to rotate
     
     ## ~~~~~~~~~~~~~~~~~~~~~~ ##
     #### Internal Functions ####
@@ -160,6 +181,17 @@ SchmidLeiman <-
     ## Store the Phi matrix and rotated loadings matrix
     L1 <- firstRot$loadings   ## Factor pattern
     R1 <- firstRot$Phi        ## Factor correlations
+    
+    ## Reorder the factors
+    facOrder <- 
+      orderFactors(Lambda  = L1,
+                   PhiMat  = R1,
+                   salient = .25,
+                   reflect = TRUE)
+    
+    ## Reordered matrices
+    L1 <- facOrder$Lambda
+    R1 <- facOrder$PhiMat
     
     ## ~~~~~~~~~~~~~~~~~~~~~~~ ##
     ## Check for Heywood cases ##
@@ -240,6 +272,17 @@ SchmidLeiman <-
       ## Save the phi matrix
       R2 <- secondRot$Phi
       
+      ## Reorder factors
+      facOrder2 <- 
+        orderFactors(Lambda  = L2,
+                     PhiMat  = R2,
+                     salient = .25,
+                     reflect = TRUE)
+      
+      ## Retain the ordered factor matrices
+      L2 <- facOrder2$Lambda
+      R2 <- facOrder2$PhiMat
+      
     } else {  #END if(numFactors[2] > 1)
       
       ## Check for Heywood cases
@@ -273,6 +316,10 @@ SchmidLeiman <-
     
     ## Orthogonalize, Final step in Schmid & Leiman ('57) with 2 levels
     B.out <- cbind(L1 %*% L2, L1 %*% U_2)
+    
+    ## Reflect all factors by default
+    BSign <- diag( sign( colSums(B.out) ) )
+    B.out <- B.out %*% BSign
     
     ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~##
     ##         Third-level hierarchical factor analysis         ##
@@ -343,6 +390,10 @@ SchmidLeiman <-
       B3    <- cbind(L3, U_3)
       B2    <- cbind((L2 %*% B3), U_2)
       B.out <- L1 %*% B2
+      
+      ## Reflect all factors by default
+      BSign <- diag( sign( colSums(B.out) ) )
+      B.out <- B.out %*% BSign
       
       ## Give the 3-level analysis some labels
       colnames(B.out) <-

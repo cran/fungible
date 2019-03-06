@@ -101,8 +101,9 @@ fapa <- function(R,
 
   ## Check to ensure R is positive definite before doing solve
   eigenVal <- eigen(R)$value
-  if ( communality == "SMC" && min(eigenVal) <= 0 ) {
-    stop("Inverting the correlation matrix for SMC communality estimates requires a positive-definite matrix.")
+  if ( communality == "SMC" && min(eigenVal) <= 1E-8) {
+    warning("Inverting the correlation matrix for SMC communality estimates requires a positive-definite matrix.")
+  communality = "maxRsqr"  # NGW March 4, 2019
   } # END if ( min(eigenVal) <= 0 )
 
   ## Find initial communality estimate
@@ -181,7 +182,7 @@ fapa <- function(R,
                          communality = communality,
                          maxItr      = maxItr))
 
-} # END PAF <- function(R, numFactors, epsilon, maxItr) {
+} # END fapa <- function(R, numFactors, epsilon, maxItr) {
 
 
 

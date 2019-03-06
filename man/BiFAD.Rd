@@ -200,8 +200,9 @@ print( round(out.ex2$BstarFR, 2) )
 Other Factor Analysis Routines: \code{\link{SLi}},
   \code{\link{SchmidLeiman}}, \code{\link{faAlign}},
   \code{\link{faMain}}, \code{\link{faSort}},
-  \code{\link{faX}}, \code{\link{fals}},
-  \code{\link{fapa}}, \code{\link{promaxQ}}
+  \code{\link{faStandardize}}, \code{\link{faX}},
+  \code{\link{fals}}, \code{\link{fapa}},
+  \code{\link{orderFactors}}, \code{\link{promaxQ}}
 }
 \author{
 \itemize{

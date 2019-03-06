@@ -15,8 +15,8 @@ Omega(lambda, genFac = 1, digits = NULL)
 }
 \value{
 \itemize{
-  \item \strong{Total}: (Scalar) The total reliability of the latent, common factors for the given test.
-  \item \strong{General}: (Scalar) The proportion of total variance that is accounted for by the general factor(s).
+  \item \strong{omegaTotal}: (Scalar) The total reliability of the latent, common factors for the given test.
+  \item \strong{omegaGeneral}: (Scalar) The proportion of total variance that is accounted for by the general factor(s).
 }
 }
 \description{

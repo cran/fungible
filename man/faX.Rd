@@ -130,8 +130,9 @@ estimates of communality: Initial estimate need not affect stabilized value.
 Other Factor Analysis Routines: \code{\link{BiFAD}},
   \code{\link{SLi}}, \code{\link{SchmidLeiman}},
   \code{\link{faAlign}}, \code{\link{faMain}},
-  \code{\link{faSort}}, \code{\link{fals}},
-  \code{\link{fapa}}, \code{\link{promaxQ}}
+  \code{\link{faSort}}, \code{\link{faStandardize}},
+  \code{\link{fals}}, \code{\link{fapa}},
+  \code{\link{orderFactors}}, \code{\link{promaxQ}}
 }
 \author{
 \itemize{

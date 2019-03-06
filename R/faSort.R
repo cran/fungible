@@ -14,11 +14,13 @@
 #' factor.
 #' @param reflect (logical) if reflect = TRUE then the factors will be
 #' reflected such that salient loadings are mostly positive.
-#' @return \item{loadings}{sorted factor loadings matrix.} \item{phi}{reflected
-#' factor correlation matrix when phi is given as an argument.}
-#' \item{markers}{A list of factor specific markers with loadings >=
+#' @return 
+#'    \item{loadings}{sorted factor loadings matrix.} 
+#'    \item{phi}{reflected factor correlation matrix when phi is given as an argument.}
+#'    \item{markers}{A list of factor specific markers with loadings >=
 #' abs(salient). Markers are sorted by the absolute value of the salient factor
-#' loadings.} \item{sortOrder}{sorted row numbers.} \item{SEmat}{The SEmat is a
+#' loadings.} \item{sortOrder}{sorted row numbers.} 
+#'    \item{SEmat}{The SEmat is a
 #' so-called Start-End matrix that lists the first (start) and last (end) row
 #' for each factor in the sorted pattern matrix.}
 #' @author Niels Waller
@@ -78,7 +80,7 @@ faSort<-function(fmat, phi = NULL, salient = .25, reflect = TRUE){
 #------------------------------------------------------#
 # faSort: Niels G Waller 
 #
-# Vers. February 26, 2018
+# Vers. March 4, 2019
 #
 # faSort takes an unsorted factor pattern or structure matrix
 # and returns a sorted matrix with (possibly)
@@ -118,7 +120,28 @@ faSort<-function(fmat, phi = NULL, salient = .25, reflect = TRUE){
 #------------------------------------------------------#
 
   Nfac <- ncol(fmat)
-  rowNumbers <- 1:nrow(fmat)
+  Nrow <- nrow(fmat)
+  rowNames <- rownames(fmat) 
+  rowNumbers <- 1:Nrow
+ 
+  
+  ## If single factor model
+  if(Nfac == 1){
+    itemOrder <- sort.list(abs(fmat), 
+                           decreasing = TRUE)
+    fmat <- fmat[itemOrder, 1, drop = FALSE]
+    dimnames(fmat) <- list(rowNames[itemOrder], "f1")
+    markers = NULL
+    sortOrder = itemOrder
+    se = NULL
+   return(  
+      list(loadings= fmat, 
+          phi = phi,
+          markers = markers,
+          sortOrder = sortOrder,
+          SEmat =se)
+    )   
+  } ## END if Nfac == 1
   
   # backup of unsorted loadings
   Floadings <- fmat
@@ -145,7 +168,7 @@ faSort<-function(fmat, phi = NULL, salient = .25, reflect = TRUE){
   # on a common factor are grouped together
   fmat <- fmat[varsOnFacs, ]
   
-  # Generate an Nfac by 2 matrix, se, that
+  # Generate an Nfac by 2 matrix, (start/end) se, that
   # lists the (s)tart and (e)nd row numbers
   # for each factor
   Frows <- c(0, cumsum(NumberSalient))
@@ -155,14 +178,28 @@ faSort<-function(fmat, phi = NULL, salient = .25, reflect = TRUE){
     se[i, ] <- (c(Frows[i] + 1, Frows[i+1]))
   }
   
-  # Sort loadings by abs value within factors
-  fmatAbs <- abs(fmat)
-  for(i in 1:Nfac){
-    r_order <- Frows[i]+ sort.list(fmatAbs[(se[i,1]:se[i,2]), i], 
-                                   decreasing=TRUE)
-    fmat[(se[i,1]:se[i,2]), ] <- fmat[r_order, ]
-  }
+  ## Ff no general factor found then sort items 
+  ## within factors
+  if (se[1,2] != Nrow ){
   
+     # Sort loadings by abs value within factors
+     fmatAbs <- abs(fmat)
+     for(i in 1:Nfac){
+       r_order <- Frows[i]+ sort.list(fmatAbs[(se[i,1]:se[i,2]), i], 
+                                   decreasing=TRUE)
+       fmat[(se[i,1]:se[i,2]), ] <- fmat[r_order, ]
+     }
+  } # END  if (se[1,2] != Nrow )
+  
+  
+  ## If general factor present then sort based on factor 1
+  if(se[1,2] == Nrow){
+    itemOrder <- sort.list(abs(fmat[, 1]), 
+                           decreasing = TRUE)
+    fmat <- fmat[itemOrder, ]
+  } ## END if(se[1,2] == Nfac)
+  
+
   # sortOrder gives the sort order of the 
   # original variables
   sortOrder <- fmat[, Nfac + 1]

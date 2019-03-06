@@ -28,20 +28,30 @@ is "fals".
   \item \strong{"pca}: Principal components are extracted. 
 }}
 
-\item{numFactors}{(Scalar) The number of factors to extract if the lambda matrix is not provided.}
+\item{numFactors}{(Scalar) The number of factors to extract if the lambda 
+matrix is not provided.}
 
-\item{power}{(Scalar) The power with which to raise factor loadings for minimizing trivial loadings. The default value is 4.}
+\item{power}{(Scalar) The power with which to raise factor loadings for 
+minimizing trivial loadings. The default value is 4.}
 
-\item{standardize}{(Character) Which standardization routine is used on the unrotated factor structure. The three options are "none", "Kaiser", and "CM". The default option is "Kaiser" as is recommended by Kaiser and others.
+\item{standardize}{(Character) Which standardization routine is applied to the 
+unrotated factor structure. The three options are "none", "Kaiser", and "CM". 
+The default option is "Kaiser" as is recommended by Kaiser and others. See 
+\code{\link{faStandardize}} for more details. 
 \itemize{
-  \item \strong{"none"}: Do \emph{not} rotate the normalized factor structure matrix.
-  \item \strong{"Kaiser"}: Use a factor structure matrix that has been normed by Kaiser's method (i.e., normalize all rows to have a unit length).
-  \item \strong{"CM"}: Use a factor structure matrix that has been normed by the Cureton-Mulaik method.
+  \item \strong{"none"}: Do \emph{not} rotate the normalized factor structure 
+  matrix.
+  \item \strong{"Kaiser"}: Use a factor structure matrix that has been normed 
+  by Kaiser's method (i.e., normalize all rows to have a unit length).
+  \item \strong{"CM"}: Use a factor structure matrix that has been normed by 
+  the Cureton-Mulaik method.
 }}
 
-\item{epsilon}{(Scalar) The convergence criterion used for evaluating the varimax rotation. The default value is 1e-4 (i.e., .0001).}
+\item{epsilon}{(Scalar) The convergence criterion used for evaluating the 
+varimax rotation. The default value is 1e-4 (i.e., .0001).}
 
-\item{maxItr}{(Scalar) The maximum number of iterations allowed for computing the varimax rotation. The default value is 15,000 iterations.}
+\item{maxItr}{(Scalar) The maximum number of iterations allowed for computing 
+the varimax rotation. The default value is 15,000 iterations.}
 
 \item{digits}{(Numeric) Rounds the values to the specified number of decimal 
 places. Defaults to digits = NULL (no rounding).}
@@ -75,28 +85,79 @@ extraction (\code{\link{faX}}) function.
 \value{
 A list of the following elements are produced:
 \itemize{
-  \item \strong{loadings}: (Matrix) The oblique, promax-rotated, factor-pattern matrix.
-  \item \strong{vmaxLoadings}: (Matrix) The orthogonal, varimax-rotated, factor-structure matrix used as the input matrix for the promax rotation.
-  \item \strong{rotMatrix}: (Matrix) The (rescaled) transformation matrix used in an attempt to minimize the Euclidean distance between the varimax loadings and the generated promax target matrix (cf. Hendrickson & White, 1964; Mulaik, 2009, p. 342-343, eqn. 12.44).
-  \item \strong{Phi}: (Matrix) The factor correlation matrix associated with the promax solution. Phi is found by taking the inverse of the inner product of the (rescaled) rotation matrix (rotMatrix) with itself (i.e., \eqn{solve(T' T)}, where T is the (rescaled) rotation matrix).
-  \item \strong{vmaxDiscrepancy}: (Scalar) The value of the minimized varimax discrepancy function. promax does not have a rotational criterion but the varimax rotation does.
-  \item \strong{tuningParams}: (List) A list containing (a) the power parameter used, (b) whether the varimax rotation used Kaiser normalization, (c) the varimax epsilon convergence criterion, and (d) the maximum number of iterations specified.
+  \item \strong{loadings}: (Matrix) The oblique, promax-rotated, 
+  factor-pattern matrix.
+  \item \strong{vmaxLoadings}: (Matrix) The orthogonal, varimax-rotated, 
+  factor-structure matrix used as the input matrix for the promax rotation.
+  \item \strong{rotMatrix}: (Matrix) The (rescaled) transformation matrix 
+  used in an attempt to minimize the Euclidean distance between the varimax 
+  loadings and the generated promax target matrix (cf. Hendrickson & White, 
+  1964; Mulaik, 2009, p. 342-343, eqn. 12.44).
+  \item \strong{Phi}: (Matrix) The factor correlation matrix associated with 
+  the promax solution. Phi is found by taking the inverse of the inner 
+  product of the (rescaled) rotation matrix (rotMatrix) with itself (i.e., 
+  \eqn{solve(T' T)}, where T is the (rescaled) rotation matrix).
+  \item \strong{vmaxDiscrepancy}: (Scalar) The value of the minimized varimax 
+  discrepancy function. promax does not have a rotational criterion but the 
+  varimax rotation does.
+  \item \strong{convergence}: (Logical) Whether the varimax rotation
+  congerged.
+  \item \strong{Table}: (Matrix) The table returned from \code{\link{GPForth}} 
+  from the \code{GPArotation} package.
+  \item \strong{rotateControl}: (List) A list containing (a) the power 
+  parameter used, (b) whether the varimax rotation used Kaiser normalization, 
+  (c) the varimax epsilon convergence criterion, and (d) the maximum number 
+  of iterations specified.
   \itemize{
-    \item \strong{power}: The power in which the varimax-rotated factor loadings are raised.
+    \item \strong{power}: The power in which the varimax-rotated factor 
+    loadings are raised.
     \item \strong{standardize}: Which standardization routine was used.
     \item \strong{epsilon}: The convergence criterion set for the varimax rotation.
-    \item \strong{maxItr}: The maximum number of iterations allowed for reaching convergence in the varimax rotation.
+    \item \strong{maxItr}: The maximum number of iterations allowed for 
+    reaching convergence in the varimax rotation.
   }
 }
 }
 \description{
-This function is an extension of the \code{\link[stats]{promax}} function. This function will extract the unrotated factor loadings (with three algorithm options, see \code{\link{faX}}) if they are not provided. The factor intercorrelations (Phi) are also computed within this function.
+This function is an extension of the \code{\link[stats]{promax}} function. 
+This function will extract the unrotated factor loadings (with three algorithm 
+options, see \code{\link{faX}}) if they are not provided. The factor 
+intercorrelations (Phi) are also computed within this function.
 }
 \details{
 \itemize{
-  \item \strong{Varimax Standardization}: When conducting the varimax rotation, it is recommended to standardize the factor loadings using Kaiser's normalization (i.e., rescaling the factor indicators [rows] so that the vectors have unit length). The standardization/normalization occurs by pre-multiplying the unrotated factor structure, \strong{A}, by the inverse of \strong{H}, where \strong{H}^2 is a diagonal matrix with the communality estimates on the diagonal. A varimax rotation is then applied to the normalized, unrotated factor structure. Then, the varimax-rotated factor structure is rescaled to its original metric by pre-multiplying the varimax factor structure by \strong{H}. For details, see Mulaik (2009).
-  \item \strong{Oblique Procrustes Rotation of the Varimax Solution}: According to Hendrickson & White (1964), an unrestricted (i.e., oblique) Procrustes rotation is applied to the orthogonal varimax solution. Specifically, a target matrix is generated by raising the varimax factor loadings to the user-specified power (typically, power = 4) (must retain the signs of the original factor loadings). This should quickly diminish trivial factor loadings while retaining larger factor loadings. The Procrustes rotation takes the varimax solution and rotates it toward the promax-generated target matrix. For a modern description of this approach, see Mulaik (2009, ch. 12, p. 342-343).
-  \item \strong{Choice of a Power}: Changing the power in which varimax factor loadings are raised will change the target matrix in the oblique Procrustes rotation. After raising factor loadings to some power, there will be a larger discrepancy between high and low loadings than before (e.g., squaring factor loadings of .6 and .7 yields loadings of .36 and .49 and cubing yields loadings of .216 and .343). Furthermore, increasing the power will increase the number of near-zero loadings, resulting in larger factor intercorrelations. Many (cf. Gorsuch, 1983; Hendrickson & White, 1964; Mulaik, 2009) advocate for raising varimax loadings to the fourth power (the default) but some (e.g., Gorsuch) advocate for trying power = 2 and power = 6 to see if there is an improvement in the simple structure without overly inflating factor correlations.
+  \item \strong{Varimax Standardization}: When conducting the varimax 
+  rotation, it is recommended to standardize the factor loadings using 
+  Kaiser's normalization (i.e., rescaling the factor indicators [rows] so 
+  that the vectors have unit length). The standardization/normalization 
+  occurs by pre-multiplying the unrotated factor structure, \strong{A}, by 
+  the inverse of \strong{H}, where \strong{H}^2 is a diagonal matrix with the 
+  communality estimates on the diagonal. A varimax rotation is then applied 
+  to the normalized, unrotated factor structure. Then, the varimax-rotated 
+  factor structure is rescaled to its original metric by pre-multiplying the 
+  varimax factor structure by \strong{H}. For details, see Mulaik (2009).
+  \item \strong{Oblique Procrustes Rotation of the Varimax Solution}: 
+  According to Hendrickson & White (1964), an unrestricted (i.e., oblique) 
+  Procrustes rotation is applied to the orthogonal varimax solution. 
+  Specifically, a target matrix is generated by raising the varimax factor 
+  loadings to the user-specified power (typically, power = 4) (must retain 
+  the signs of the original factor loadings). This should quickly diminish 
+  trivial factor loadings while retaining larger factor loadings. The 
+  Procrustes rotation takes the varimax solution and rotates it toward the 
+  promax-generated target matrix. For a modern description of this approach, 
+  see Mulaik (2009, ch. 12, p. 342-343).
+  \item \strong{Choice of a Power}: Changing the power in which varimax factor 
+  loadings are raised will change the target matrix in the oblique Procrustes 
+  rotation. After raising factor loadings to some power, there will be a 
+  larger discrepancy between high and low loadings than before (e.g., squaring 
+  factor loadings of .6 and .7 yields loadings of .36 and .49 and cubing 
+  yields loadings of .216 and .343). Furthermore, increasing the power will 
+  increase the number of near-zero loadings, resulting in larger factor 
+  intercorrelations. Many (cf. Gorsuch, 1983; Hendrickson & White, 1964; 
+  Mulaik, 2009) advocate for raising varimax loadings to the fourth power 
+  (the default) but some (e.g., Gorsuch) advocate for trying power = 2 and 
+  power = 6 to see if there is an improvement in the simple structure without 
+  overly inflating factor correlations.
 }
 }
 \examples{
@@ -142,18 +203,23 @@ all.equal(Out1, Out2, check.attributes = FALSE)
 
 }
 \references{
-Gorsuch, R. L. (1983). \emph{Factor Analysis}, 2nd. Hillsdale, NJ: LEA.
+Gorsuch, R. L. (1983). \emph{Factor Analysis}, 2nd. Hillsdale, 
+NJ: LEA.
 
-Hendrickson, A. E., & White, P. O. (1964). Promax: A quick method for rotation to oblique simple structure. \emph{British Journal of Statistical Psychology, 17}(1), 65-70.
+Hendrickson, A. E., & White, P. O. (1964). Promax: A quick 
+method for rotation to oblique simple structure. \emph{British Journal of 
+Statistical Psychology, 17}(1), 65-70.
 
-Mulaik, S. A. (2009). \emph{Foundations of Factor Analysis}. Chapman and Hall/CRC.
+Mulaik, S. A. (2009). \emph{Foundations of Factor Analysis}. 
+Chapman and Hall/CRC.
 }
 \seealso{
 Other Factor Analysis Routines: \code{\link{BiFAD}},
   \code{\link{SLi}}, \code{\link{SchmidLeiman}},
   \code{\link{faAlign}}, \code{\link{faMain}},
-  \code{\link{faSort}}, \code{\link{faX}},
-  \code{\link{fals}}, \code{\link{fapa}}
+  \code{\link{faSort}}, \code{\link{faStandardize}},
+  \code{\link{faX}}, \code{\link{fals}},
+  \code{\link{fapa}}, \code{\link{orderFactors}}
 }
 \author{
 \itemize{

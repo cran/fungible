@@ -12,7 +12,9 @@
 #' 
 #' @references Browne, M. W. (2001). An overview of analytic rotation in exploratory factor analysis. \emph{Multivariate Behavioral Research, 36}(1), 111-150.
 #' @references Cureton, E. E., & Mulaik, S. A. (1975). The weighted varimax rotation and the promax rotation. \emph{Psychometrika, 40}(2), 183-195.
-
+#' 
+#' @family Factor Analysis Routines
+#' 
 #' @return The resulting output can be used to standardize the factor loadings as well as providing the inverse matrix used to unstandardize the factor loadings after rotating the factor solution.
 #' \itemize{
 #'   \item \strong{Dv}: (Matrix) A diagonal weight matrix used to standardize the unrotated factor loadings. Pre-multiplying the loadings matrix by the diagonal weight matrix (i.e., Dv %*% lambda) is how to standardization occurs.
@@ -22,7 +24,7 @@
 #' }
 #' @export
 
-Standardize <- function(method,
+faStandardize <- function(method,
                         lambda) {
   ## Purpose: Find the diagonal weight matrix to standardize lambda
   ##

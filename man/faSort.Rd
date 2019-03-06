@@ -20,11 +20,12 @@ factor.}
 reflected such that salient loadings are mostly positive.}
 }
 \value{
-\item{loadings}{sorted factor loadings matrix.} \item{phi}{reflected
-factor correlation matrix when phi is given as an argument.}
-\item{markers}{A list of factor specific markers with loadings >=
+\item{loadings}{sorted factor loadings matrix.} 
+   \item{phi}{reflected factor correlation matrix when phi is given as an argument.}
+   \item{markers}{A list of factor specific markers with loadings >=
 abs(salient). Markers are sorted by the absolute value of the salient factor
-loadings.} \item{sortOrder}{sorted row numbers.} \item{SEmat}{The SEmat is a
+loadings.} \item{sortOrder}{sorted row numbers.} 
+   \item{SEmat}{The SEmat is a
 so-called Start-End matrix that lists the first (start) and last (end) row
 for each factor in the sorted pattern matrix.}
 }
@@ -89,8 +90,9 @@ cat("\\n",Items[out1$sortOrder])
 Other Factor Analysis Routines: \code{\link{BiFAD}},
   \code{\link{SLi}}, \code{\link{SchmidLeiman}},
   \code{\link{faAlign}}, \code{\link{faMain}},
-  \code{\link{faX}}, \code{\link{fals}},
-  \code{\link{fapa}}, \code{\link{promaxQ}}
+  \code{\link{faStandardize}}, \code{\link{faX}},
+  \code{\link{fals}}, \code{\link{fapa}},
+  \code{\link{orderFactors}}, \code{\link{promaxQ}}
 }
 \author{
 Niels Waller
