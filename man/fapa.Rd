@@ -17,7 +17,7 @@ fapa(R, numFactors = NULL, epsilon = 1e-04, communality = "SMC",
 \item{communality}{(Character) The routine requires an initial estimate of the communality values. There are three options (see below) with "SMC" (i.e., squared multiple correlation) being the default.
 \itemize{
   \item \strong{"SMC"}: Initial communalities are estimated by taking the squared multiple correlations of each indicator after regressing the indicator on the remaining variables. The following equation is employed to find the squared multiple correlation: \eqn{1 - 1 / diag(R^-1)}.
-  \item \strong{"maxRsqr"}: Initial communalities equal the largest squared correlation in each column of the correlation matrix.
+  \item \strong{"maxr"}: Initial communalities equal the largest (absolute value) correlation in each column of the correlation matrix.
   \item \strong{"unity"}: Initial communalities equal 1.0 for all variables.
 }}
 
@@ -79,7 +79,7 @@ Out1 <- fapa(R           = R,
 Out2 <- faX(R          = R,
             numFactors = 3,
             facMethod  = "fapa",
-            faControl  = list(communality = "maxRsqr",
+            faControl  = list(communality = "maxr",
                               epsilon     = 1e-4))
 
 ## Check for equivalence of the two results
@@ -92,10 +92,11 @@ Widaman, K. F., & Herringer, L. G. (1985). Iterative least squares estimates of 
 }
 \seealso{
 Other Factor Analysis Routines: \code{\link{BiFAD}},
-  \code{\link{SLi}}, \code{\link{SchmidLeiman}},
-  \code{\link{faAlign}}, \code{\link{faMain}},
-  \code{\link{faSort}}, \code{\link{faStandardize}},
-  \code{\link{faX}}, \code{\link{fals}},
+  \code{\link{GenerateBoxData}}, \code{\link{SLi}},
+  \code{\link{SchmidLeiman}}, \code{\link{faAlign}},
+  \code{\link{faMain}}, \code{\link{faSort}},
+  \code{\link{faStandardize}}, \code{\link{faX}},
+  \code{\link{fals}}, \code{\link{fareg}},
   \code{\link{orderFactors}}, \code{\link{promaxQ}}
 }
 \author{

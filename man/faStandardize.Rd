@@ -35,10 +35,11 @@ Cureton, E. E., & Mulaik, S. A. (1975). The weighted varimax rotation and the pr
 }
 \seealso{
 Other Factor Analysis Routines: \code{\link{BiFAD}},
-  \code{\link{SLi}}, \code{\link{SchmidLeiman}},
-  \code{\link{faAlign}}, \code{\link{faMain}},
-  \code{\link{faSort}}, \code{\link{faX}},
-  \code{\link{fals}}, \code{\link{fapa}},
+  \code{\link{GenerateBoxData}}, \code{\link{SLi}},
+  \code{\link{SchmidLeiman}}, \code{\link{faAlign}},
+  \code{\link{faMain}}, \code{\link{faSort}},
+  \code{\link{faX}}, \code{\link{fals}},
+  \code{\link{fapa}}, \code{\link{fareg}},
   \code{\link{orderFactors}}, \code{\link{promaxQ}}
 }
 \concept{Factor Analysis Routines}

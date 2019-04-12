@@ -46,6 +46,11 @@ rmsd <- function(A,
                  Symmetric = TRUE,
                  IncludeDiag = FALSE) {
   if (Symmetric) {
+    
+    if( dim(A)[1] != dim(A)[2] || dim(B)[1] != dim(B)[2] ){
+      stop("Either A and/or B not symmetric")
+    }  
+    
     sqrt(mean((A[lower.tri(A, diag = IncludeDiag)] -
                  B[lower.tri(B, diag = IncludeDiag)])^2))
   }

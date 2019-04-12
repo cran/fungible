@@ -41,10 +41,11 @@ out1 <- fals(R = Rbig,
 }
 \seealso{
 Other Factor Analysis Routines: \code{\link{BiFAD}},
-  \code{\link{SLi}}, \code{\link{SchmidLeiman}},
-  \code{\link{faAlign}}, \code{\link{faMain}},
-  \code{\link{faSort}}, \code{\link{faStandardize}},
-  \code{\link{faX}}, \code{\link{fapa}},
+  \code{\link{GenerateBoxData}}, \code{\link{SLi}},
+  \code{\link{SchmidLeiman}}, \code{\link{faAlign}},
+  \code{\link{faMain}}, \code{\link{faSort}},
+  \code{\link{faStandardize}}, \code{\link{faX}},
+  \code{\link{fapa}}, \code{\link{fareg}},
   \code{\link{orderFactors}}, \code{\link{promaxQ}}
 }
 \author{

@@ -52,6 +52,15 @@ orderFactors <- function(Lambda,
   
   ## Wipe out low loadings (based on salient argument)
   F0 <- Lambda
+  
+  ## Check max loading of every factor
+  maxF0 <- apply(abs(F0), 2, max)
+  
+  ## If any factor has loadings smaller than salient, reduce salient threshold
+  if ( any(maxF0 <= salient) ) salient <- .01
+
+  
+  ## Wipe out trivial factor loadings
   F0[abs(Lambda) < salient] <- 0
   
   ## If only 1 factor, only need to reflect the factor

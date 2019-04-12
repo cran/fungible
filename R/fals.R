@@ -134,9 +134,9 @@ fals   <- function(R,           ## Correlation matrix
     Rstart <- R
     diag(Rstart) <- 0
   
-    # Use max rij^2 for each col
+    # Use max rij for each col
     maxrij <- apply(abs(Rstart), 2, max)
-    diag(Rstart) <- maxrij^2
+    diag(Rstart) <- maxrij
   
   
     if(NVar < 40){

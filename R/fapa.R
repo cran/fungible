@@ -8,7 +8,7 @@
 #' @param communality (Character) The routine requires an initial estimate of the communality values. There are three options (see below) with "SMC" (i.e., squared multiple correlation) being the default.
 #' \itemize{
 #'   \item \strong{"SMC"}: Initial communalities are estimated by taking the squared multiple correlations of each indicator after regressing the indicator on the remaining variables. The following equation is employed to find the squared multiple correlation: \eqn{1 - 1 / diag(R^-1)}.
-#'   \item \strong{"maxRsqr"}: Initial communalities equal the largest squared correlation in each column of the correlation matrix.
+#'   \item \strong{"maxr"}: Initial communalities equal the largest (absolute value) correlation in each column of the correlation matrix.
 #'   \item \strong{"unity"}: Initial communalities equal 1.0 for all variables.
 #'}
 #' @param maxItr (Numeric) The maximum number of iterations to reach convergence. The default is 15,000.
@@ -74,7 +74,7 @@
 #' Out2 <- faX(R          = R,
 #'             numFactors = 3,
 #'             facMethod  = "fapa",
-#'             faControl  = list(communality = "maxRsqr",
+#'             faControl  = list(communality = "maxr",
 #'                               epsilon     = 1e-4))
 #'
 #' ## Check for equivalence of the two results
@@ -89,99 +89,110 @@ fapa <- function(R,
                  communality   = "SMC",
                  maxItr        = 15000,
                  digits        = NULL) {
-
+  
   ## ~~~~~~~~~~~~~~~~~~ ##
   #### Error Checking ####
   ## ~~~~~~~~~~~~~~~~~~ ##
-
+  
   ## Specify number of factors to extract
   if ( is.null(numFactors) ) {
     stop("The 'numFactors' argument is not specified, please specify how many factors are to be extracted.")
   } # END if ( is.null(numFactors) )
-
+  
   ## Check to ensure R is positive definite before doing solve
   eigenVal <- eigen(R)$value
-  if ( communality == "SMC" && min(eigenVal) <= 1E-8) {
+  if ( communality == "SMC" && min(eigenVal) <= 1E-8 ) {
     warning("Inverting the correlation matrix for SMC communality estimates requires a positive-definite matrix.")
-  communality = "maxRsqr"  # NGW March 4, 2019
-  } # END if ( min(eigenVal) <= 0 )
-
+    communality <- "maxr"  # NGW March 4, 2019
+  } # END if ( min(eigenVal) <= 1E-8 )
+  
   ## Find initial communality estimate
   if (communality == "SMC")     hsq <- 1 - 1 / diag(solve(R))
-  if (communality == "maxRsqr") hsq <- apply((R - diag(ncol(R)))^2, 2, max)
+  if (communality == "maxr")    hsq <- apply( abs((R - diag(ncol(R)))) , 2, max)
   if (communality == "unity")   hsq <- rep(1, ncol(R))
-
+  
   ## If digits is not set, select arbitrarily big value
   if ( is.null(digits) ) {
     digits <- options()$digits
   } # END if ( is.null(digits) )
-
+  
   ## ~~~~~~~~~~~~~~~~~~ ##
   #### Begin Function ####
   ## ~~~~~~~~~~~~~~~~~~ ##
-
+  
   ## Initialize parameter for convergence evaluation
   error <- 1
-
+  
   ## Initialize iteration parameter
   iter <- 1
-
+  
   ## Iterated principal axis factoring
   while (error > epsilon && iter < maxItr) {
-
+    
+    
     ## Reduced correlation matrix with communalities on diagonal
     diag(R) <- hsq
-
+    
     ## Find eigenvalues & eigenvectors for reduced R
     Eigs <- eigen(R)
-
+    
+    
     ## Cannot take diag() of a scalar, same analyses, slightly different format
     if (numFactors > 1) {
-
+      
+      
+      # NGW March 12 2019
+      # Set negative eigenvalues to zero
+      EigVals <- Eigs$values
+      EigVals[EigVals < 0] <- 0
+      
+      
       ## Lambda = A %*% D^1/2
-      Lambda <- Eigs$vec[, 1:numFactors] %*% diag(sqrt(Eigs$val[1:numFactors]))
-
+      Lambda <- Eigs$vec[, 1:numFactors] %*% diag(sqrt(EigVals[1:numFactors]))
+      
     } else {
-
+      
       ## Linear algebra with scalars in R does not work.
       ## Same analysis, different notation
       Lambda <- matrix(Eigs$vec[, 1] * sqrt(Eigs$val[1]), ncol = 1)
-
+      
     } # END if (numFactors > 1)
-
+    
     ## Find communality estimate from the factor loadings
     NewHsq <- diag( tcrossprod(Lambda) )
-
+    
     ## Change the way the error term is computed
-
+    
     ## Determine difference between old and new hsq estimates
     error <- abs( sum(NewHsq) - sum(hsq) )
-
+    
     ## Rewrite hsq for the next iteration
     hsq <- NewHsq
-
+    
     ## Track number of iterations used
     iter <- iter + 1
-
+    
   } # END while (error > epsilon && iter < maxItr) {
-
-  if (error > epsilon && iter < maxItr) {
+  
+  
+  ## NGW March 12 2019
+  convergence <- FALSE
+  if (error < epsilon && iter < maxItr) {
     ## Did the algorithm converge or hit its max iteration attempts?
-    convergance <- FALSE
-  } else {
-    convergance <- TRUE
-  } # END if (error > epsilon && iter < maxItr)
+    convergence <- TRUE
+  }
+  
   
   
   ## List of the final output
   list(loadings   = round(Lambda, digits),
        h2         = round(hsq, digits),
        iterations = iter,
-       converged  = convergance,
+       converged  = convergence,
        faControl  = list(epsilon     = epsilon,
                          communality = communality,
                          maxItr      = maxItr))
-
+  
 } # END fapa <- function(R, numFactors, epsilon, maxItr) {
 
 

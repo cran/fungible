@@ -15,8 +15,9 @@
 #' @param facMethod (Character) The method used for factor extraction 
 #' (\code{\link{faX}}). The supported options are "fals" for unweighted least 
 #' squares, "faml" for maximum likelihood, "fapa" for iterated principal axis 
-#' factoring, and "pca" for principal components analysis. The default method 
-#' is "fals". 
+#' factoring, "faregLS" for regularized least squares,
+#' "faregML" for regularized maximum likelihood, and "pca" for principal components 
+#'  analysis. The default method  is "fals". 
 #' \itemize{
 #'   \item \strong{"fals"}: Factors are extracted using the unweighted least 
 #'   squares estimation procedure using the \code{\link{fals}} function.
@@ -24,7 +25,11 @@
 #'   estimation procedure using the \code{\link[stats]{factanal}} function.
 #'   \item \strong{"fapa"}: Factors are extracted using the iterated principal 
 #'   axis factoring estimation procedure using the \code{\link{fapa}} function.
-#'   \item \strong{"pca}: Principal components are extracted. 
+#'   \item \strong{"faregLS"}: Factors are extracted using regularized 
+#'   least squares factor analysis using the \code{\link{fareg}} function. 
+#'   \item \strong{"faregML"}: Factors are extracted using regularized 
+#'   maximum likelihood factor using the \code{\link{fareg}} function. 
+#'   \item \strong{"pca"}: Principal components are extracted. 
 #' }
 #' @param urLoadings (Matrix) An unrotated factor-structure matrix to be rotated.
 #' @param rotate (Character) Designate which rotation algorithm to apply. The 
@@ -35,9 +40,15 @@
 #' "none". Defaults to rotate = "oblimin". See \pkg{GPArotation} package for more 
 #' details. Note that rotations ending in "T" and "Q" represent orthogonal and 
 #' oblique rotations, respectively.
-#' @param targetMatrix (Matrix) The target matrix for (fully and partially) 
-#' specified target rotations. To conduct Browne's (2001) partially-specified 
-#' target rotation, freely estimated factor loadings are designated by "NA" values.
+#' @param targetMatrix (Matrix) This argument serves two functions. First, if a 
+#' user has requested either a "targetT" or "targetQ' rotation, then 
+#'  the target matrix is used to conduct a fully or partially
+#' specified target rotation. In the latter case,  freely estimated factor 
+#' loadings are designated by "NA" values and rotation will be conducted using  
+#' Browne's (1972a, 1972b, 2001) method for a partially-specified 
+#' target rotation. Second, if any other rotation option is chosen then all 
+#' rotated loadings matrices (and assorted output) will be aligned 
+#' (but not rotated) with the target solution. 
 #' @param bootstrapSE (Logical) Computes bootstrap standard errors. All bootstrap 
 #' samples are aligned to the global minimum solution. Defaults to 
 #' bootstrapSE = FALSE (no standard errors). 
@@ -56,6 +67,8 @@
 #'   estimates below 1.0. Defaults to treatHeywood = TRUE.
 #'   \item \strong{nStart}: (Numeric) The number of starting values to be tried 
 #'   in \code{faml}. Defaults to nStart = 10.
+#'   \item \strong{start}: (Matrix) NULL or a matrix of starting values, each column 
+#'   giving an initial set of uniquenesses. Defaults to start = NULL. 
 #'   \item \strong{maxCommunality}: (Numeric) In \code{faml}, set the maximum 
 #'   communality value for the estimated solution. Defaults to maxCommunality = .995.
 #'   \item \strong{epsilon}: (Numeric) In \code{fapa}, the numeric threshold 
@@ -66,8 +79,8 @@
 #'     \item \strong{"SMC"}: Initial communalities are estimated by taking the 
 #'     squared multiple correlations of each indicator after regressing the 
 #'     indicator on the remaining variables.
-#'     \item \strong{"maxRsqr"}: Initial communalities equal the largest squared 
-#'     correlation in each column of the correlation matrix.
+#'     \item \strong{"maxr"}: Initial communalities equal the largest 
+#'     (absolute value) correlation in each column of the correlation matrix.
 #'     \item \strong{"unity"}: Initial communalities equal 1.0 for all variables.
 #'   }
 #'   \item \strong{maxItr}: (Numeric) In \code{fapa}, the maximum number of 
@@ -230,8 +243,11 @@
 #'     \item \strong{maxAbsGradient}: (Numeric) The maximum absolute value of the 
 #'     gradient at the least squares solution. 
 #'     \item \strong{Heywood}: (Logical) TRUE if a Heywood case was produced.
-#'     \item \strong{converged}: (Logical) TRUE if the least squares or 
-#'     principal axis factor extraction routine converged. 
+#'     \item \strong{convergedX}: (Logical) TRUE if the factor 
+#'     \strong{extraction} routine converged. 
+#'     \item \strong{convergedR}: (Logical) TRUE if the factor \strong{rotation} 
+#'     routine converged (for the local solution with the minimum discrepancy 
+#'     value).
 #'   }
 #'   \item \strong{rotateControl}: (List) A list of the control parameters 
 #'   passed to the rotation algorithm.
@@ -239,8 +255,11 @@
 #'   \item \strong{Call}: (call) A copy of the function call.
 #' }
 #' 
-#' @references Browne, M. W. (1972). Orthogonal rotation to a partially specifed
-#' target. \emph{British Journal of Statistical Psychology, 25}(1), 115-120.
+#' @references Browne, M. W.  (1972).  Oblique rotation to a partially specified 
+#' target.  \emph{British Journal of Mathematical and Statistical Psychology, 25},(1), 
+#' 207-212.  
+#' @references Browne, M. W. (1972b). Orthogonal rotation to a partially specifed
+#' target. \emph{British Journal of Statistical Psychology, 25},(1), 115-120.
 #' @references Browne, M. W. (2001). An overview of analytic rotation in 
 #' exploratory factor analysis. \emph{Multivariate Behavioral Research, 36}(1), 111-150.
 #' @references Cureton, E. E., & Mulaik, S. A. (1975). The weighted varimax 
@@ -248,6 +267,8 @@
 #' @references Guttman, L. (1955). The determinacy of factor score matrices with 
 #' implications for five other basic problems of common factor theory. 
 #' \emph{British Journal of Statistical Psychology, 8}(2), 65-81.
+#' @references Jung, S. & Takane, Y.  (2008).  Regularized common factor analysis.  
+#' \emph{New Trends in Psychometrics}, 141-149. 
 #' @references Mansolf, M., & Reise, S. P. (2016). Exploratory bifactor 
 #' analysis: The Schmid-Leiman orthogonalization and Jennrich-Bentler 
 #' analytic rotations. \emph{Multivariate Behavioral Research, 51}(5), 698-717.
@@ -378,7 +399,7 @@ faMain <-
            facMethod     = "fals",    ## Factor extraction method
            urLoadings    = NULL,      ## Unrotated loading matrix
            rotate        = "oblimin", ## Which rotation to use
-           targetMatrix  = NULL,      ## If targetT, matrix of specified loadings
+           targetMatrix  = NULL,      ## If targetT or targetQ, matrix of specified loadings
            bootstrapSE   = FALSE,     ## Whether to bootstrap stand. errors
            numBoot       = 1000,      ## Number of bootstrapped samples drawn
            CILevel       = .95,       ## Bootstrap SE confidence level
@@ -391,6 +412,8 @@ faMain <-
     ## ~~~~~~~~~~~~~~~~~~ ##
     #### Error checking ####
     ## ~~~~~~~~~~~~~~~~~~ ##
+    FLAGurLoadings <- FALSE
+    if(!is.null(urLoadings))  FLAGurLoadings <- TRUE
     
     ## Check rotate
     
@@ -413,9 +436,6 @@ faMain <-
     if ( rotate %in% PlausibleRotations == FALSE ) {
       stop("The 'rotate' argument is incorrectly specified. Check for spelling errors (case sensitive).")
     } # END if (rotate %in% PlausibleRotations == FALSE) {
-    
-    ## If only 1 factor, rotate must equal "none"
-    if ( is.null(urLoadings) && numFactors == 1 ) rotate <- "none"
     
     ## Check R
     
@@ -531,6 +551,15 @@ faMain <-
       matrixDim <- ncol(lambda)
       
       ## Perform rotation with the specified parameters
+      ## if numberStarts = 1 then rotate from the unrotated
+      ## solution
+      if(rotateControl$numberStarts == 1){
+        RandomSpinMatrix <- diag(matrixDim)
+      } 
+      if(rotateControl$numberStarts > 1){
+        RandomSpinMatrix <- randStart(matrixDim)
+      }
+      
       switch(rotation,
              "none" = {
                list(loadings = lambda,
@@ -538,7 +567,7 @@ faMain <-
              },
              "oblimin" = {
                GPArotation::oblimin(lambda,
-                                    Tmat      = randStart(matrixDim),
+                                    Tmat      = RandomSpinMatrix,
                                     gam       = cnRotate$gamma,
                                     normalize = FALSE,
                                     eps       = cnRotate$epsilon,
@@ -546,14 +575,14 @@ faMain <-
              },
              "quartimin" = {
                GPArotation::quartimin(lambda,
-                                      Tmat      = randStart(matrixDim),
+                                      Tmat      = RandomSpinMatrix,
                                       maxit     = cnRotate$maxItr,
                                       eps       = cnRotate$epsilon,
                                       normalize = FALSE)
              },
              "targetT" = {
                GPArotation::targetT(lambda,
-                                    Tmat      = randStart(matrixDim),
+                                    Tmat      = RandomSpinMatrix,
                                     Target    = targetMatrix,
                                     normalize = FALSE,
                                     eps       = cnRotate$epsilon,
@@ -561,7 +590,7 @@ faMain <-
              },
              "targetQ" = {
                GPArotation::targetQ(lambda,
-                                    Tmat      = randStart(matrixDim),
+                                    Tmat      = RandomSpinMatrix,
                                     Target    = targetMatrix,
                                     normalize = FALSE,
                                     eps       = cnRotate$epsilon,
@@ -569,35 +598,35 @@ faMain <-
              },
              "oblimax" = {
                GPArotation::oblimax(lambda,
-                                    Tmat      = randStart(matrixDim),
+                                    Tmat      = RandomSpinMatrix,
                                     normalize = FALSE,
                                     eps       = cnRotate$epsilon,
                                     maxit     = cnRotate$maxItr)
              },
              "entropy" = {
                GPArotation::entropy(lambda,
-                                    Tmat      = randStart(matrixDim),
+                                    Tmat      = RandomSpinMatrix,
                                     normalize = FALSE,
                                     eps       = cnRotate$epsilon,
                                     maxit     = cnRotate$maxItr)
              },
              "quartimax" = {
                GPArotation::quartimax(lambda,
-                                      Tmat      = randStart(matrixDim),
+                                      Tmat      = RandomSpinMatrix,
                                       normalize = FALSE,
                                       eps       = cnRotate$epsilon,
                                       maxit     = cnRotate$maxItr)
              },
              "varimax" = {
                GPArotation::Varimax(lambda,
-                                    Tmat      = randStart(matrixDim),
+                                    Tmat      = RandomSpinMatrix,
                                     normalize = FALSE,
                                     eps       = cnRotate$epsilon,
                                     maxit     = cnRotate$maxItr)
              },
              "simplimax" = {
                GPArotation::simplimax(lambda,
-                                      Tmat      = randStart(matrixDim),
+                                      Tmat      = RandomSpinMatrix,
                                       normalize = FALSE,
                                       eps       = cnRotate$epsilon,
                                       k         = cnRotate$k,
@@ -605,35 +634,35 @@ faMain <-
              },
              "bentlerT" = {
                GPArotation::bentlerT(lambda,
-                                     Tmat      = randStart(matrixDim),
+                                     Tmat      = RandomSpinMatrix,
                                      maxit     = cnRotate$maxItr,
                                      eps       = cnRotate$epsilon,
                                      normalize = FALSE)
              },
              "bentlerQ" = {
                GPArotation::bentlerQ(lambda,
-                                     Tmat      = randStart(matrixDim),
+                                     Tmat      = RandomSpinMatrix,
                                      maxit     = cnRotate$maxItr,
                                      eps       = cnRotate$epsilon,
                                      normalize = FALSE)
              },
              "tandemI" = {
                GPArotation::tandemI(lambda,
-                                    Tmat      = randStart(matrixDim),
+                                    Tmat      = RandomSpinMatrix,
                                     maxit     = cnRotate$maxItr,
                                     eps       = cnRotate$epsilon,
                                     normalize = FALSE)
              },
              "tandemII" = {
                GPArotation::tandemII(lambda,
-                                     Tmat      = randStart(matrixDim),
+                                     Tmat      = RandomSpinMatrix,
                                      maxit     = cnRotate$maxItr,
                                      eps       = cnRotate$epsilon,
                                      normalize = FALSE)
              },
              "geominT" = {
                GPArotation::geominT(lambda,
-                                    Tmat      = randStart(matrixDim),
+                                    Tmat      = RandomSpinMatrix,
                                     delta     = cnRotate$delta,
                                     normalize = FALSE,
                                     eps       = cnRotate$epsilon,
@@ -641,7 +670,7 @@ faMain <-
              },
              "geominQ" = {
                GPArotation::geominQ(lambda,
-                                    Tmat      = randStart(matrixDim),
+                                    Tmat      = RandomSpinMatrix,
                                     delta     = cnRotate$delta,
                                     normalize = FALSE,
                                     eps       = cnRotate$epsilon,
@@ -656,7 +685,7 @@ faMain <-
              },
              "cfT" = {
                GPArotation::cfT(lambda,
-                                Tmat      = randStart(matrixDim),
+                                Tmat      = RandomSpinMatrix,
                                 kappa     = cnRotate$kappa,
                                 maxit     = cnRotate$maxItr,
                                 eps       = cnRotate$epsilon,
@@ -664,7 +693,7 @@ faMain <-
              },
              "cfQ" = {
                GPArotation::cfQ(lambda,
-                                Tmat      = randStart(matrixDim),
+                                Tmat      = RandomSpinMatrix,
                                 kappa     = cnRotate$kappa,
                                 eps       = cnRotate$epsilon,
                                 normalize = FALSE,
@@ -672,35 +701,35 @@ faMain <-
              },
              "infomaxT" = {
                GPArotation::infomaxT(lambda,
-                                     Tmat      = randStart(matrixDim),
+                                     Tmat      = RandomSpinMatrix,
                                      normalize = FALSE,
                                      eps       = cnRotate$epsilon,
                                      maxit     = cnRotate$maxItr)
              },
              "infomaxQ" = {
                GPArotation::infomaxQ(lambda,
-                                     Tmat      = randStart(matrixDim),
+                                     Tmat      = RandomSpinMatrix,
                                      normalize = FALSE,
                                      eps       = cnRotate$epsilon,
                                      maxit     = cnRotate$maxItr)
              },
              "mccammon" = {
                GPArotation::mccammon(lambda,
-                                     Tmat      = randStart(matrixDim),
+                                     Tmat      = RandomSpinMatrix,
                                      normalize = FALSE,
                                      eps       = cnRotate$epsilon,
                                      maxit     = cnRotate$maxItr)
              },
              "bifactorT" = {
                GPArotation::bifactorT(lambda,
-                                      Tmat      = randStart(matrixDim),
+                                      Tmat      = RandomSpinMatrix,
                                       normalize = FALSE,
                                       eps       = cnRotate$epsilon,
                                       maxit     = cnRotate$maxItr)
              },
              "bifactorQ" = {
                GPArotation::bifactorQ(lambda,
-                                      Tmat      = randStart(matrixDim),
+                                      Tmat      = RandomSpinMatrix,
                                       normalize = FALSE,
                                       eps       = cnRotate$epsilon,
                                       maxit     = cnRotate$maxItr)
@@ -709,7 +738,8 @@ faMain <-
     
     ## Compute Guttman's factor determinacy indices
     GuttmanIndices <- function(Lambda, 
-                               PhiMat) {
+                               PhiMat,
+                               SampCorr) {
       ## Purpose: Compute Guttman (1955) factor indeterminacy indices
       ##
       ## Args:    Lambda: (Matrix) Rotated factor loadings matrix
@@ -718,14 +748,13 @@ faMain <-
       ## Fator structure (works for either oblique or orthogonal model)
       facStruct <- Lambda %*% PhiMat
       
-      ## Model-implied correlation matrix
-      modImpR <- facStruct %*% t(Lambda)
-      
-      ## Otherwise, diagonal elements are the communalities
-      diag(modImpR) <- 1
-      
+      Rinv  <-try(solve(SampCorr), silent = TRUE)
+      if( class(Rinv) == "try-error"){
+        warning("\n\nEncountered a singular R matrix when computing factor indeterminancy values\n")
+        return( rep(NA, ncol(Lambda) ) )
+      }
       ## Factor indeterminacy solution
-      sqrt( diag( t(facStruct) %*% solve(modImpR) %*% facStruct))
+      sqrt( diag( t(facStruct) %*% Rinv %*% facStruct))
     } # END GuttmanIndices
     
     #### ------- VARIABLE NAME RETENTION -------- ####
@@ -792,6 +821,9 @@ faMain <-
       faXh2 <- faOut$h2
       
       ## Extract all other output
+      
+      convergedPos <- which(names(faOut$faFit) %in% "converged")
+      names(faOut$faFit)[convergedPos] <- "convergedX"
       faModelFit <- faOut$faFit
       
     } # END if ( is.null(urLoadings) )
@@ -811,6 +843,10 @@ faMain <-
     lambda <- Stnd$lambda
     
     #### ------- ROTATION -------- ####
+    
+    
+    ## If only 1 factor, rotate must equal "none"
+    if ( numFactors == 1 ) rotate <- "none"
     
     ## Pre-allocate a list for the different attempts
     starts <- vector("list",
@@ -860,16 +896,16 @@ faMain <-
     } # END if (rotate == "none") {
     
     ## Find the sort order (minimum first)
-    sortOrder <- order(DiscrepFunc)
+    sortedDiscOrder <- order(DiscrepFunc)
     
     ## Create new list to hold the output
-    uniqueSolutions <- vector("list", length(sortOrder))
+    uniqueSolutions <- vector("list", length(sortedDiscOrder))
     
     ## Create list of output from local solutions
-    for (numStart in 1:length(sortOrder)) {
+    for (numStart in 1:length(sortedDiscOrder)) {
       
-      ## Determine which element of sortOrder to grab
-      num <- which(sortOrder == numStart)
+      ## Determine which element of sortedDiscOrder to grab
+      num <- which(sortedDiscOrder == numStart)
       
       ## Extract the relevant factor loadings and Phi matrices
       selected <- starts[[num]]
@@ -880,7 +916,7 @@ faMain <-
       sortedSols <- 
         orderFactors(Lambda  = selected$loadings,
                      PhiMat  = selected$Phi,
-                     salient = .29,
+                     salient = .01,
                      reflect = TRUE)
       
       ## Overwrite "selected" list
@@ -897,16 +933,20 @@ faMain <-
       uniqueSolutions[[numStart]]$DiscrepValue <- DiscrepFunc[num]
       
       #### ----- FACTOR INDETERMINACY ----- ####
-      
-      ## Guttman's factor indeterminacy indices
-      uniqueSolutions[[numStart]]$facIndeterminacy <- 
-        GuttmanIndices(Lambda = selected$loadings, 
-                       PhiMat = selected$Phi)
+      ## if the user provides urloadings then do not 
+      ## compute factor indeterminancy values
+      if( !isTRUE(FLAGurLoadings) ){
+         ## Guttman's factor indeterminacy indices
+         uniqueSolutions[[numStart]]$facIndeterminacy <- 
+           GuttmanIndices(Lambda = selected$loadings, 
+                          PhiMat = selected$Phi,
+                          SampCorr = R )
+      }# END if(!is.null((R)))
       
       ## Did the local optima solution converge
       uniqueSolutions[[numStart]]$converged <- selected$convergence
       
-    } # END for (numStart in 1:length(sortOrder))
+    } # END for (numStart in 1:length(sortedDiscOrder))
     
     ## Extracted discrepancy values from uniqueSolutions to find solution sets
     DisVal <- unlist(lapply(uniqueSolutions, function(x) x$DiscrepValue))
@@ -939,6 +979,26 @@ faMain <-
     minLambda  <- uniqueSolutions[[1]]$loadings
     minPhi     <- uniqueSolutions[[1]]$Phi
     facIndeter <- uniqueSolutions[[1]]$facIndeterminacy
+    ## If factor indeter. not computed, give NA values
+    if ( is.null(facIndeter) ) facIndeter <- rep(NA, ncol(minLambda))
+    
+    ## If target matrix given then align final factor solution 
+    ## to the target
+    
+    if ( !is.null(targetMatrix) && 
+        rotate %in% c("targetT", "targetQ", "none") == FALSE ) {
+      minAlign   <- faAlign(F1          = targetMatrix, 
+                            F2          = minLambda, 
+                            Phi2        = minPhi,
+                            MatchMethod = "LS")
+      minLambda  <- minAlign$F2
+      minPhi     <- minAlign$Phi2
+      facIndeter <- facIndeter[ minAlign$FactorMap[2, ] ]
+    }
+    
+    
+    
+    
     
     #### -------- BOOTSTRAP SETUP -------- ####
     
@@ -975,7 +1035,7 @@ faMain <-
                            size    = nSubj,
                            replace = TRUE)
         
-        ## Create correlation matrix
+        ## Create correlation matrix from the bootstrap sample
         Rsamp <- cor(X[bsSample, ], ...)
         
         ## Extract unrotated factors using resampled data matrix
@@ -1066,7 +1126,8 @@ faMain <-
         
         ## Save factor indeterminacy indices
         FIList[[iSample]] <- GuttmanIndices(Lambda = AlignedLambda,
-                                            PhiMat = AlignedPhi)
+                                            PhiMat = AlignedPhi,
+                                            SampCorr = Rsamp)
         
       } # END for (iSample in seq_len(numBoot))
       
@@ -1175,8 +1236,10 @@ faMain <-
     if(numFactors > 1) colnames(minLambda) <- facNames
     if(numFactors == 1) dimnames(minLambda) <- list(varNames, facNames)
     rownames(minPhi)  <-  
-      colnames(minPhi)  <- 
-      names(facIndeter) <- facNames
+      colnames(minPhi)  <- facNames
+    
+    ## facIndeter is NA if urLoadings is specified
+    if ( any(is.na(facIndeter)) == FALSE) names(facIndeter) <- facNames
     
     #### ------- SORT ITEMS -------- ####
     
@@ -1187,24 +1250,31 @@ faMain <-
                             phi  = minPhi)
       
       ## Determine the order in which items are sorted
-      sortOrder <- itemSorting$sortOrder
+      itemOrder <- itemSorting$sortOrder
       
       ## Sort items in global min lambda
-      minLambda <- minLambda[sortOrder, , drop=FALSE]
+      minLambda <- minLambda[itemOrder, , drop=FALSE]
       
       ## Sort items in rotateH2 (communality of indicators)
-      rotateH2 <- rotateH2[sortOrder]
+      rotateH2 <- rotateH2[itemOrder]
       
       ## If bootstrap is done, re-order factor indicators
       if (bootstrapSE == TRUE) {
-        loadSE       <- loadSE[sortOrder, , drop=FALSE]
-        loadCI.upper <- loadCI.upper[sortOrder, , drop=FALSE]
-        loadCI.lower <- loadCI.lower[sortOrder, , drop=FALSE]
-        loadArray    <- loadArray[sortOrder, , ,  drop=FALSE]
+        loadSE       <- loadSE[itemOrder, , drop=FALSE]
+        loadCI.upper <- loadCI.upper[itemOrder, , drop=FALSE]
+        loadCI.lower <- loadCI.lower[itemOrder, , drop=FALSE]
+        loadArray    <- loadArray[itemOrder, , ,  drop=FALSE]
         
       } # END if (bootstrapSE == TRUE)
       
     } # END if (cnRotate$itemSort == TRUE) 
+    
+    ## If no itemSort-ing, return a NULL value
+    if (cnRotate$itemSort == FALSE) itemOrder <- NULL
+    
+    
+    ## Add rotation convergence status to faFit
+    faModelFit$convergedR <- uniqueSolutions[[1]]$converged
     
     #### ----- OUTPUT ----- ####
     
@@ -1229,7 +1299,7 @@ faMain <-
          faControl             = faControl,
          faFit                 = faModelFit,
          rotateControl         = cnRotate,
-         itemOrder             = sortOrder,
+         itemOrder             = itemOrder,
          Call                  = CALL)
     
   } ## END rotate()

@@ -5,7 +5,7 @@
 \title{Velicer's minimum partial correlation method for determining the number of
 major components for a principal components analysis or a factor analysis}
 \usage{
-faMAP(R, max.fac = 8, Print = TRUE, Plot = TRUE)
+faMAP(R, max.fac = 8, Print = TRUE, Plot = TRUE, ...)
 }
 \arguments{
 \item{R}{input data in the form of a correlation matrix.}
@@ -15,6 +15,8 @@ faMAP(R, max.fac = 8, Print = TRUE, Plot = TRUE)
 \item{Print}{(logical) Print = TRUE will print complete results.}
 
 \item{Plot}{(logical) Plot = TRUE will plot the MAP values.}
+
+\item{...}{Arguments to be passed to the plot functions (see \code{par}).}
 }
 \value{
 \item{MAP}{Minimum partial correlations} \item{MAP4}{Minimum partial

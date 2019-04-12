@@ -19,6 +19,7 @@
 #' @param max.fac maximum number of dimensions to extract.
 #' @param Print (logical) Print = TRUE will print complete results.
 #' @param Plot (logical) Plot = TRUE will plot the MAP values.
+#' @param ...	Arguments to be passed to the plot functions (see \code{par}). 
 #' @return \item{MAP}{Minimum partial correlations} \item{MAP4}{Minimum partial
 #' correlations} \item{fm}{average of the squared partial correlations after
 #' the first m components are partialed out.} \item{fm4}{see Velicer, Eaton, &
@@ -70,7 +71,7 @@
 #' 	  
 #'   	faMAP(R, max.fac = 8, Print = TRUE, Plot = TRUE) 
 #' 
-faMAP <- function(R, max.fac = 8, Print=TRUE, Plot=TRUE) {
+faMAP <- function(R, max.fac = 8, Print=TRUE, Plot=TRUE, ...) {
 	
 nvars <- nrow(R)
 ULU <- eigen(R)
@@ -117,7 +118,8 @@ for(m in 1:(max.fac-1)){
  	     main=m1,
  	     xlab="Dimensions",
  	     ylab="Avg squared partial r",
- 	     xlim=c(1,max.fac))
+ 	     xlim=c(1,max.fac),
+ 	     ...)
 
   PlotAvgSq <- recordPlot()
  
@@ -127,7 +129,8 @@ for(m in 1:(max.fac-1)){
  		plot(1:max.fac,fm4,type="b", 
  	     main=m1,
  	     xlab="Dimensions",
- 	     ylab="Avg 4th partial r") 
+ 	     ylab="Avg 4th partial r",
+ 	     ...) 
  		
  		PlotAvg4th <- recordPlot()
   }	

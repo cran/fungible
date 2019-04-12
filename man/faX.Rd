@@ -24,13 +24,42 @@ principal components analysis. The default method is "fals".
   squares estimation procedure using the \code{\link{fals}} function.
   \item \strong{"faml"}: Factors are extracted using the maximum likelihood 
   estimation procedure using the \code{\link[stats]{factanal}} function.
+  \item \strong{"faregLS"}: Factors are extracted using regularized 
+  least squares factor analysis using the \code{\link{fareg}} function. 
+  \item \strong{"faregML"}: Factors are extracted using regularized 
+  maximum likelihood factor using the \code{\link{fareg}} function. 
   \item \strong{"fapa"}: Factors are extracted using the iterated principal 
   axis factoring estimation procedure using the \code{\link{fapa}} function.
-  \item \strong{"pca}: Principal components are extracted. 
+  \item \strong{"pca"}: Principal components are extracted. 
 }}
 
 \item{faControl}{(List) A list of optional parameters passed to the factor 
-extraction routines.}
+extraction (\code{\link{faX}}) function.
+\itemize{
+  \item \strong{treatHeywood}: (Logical) In \code{fals}, if treatHeywood is 
+  true, a penalized least squares function is used to bound the communality 
+  estimates below 1.0. Defaults to treatHeywood = TRUE.
+  \item \strong{nStart}: (Numeric) The number of starting values to be tried 
+  in \code{faml}. Defaults to nStart = 10.
+  \item \strong{start}: (Matrix) NULL or a matrix of starting values, each column 
+  giving an initial set of uniquenesses. Defaults to start = NULL. 
+  \item \strong{maxCommunality}: (Numeric) In \code{faml}, set the maximum 
+  communality value for the estimated solution. Defaults to maxCommunality = .995.
+  \item \strong{epsilon}: (Numeric) In \code{fapa}, the numeric threshold 
+  designating when the algorithm has converged. Defaults to epsilon = 1e-4.
+  \item \strong{communality}: (Character) The method used to estimate the 
+  initial communality values in \code{fapa}. Defaults to communality = 'SMC'.
+  \itemize{
+    \item \strong{"SMC"}: Initial communalities are estimated by taking the 
+    squared multiple correlations of each indicator after regressing the 
+    indicator on the remaining variables.
+    \item \strong{"maxr"}: Initial communalities equal the largest 
+    (absolute value) correlation in each column of the correlation matrix.
+    \item \strong{"unity"}: Initial communalities equal 1.0 for all variables.
+  }
+  \item \strong{maxItr}: (Numeric) In \code{fapa}, the maximum number of 
+  iterations to reach convergence. Defaults to maxItr = 15,000.
+}}
 
 \item{digits}{(Numeric) Rounds the values to the specified number of decimal 
 places. Defaults to digits = NULL (no rounding).}
@@ -107,7 +136,7 @@ diag(R) <- 1
 Out1 <- faX(R          = R,
             numFactors = 3,
             facMethod  = "fapa",
-            faControl  = list(communality = "maxRsqr",
+            faControl  = list(communality = "maxr",
                               epsilon     = 1e-4))
 
 ## Extract (least squares) factors using the factExtract function
@@ -118,6 +147,9 @@ Out2 <- faX(R          = R,
 
 }
 \references{
+Jung, S. & Takane, Y.  (2008).  Regularized common factor analysis.  
+New trends in psychometrics, 141-149.
+
 Steiger, J. H., & Lind, J. (1980). Paper presented at the annual 
 meeting of the Psychometric Society. \emph{Statistically-based tests for the 
 number of common factors.}
@@ -128,10 +160,11 @@ estimates of communality: Initial estimate need not affect stabilized value.
 }
 \seealso{
 Other Factor Analysis Routines: \code{\link{BiFAD}},
-  \code{\link{SLi}}, \code{\link{SchmidLeiman}},
-  \code{\link{faAlign}}, \code{\link{faMain}},
-  \code{\link{faSort}}, \code{\link{faStandardize}},
-  \code{\link{fals}}, \code{\link{fapa}},
+  \code{\link{GenerateBoxData}}, \code{\link{SLi}},
+  \code{\link{SchmidLeiman}}, \code{\link{faAlign}},
+  \code{\link{faMain}}, \code{\link{faSort}},
+  \code{\link{faStandardize}}, \code{\link{fals}},
+  \code{\link{fapa}}, \code{\link{fareg}},
   \code{\link{orderFactors}}, \code{\link{promaxQ}}
 }
 \author{

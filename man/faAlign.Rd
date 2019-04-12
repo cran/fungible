@@ -166,10 +166,11 @@ Algorithms and Complexity. Englewood Cliffs: Prentice Hall.
 }
 \seealso{
 Other Factor Analysis Routines: \code{\link{BiFAD}},
-  \code{\link{SLi}}, \code{\link{SchmidLeiman}},
-  \code{\link{faMain}}, \code{\link{faSort}},
-  \code{\link{faStandardize}}, \code{\link{faX}},
-  \code{\link{fals}}, \code{\link{fapa}},
+  \code{\link{GenerateBoxData}}, \code{\link{SLi}},
+  \code{\link{SchmidLeiman}}, \code{\link{faMain}},
+  \code{\link{faSort}}, \code{\link{faStandardize}},
+  \code{\link{faX}}, \code{\link{fals}},
+  \code{\link{fapa}}, \code{\link{fareg}},
   \code{\link{orderFactors}}, \code{\link{promaxQ}}
 }
 \author{

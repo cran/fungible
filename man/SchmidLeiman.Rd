@@ -20,8 +20,9 @@ orthogonalize up to (and including) a three-order factor solution.}
 \item{facMethod}{(Character) The method used for factor extraction 
 (\code{\link{faX}}). The supported options are "fals" for unweighted least 
 squares, "faml" for maximum likelihood, "fapa" for iterated principal axis 
-factoring, and "pca" for principal components analysis. The default method 
-is "fals". 
+factoring, "faregLS" for regularized least squares,
+"faregML" for regularized maximum likelihood, and "pca" for principal components 
+ analysis. The default method  is "fals". 
 \itemize{
   \item \strong{"fals"}: Factors are extracted using the unweighted least 
   squares estimation procedure using the \code{\link{fals}} function.
@@ -29,7 +30,11 @@ is "fals".
   estimation procedure using the \code{\link[stats]{factanal}} function.
   \item \strong{"fapa"}: Factors are extracted using the iterated principal 
   axis factoring estimation procedure using the \code{\link{fapa}} function.
-  \item \strong{"pca}: Principal components are extracted. 
+  \item \strong{"faregLS"}: Factors are extracted using regularized 
+  least squares factor analysis using the \code{\link{fareg}} function. 
+  \item \strong{"faregML"}: Factors are extracted using regularized 
+  maximum likelihood factor using the \code{\link{fareg}} function. 
+  \item \strong{"pca"}: Principal components are extracted. 
 }}
 
 \item{rotate}{(Character) Designate which rotation algorithm to apply. See 
@@ -53,6 +58,8 @@ extraction (\code{\link{faX}}) function.
   estimates below 1.0. Defaults to treatHeywood = TRUE.
   \item \strong{nStart}: (Numeric) The number of starting values to be tried 
   in \code{faml}. Defaults to nStart = 10.
+  \item \strong{start}: (Matrix) NULL or a matrix of starting values, each column 
+  giving an initial set of uniquenesses. Defaults to start = NULL. 
   \item \strong{maxCommunality}: (Numeric) In \code{faml}, set the maximum 
   communality value for the estimated solution. Defaults to maxCommunality = .995.
   \item \strong{epsilon}: (Numeric) In \code{fapa}, the numeric threshold 
@@ -63,8 +70,8 @@ extraction (\code{\link{faX}}) function.
     \item \strong{"SMC"}: Initial communalities are estimated by taking the 
     squared multiple correlations of each indicator after regressing the 
     indicator on the remaining variables.
-    \item \strong{"maxRsqr"}: Initial communalities equal the largest squared 
-    correlation in each column of the correlation matrix.
+    \item \strong{"maxr"}: Initial communalities equal the largest 
+    (absolute value) correlation in each column of the correlation matrix.
     \item \strong{"unity"}: Initial communalities equal 1.0 for all variables.
   }
   \item \strong{maxItr}: (Numeric) In \code{fapa}, the maximum number of 
@@ -198,10 +205,11 @@ hierarchical factor solutions. \emph{Psychometrika, 22}(1), 53-61.
 }
 \seealso{
 Other Factor Analysis Routines: \code{\link{BiFAD}},
-  \code{\link{SLi}}, \code{\link{faAlign}},
-  \code{\link{faMain}}, \code{\link{faSort}},
-  \code{\link{faStandardize}}, \code{\link{faX}},
-  \code{\link{fals}}, \code{\link{fapa}},
+  \code{\link{GenerateBoxData}}, \code{\link{SLi}},
+  \code{\link{faAlign}}, \code{\link{faMain}},
+  \code{\link{faSort}}, \code{\link{faStandardize}},
+  \code{\link{faX}}, \code{\link{fals}},
+  \code{\link{fapa}}, \code{\link{fareg}},
   \code{\link{orderFactors}}, \code{\link{promaxQ}}
 }
 \author{

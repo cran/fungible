@@ -22,8 +22,9 @@ faMain(X = NULL, R = NULL, n = NULL, numFactors = NULL,
 \item{facMethod}{(Character) The method used for factor extraction 
 (\code{\link{faX}}). The supported options are "fals" for unweighted least 
 squares, "faml" for maximum likelihood, "fapa" for iterated principal axis 
-factoring, and "pca" for principal components analysis. The default method 
-is "fals". 
+factoring, "faregLS" for regularized least squares,
+"faregML" for regularized maximum likelihood, and "pca" for principal components 
+ analysis. The default method  is "fals". 
 \itemize{
   \item \strong{"fals"}: Factors are extracted using the unweighted least 
   squares estimation procedure using the \code{\link{fals}} function.
@@ -31,7 +32,11 @@ is "fals".
   estimation procedure using the \code{\link[stats]{factanal}} function.
   \item \strong{"fapa"}: Factors are extracted using the iterated principal 
   axis factoring estimation procedure using the \code{\link{fapa}} function.
-  \item \strong{"pca}: Principal components are extracted. 
+  \item \strong{"faregLS"}: Factors are extracted using regularized 
+  least squares factor analysis using the \code{\link{fareg}} function. 
+  \item \strong{"faregML"}: Factors are extracted using regularized 
+  maximum likelihood factor using the \code{\link{fareg}} function. 
+  \item \strong{"pca"}: Principal components are extracted. 
 }}
 
 \item{urLoadings}{(Matrix) An unrotated factor-structure matrix to be rotated.}
@@ -45,9 +50,15 @@ following are available rotation options: "oblimin", "quartimin", "targetT",
 details. Note that rotations ending in "T" and "Q" represent orthogonal and 
 oblique rotations, respectively.}
 
-\item{targetMatrix}{(Matrix) The target matrix for (fully and partially) 
-specified target rotations. To conduct Browne's (2001) partially-specified 
-target rotation, freely estimated factor loadings are designated by "NA" values.}
+\item{targetMatrix}{(Matrix) This argument serves two functions. First, if a 
+user has requested either a "targetT" or "targetQ' rotation, then 
+ the target matrix is used to conduct a fully or partially
+specified target rotation. In the latter case,  freely estimated factor 
+loadings are designated by "NA" values and rotation will be conducted using  
+Browne's (1972a, 1972b, 2001) method for a partially-specified 
+target rotation. Second, if any other rotation option is chosen then all 
+rotated loadings matrices (and assorted output) will be aligned 
+(but not rotated) with the target solution.}
 
 \item{bootstrapSE}{(Logical) Computes bootstrap standard errors. All bootstrap 
 samples are aligned to the global minimum solution. Defaults to 
@@ -72,6 +83,8 @@ extraction (\code{\link{faX}}) function.
   estimates below 1.0. Defaults to treatHeywood = TRUE.
   \item \strong{nStart}: (Numeric) The number of starting values to be tried 
   in \code{faml}. Defaults to nStart = 10.
+  \item \strong{start}: (Matrix) NULL or a matrix of starting values, each column 
+  giving an initial set of uniquenesses. Defaults to start = NULL. 
   \item \strong{maxCommunality}: (Numeric) In \code{faml}, set the maximum 
   communality value for the estimated solution. Defaults to maxCommunality = .995.
   \item \strong{epsilon}: (Numeric) In \code{fapa}, the numeric threshold 
@@ -82,8 +95,8 @@ extraction (\code{\link{faX}}) function.
     \item \strong{"SMC"}: Initial communalities are estimated by taking the 
     squared multiple correlations of each indicator after regressing the 
     indicator on the remaining variables.
-    \item \strong{"maxRsqr"}: Initial communalities equal the largest squared 
-    correlation in each column of the correlation matrix.
+    \item \strong{"maxr"}: Initial communalities equal the largest 
+    (absolute value) correlation in each column of the correlation matrix.
     \item \strong{"unity"}: Initial communalities equal 1.0 for all variables.
   }
   \item \strong{maxItr}: (Numeric) In \code{fapa}, the maximum number of 
@@ -231,8 +244,11 @@ to the rotated factor pattern matrix and the factor correlations.
     \item \strong{maxAbsGradient}: (Numeric) The maximum absolute value of the 
     gradient at the least squares solution. 
     \item \strong{Heywood}: (Logical) TRUE if a Heywood case was produced.
-    \item \strong{converged}: (Logical) TRUE if the least squares or 
-    principal axis factor extraction routine converged. 
+    \item \strong{convergedX}: (Logical) TRUE if the factor 
+    \strong{extraction} routine converged. 
+    \item \strong{convergedR}: (Logical) TRUE if the factor \strong{rotation} 
+    routine converged (for the local solution with the minimum discrepancy 
+    value).
   }
   \item \strong{rotateControl}: (List) A list of the control parameters 
   passed to the rotation algorithm.
@@ -365,8 +381,12 @@ Out3 <- faMain(urLoadings   = lambda,
 Out3
 }
 \references{
-Browne, M. W. (1972). Orthogonal rotation to a partially specifed
-target. \emph{British Journal of Statistical Psychology, 25}(1), 115-120.
+Browne, M. W.  (1972).  Oblique rotation to a partially specified 
+target.  \emph{British Journal of Mathematical and Statistical Psychology, 25},(1), 
+207-212.
+
+Browne, M. W. (1972b). Orthogonal rotation to a partially specifed
+target. \emph{British Journal of Statistical Psychology, 25},(1), 115-120.
 
 Browne, M. W. (2001). An overview of analytic rotation in 
 exploratory factor analysis. \emph{Multivariate Behavioral Research, 36}(1), 111-150.
@@ -377,6 +397,9 @@ rotation and the promax rotation. \emph{Psychometrika, 40}(2), 183-195.
 Guttman, L. (1955). The determinacy of factor score matrices with 
 implications for five other basic problems of common factor theory. 
 \emph{British Journal of Statistical Psychology, 8}(2), 65-81.
+
+Jung, S. & Takane, Y.  (2008).  Regularized common factor analysis.  
+\emph{New Trends in Psychometrics}, 141-149.
 
 Mansolf, M., & Reise, S. P. (2016). Exploratory bifactor 
 analysis: The Schmid-Leiman orthogonalization and Jennrich-Bentler 
@@ -391,10 +414,11 @@ analysis. \emph{Multivariate Behavioral Research, 49}(4), 339-353.
 }
 \seealso{
 Other Factor Analysis Routines: \code{\link{BiFAD}},
-  \code{\link{SLi}}, \code{\link{SchmidLeiman}},
-  \code{\link{faAlign}}, \code{\link{faSort}},
-  \code{\link{faStandardize}}, \code{\link{faX}},
-  \code{\link{fals}}, \code{\link{fapa}},
+  \code{\link{GenerateBoxData}}, \code{\link{SLi}},
+  \code{\link{SchmidLeiman}}, \code{\link{faAlign}},
+  \code{\link{faSort}}, \code{\link{faStandardize}},
+  \code{\link{faX}}, \code{\link{fals}},
+  \code{\link{fapa}}, \code{\link{fareg}},
   \code{\link{orderFactors}}, \code{\link{promaxQ}}
 }
 \author{

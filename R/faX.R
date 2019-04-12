@@ -18,12 +18,15 @@
 #'   squares estimation procedure using the \code{\link{fals}} function.
 #'   \item \strong{"faml"}: Factors are extracted using the maximum likelihood 
 #'   estimation procedure using the \code{\link[stats]{factanal}} function.
+#'   \item \strong{"faregLS"}: Factors are extracted using regularized 
+#'   least squares factor analysis using the \code{\link{fareg}} function. 
+#'   \item \strong{"faregML"}: Factors are extracted using regularized 
+#'   maximum likelihood factor using the \code{\link{fareg}} function. 
 #'   \item \strong{"fapa"}: Factors are extracted using the iterated principal 
 #'   axis factoring estimation procedure using the \code{\link{fapa}} function.
-#'   \item \strong{"pca}: Principal components are extracted. 
+#'   \item \strong{"pca"}: Principal components are extracted. 
 #' }
-#' @param faControl (List) A list of optional parameters passed to the factor 
-#' extraction routines.
+#' 
 #' @inheritParams faMain
 #'
 #'
@@ -79,6 +82,8 @@
 #'
 #' @family Factor Analysis Routines
 #' 
+#' @references Jung, S. & Takane, Y.  (2008).  Regularized common factor analysis.  
+#' New trends in psychometrics, 141-149.  
 #' @references Steiger, J. H., & Lind, J. (1980). Paper presented at the annual 
 #' meeting of the Psychometric Society. \emph{Statistically-based tests for the 
 #' number of common factors.}
@@ -107,7 +112,7 @@
 #' Out1 <- faX(R          = R,
 #'             numFactors = 3,
 #'             facMethod  = "fapa",
-#'             faControl  = list(communality = "maxRsqr",
+#'             faControl  = list(communality = "maxr",
 #'                               epsilon     = 1e-4))
 #'
 #' ## Extract (least squares) factors using the factExtract function
@@ -152,7 +157,7 @@ faX <- function(R,
   ## Check facMethod
   
   ## Specified correctly?
-  facMethodOptions <- c("fals", "faml", "fapa", "pca")
+  facMethodOptions <- c("fals", "faml", "fapa", "faregLS", "faregML", "pca")
   if ( (facMethod %in% facMethodOptions) == FALSE ) {
     stop("The method of factor extraction is incorrectly specified. Select either 'fals', 'faml', 'fapa', or 'pca'.")
   } # END if ( (facMethod %in% facMethodOptions) == FALSE )
@@ -169,6 +174,7 @@ faX <- function(R,
   ## Assert the default options
   cnFA <- list(treatHeywood   = TRUE,
                nStart         = 10,
+               start          = NULL,
                maxCommunality = .995,
                epsilon        = 1e-4,
                communality    = "SMC",
@@ -214,7 +220,7 @@ faX <- function(R,
     ##          See Steiger & Lind (1980) & Browne & Cudeck (1993)
     ##
     ## Args:
-    ##          discVal: Discrepency value from ML fac estimation
+    ##          discVal: discrepancy value from ML fac estimation
     ##          DF:      Degrees of freedom
     ##          N:       Scalar, sample size, used for bias correction
     ## 
@@ -250,9 +256,20 @@ faX <- function(R,
                   factanal(covmat   = R,
                            factors  = numFactors,
                            n.obs    = n,
+                           start    = cnFA$start,
                            rotation = "none",
                            control  = list(nstart = cnFA$nStart,
                                            lower  = 1 - cnFA$maxCommunality))
+                },
+                 "faregLS" = {
+                  fareg(R   = R,
+                        numFactors  = numFactors,
+                        facMethod = "rls")
+                },
+                "faregML" = {
+                  fareg(R   = R,
+                        numFactors  = numFactors,
+                        facMethod = "rml")
                 },
                 "fapa" = {
                   fapa(R            = R,
@@ -294,7 +311,7 @@ faX <- function(R,
   modelFit$facMethod <- facMethod
   
   ## Communalities
-  modelFit$h2 <- diag(tcrossprod(Out$loadings))
+  modelFit$h2 <- apply(Out$loadings^2, 1, sum)
   
   ## Maximum likelihood indicies
   ## Degrees of freedom
@@ -331,7 +348,7 @@ faX <- function(R,
   } # END if (facMethod == "fals") 
   
   ## Were any Heywood cases detected
-  modelFit$Heywood <- any(modelFit$h2 > 1)
+  modelFit$Heywood <- any(modelFit$h2 >= 1)
   
   ## Did the extraction procedure converge
   modelFit$converged <- Out$converged
