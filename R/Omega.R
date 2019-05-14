@@ -55,7 +55,7 @@ Omega <- function(lambda,
 
   ## If digits is not specified, give it arbitrarily large value
   if ( is.null(digits) ) {
-    digits <- 100
+    digits <- options()$digits
   } # END if ( is.null(digits) )
 
   ## Is lambda a factor structure?

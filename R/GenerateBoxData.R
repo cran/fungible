@@ -1,20 +1,22 @@
-#' Generate Thurstone's Box Data From Amazon Boxes
+#' Generate Thurstone's Box Data From length, width, and height box measurements
 #'
-#' Generate data for Thurstone's 20 variable and 26 variable Box Study using Amazon Boxes measurements.  
+#' Generate data for Thurstone's 20 variable and 26 variable Box Study From length, width, and height box measurements.  
 #'
-#' @param XYZ (Matrix) The Amazon Box data. This can be accessed by calling \code{data(AmxBoxes)}.
+#' @param XYZ (Matrix) Length, width, and height measurements for N boxes.   The Amazon Box data 
+#'  can be accessed by calling \code{data(AmxBoxes)}. The Thurstone Box data (20 hypothetical boxes) 
+#'  can be accessed by calling \code{data(Thurstone20Boxes)}.
 #' @param BoxStudy (Integer) If BoxStudy = 20 then data will be generated for 
 #'    Thurstone's classic 20 variable box problem. If BoxStudy = 26 then data will 
 #'    be generated for Thurstone's 26 variable box problem. Default: \code{BoxStudy = 20}.
 #' @param Reliability (Scalar [0, 1] ) The common reliability value for each 
 #'    measured variable. Default: Reliability = .75.
-#' @param ModApproxErrVar (Scalar [0, 1] ) The proportion of reliabile 
+#' @param ModApproxErrVar (Scalar [0, 1] ) The proportion of reliable 
 #'    variance (for each variable) that is due to all minor common factors. 
 #'    Thus, if \code{x} (i.e., error free length) has variance \code{var(x)} and  
 #'     \code{ModApproxErrVar = .10}, then \code{var(e.ma)/var(x + e.ma) = .10}.
 #' @param  SampleSize (Integer) Specifies the number of boxes to be sampled from 
 #'   the population.  If \code{SampleSize = NULL} then measurements will be 
-#'   generated for the original 98 Amazon box sizes. 
+#'   generated for the original input box sizes. 
 #' @param  NMinorFac (Integer) The number of minor factors to use while 
 #'   generating model approximation error. Default: \code{NMinorFac = 50.}
 #' @param  epsTKL (Numeric [0, 1])  A parameter of the 
@@ -46,7 +48,7 @@
 #'  known as the Thurstone Box problem (see Kaiser and Horst, 1975).  To create his data for the Box problem, 
 #'  Thurstone constructed 20 nonlinear combinations of fictitious length, width, and height measurements. 
 #'  \strong{Box20} variables:
-#' \itemize{
+#' \enumerate{
 #'      \item   x^2
 #'      \item   y^2
 #'      \item   z^2
@@ -71,7 +73,7 @@
 #'    
 #'  The second Thurstone Box problem contains measurements on the following 26 functions of length, width, and height. 
 #'   \strong{Box26} variables:
-#'   \itemize{
+#'   \enumerate{
 #'   \item x
 #'   \item y
 #'   \item z
@@ -102,6 +104,9 @@
 #' 
 #' @return 
 #' \itemize{
+#'   \item \strong{XYZ} The length (x), width (y), and height (z) measurements for the sampled boxes. 
+#'          If \code{SampleSize = NULL} then \code{XYZ} contains the x, y, z values for the 
+#'          original 98 boxes.
 #'   \item \strong{BoxData} Error free box measurements.  
 #'   \item \strong{BoxDataE} Box data with added measurement error. 
 #'   \item \strong{BoxDataEME}  Box data with added (reliable) model approximation and (unreliable) measurement error.
@@ -122,7 +127,7 @@
 #' 
 #' @references 
 #' Kaiser, H. F. and Horst, P.  (1975).  A score matrix for Thurstone's box problem.  
-#' Multivariate Behavioral Research, 10(1), 17--26.  
+#' Multivariate Behavioral Research, 10(1), 17-26.  
 #' 
 #' Thurstone, L. L.  (1947).  Multiple Factor Analysis.  Chicago: 
 #' University of Chicago Press. 
@@ -153,7 +158,7 @@
 #'    RBoxes <- cor(BoxData)
 #'    out <- faMain(R = RBoxes,
 #'                  numFactors = 3,
-#'                  facMethods = "fals",
+#'                  facMethod = "fals",
 #'                  rotate = "geominQ",
 #'                  rotateControl = list(numberStarts = 100,
 #'                                       standardize = "CM")) 
@@ -280,7 +285,6 @@ GenerateBoxData <- function(XYZ,
      Z.ME <- scale(svd(matrix(rnorm(NBoxes * NMinorFactors), 
                              nrow = NBoxes,
                              ncol = NMinorFactors))$u) 
-     
 
     ModelErrorFactorScores <- Z.ME %*% t(W)
     
@@ -407,40 +411,53 @@ GenerateBoxData <- function(XYZ,
       BoxData <- MakeBox26(xT, yT, zT)
    }
   
-  # Unreliable Box Data
-    BoxDataE <- BoxData
-    set.seed(SeedErrorFactors)
-    for (j in 1:ncol(BoxDataE)) {
-      BoxDataE[, j] <- AddRandomError(BoxDataE[, j], 
-                                      Reliability, 
-                                      iter = j)
-    }
+   BoxDataE <- NULL
+   # Create Unreliable Box Data
+   if(Reliability < 1){
+       BoxDataE <- BoxData
+       set.seed(SeedErrorFactors)
+       for (j in 1:ncol(BoxDataE)) {
+         BoxDataE[, j] <- AddRandomError(BoxDataE[, j], 
+                                           Reliability, 
+                                          iter = j)
+       }
+   } # END  if(Reliability < 1)  
  
-  # Unreliable and Model Approximation Error  
-     # First add model Error  
-     set.seed(SeedMinorFactors)
-     BoxDataME <- AddModelError(BoxData,
-                                MEVar = ModApproxErrVar,
-                                NMinorFac = NMinorFac,
-                                epsTKL = epsTKL)
-     # Then add random error
-     set.seed(SeedErrorFactors)
-     BoxDataEME <- BoxDataME
+  # Unreliable and Model Approximation Error 
+   BoxDataEME <- NULL
+   if(ModApproxErrVar > 0){
+       # First add model Error  
+       set.seed(SeedMinorFactors)
+       BoxDataME <- AddModelError(BoxData,
+                                  MEVar = ModApproxErrVar,
+                                  NMinorFac = NMinorFac,
+                                  epsTKL = epsTKL)
+       # Then add random error
+       set.seed(SeedErrorFactors)
+       BoxDataEME <- BoxDataME
        for (j in 1:ncol(BoxDataEME)) {
        BoxDataEME[, j] <- AddRandomError(BoxDataME[, j], 
                                          Reliability, 
                                          iter = j)
-     } 
+       }
+   }# END if(ModApproxErrVar > 0)   
   
   # Reliability of Box data with error
+  Rel.E <- Rel.EME <- rep(1, ncol(BoxData))
+  if(Reliability < 1){
   Rel.E <- apply(BoxData, 2, var)/apply(BoxDataE, 2, var)
+  }
   
   # Reliability of Box data with model approximation error and
   # random error
-  Rel.EME <- 1/apply(BoxDataEME, 2, var)
+  Rel.EME <- NULL
+  if(ModApproxErrVar > 0) {
+      Rel.EME <- 1/apply(BoxDataEME, 2, var)
+  }    
   
  
-  list(BoxData = BoxData,
+  list(XYZ = XYZ,
+       BoxData = BoxData,
        BoxDataE = BoxDataE,
        BoxDataEME = BoxDataEME,
        Rel.E = Rel.E,

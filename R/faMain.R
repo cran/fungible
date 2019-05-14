@@ -2,9 +2,9 @@
 #' 
 #' This function conducts factor rotations (using the \pkg{GPArotation} package) 
 #' from a user-specified number of random (orthogonal) starting configurations. 
-#' Based on the resulting discrepancy function, the function determines the 
+#' Based on the resulting complexity function value, the function determines the 
 #' number of local minima and, among these local solutions, will find the 
-#' "global minimum" (i.e., the minimized discrepancy value from the finite 
+#' "global minimum" (i.e., the minimized complexity value from the finite 
 #' number of solutions). See Details below for an elaboration on the global 
 #' minimum. This function can also return bootstrap standard errors of the factor solution.
 #'
@@ -55,7 +55,7 @@
 #' @param numBoot (Numeric) The number bootstraps. Defaults to numBoot = 1000.
 #' @param CILevel (Numeric) The confidence level (between 0 and 1) of the bootstrap 
 #' confidence interval. Defaults to CILevel = .95.
-#' @param Seed (Numeric) Starting seed for reproducible bootstrap results. 
+#' @param Seed (Numeric) Starting seed for reproducible bootstrap results and factor rotations. 
 #' Defaults to Seed = 1.
 #' @param digits (Numeric) Rounds the values to the specified number of decimal 
 #' places. Defaults to digits = NULL (no rounding).
@@ -90,7 +90,8 @@
 #' @param rotateControl (List) A list of control values to pass to the factor rotation algorithms.
 #' \itemize{
 #'   \item \strong{numberStarts}: (Numeric) The number of random (orthogonal) 
-#'   starting configurations for the chosen rotation method (e.g., oblimin). 
+#'   starting configurations for the chosen rotation method (e.g., oblimin). The first
+#'   rotation will always commence from the unrotated factors orientation.
 #'   Defaults to numberStarts = 10. 
 #'   \item \strong{itemSort}: (Logical) If TRUE, sort the row order of all the following output 
 #'   such that variables loading on a common factor are grouped together for 
@@ -195,13 +196,15 @@
 #'   standard errors of Guttman's (1955) factor indeterminacy indices across the 
 #'   bootstrap factor solutions. 
 #'   \item \strong{localSolutions}: (List) A list containing all local solutions 
-#'   in ascending order of their discrepancy values (i.e., the first solution 
+#'   in ascending order of their factor loadings, rotation complexity values (i.e., the first solution 
 #'   is the "global" minimum). Each solution returns the 
-#'   (a) factor loadings, 
-#'   (b) factor correlations, 
-#'   (c) the discrepancy value of the rotation algorithm, 
-#'   (d) A vector of factor indeterminacy indices for each common factor, and 
-#'   (d) whether the rotation procedure converged.
+#'   \itemize{
+#'      \item \strong{loadings}: (Matrix) the factor loadings, 
+#'      \item \strong{Phi}: (Matrix) factor correlations, 
+#'      \item \strong{RotationComplexityValue}: (Numeric) the complexity value of the rotation algorithm, 
+#'      \item \strong{facIndeterminacy}: (Vector) A vector of factor indeterminacy indices for each common factor, and 
+#'      \item \strong{RotationConverged}: (Logical) convergence status of the rotation algorithm. 
+#'      }
 #'   \item \strong{numLocalSets} (Numeric) How many sets of local solutions
 #'    with the same discrepancy value were obtained. 
 #'   \item \strong{localSolutionSets}: (List) A list containing the sets of 
@@ -252,6 +255,8 @@
 #'   \item \strong{rotateControl}: (List) A list of the control parameters 
 #'   passed to the rotation algorithm.
 #'   \item \strong{itemOrder}: (Vector) The final item order if \code{itemSort = TRUE}. 
+#'   \item \strong{unSpunSolution}: (List) A list of output parameters (e.g., loadings, Phi, etc) from 
+#'   the rotated solution that was obtained by rotating directly from the unrotated (i.e., unspun) common factor orientation. 
 #'   \item \strong{Call}: (call) A copy of the function call.
 #' }
 #' 
@@ -539,26 +544,31 @@ faMain <-
     } # END randStart <- function(dimension) {
     
     ## Do the rotations, will be called multiple times
-    internalRotate <- function(lambda, rotation, rotateControl) {
+    internalRotate <- function(lambda, 
+                               rotation, 
+                               spinMatrix,
+                               rotateControl) {
       ## Purpose: Simple rotation wrapper
       ##
       ## Args: lambda:        (matrix) unrotated loadings to rotate
       ##       rotation:      (character) which rotation to use
+      ##       spinMatrix:    (Matrix) randomly spin unrotated factor loadings
       ##       rotateControl: (list) tuning parameters to pass to rotation
       ##
       
       ## Determine column dimensions
       matrixDim <- ncol(lambda)
       
-      ## Perform rotation with the specified parameters
-      ## if numberStarts = 1 then rotate from the unrotated
-      ## solution
-      if(rotateControl$numberStarts == 1){
-        RandomSpinMatrix <- diag(matrixDim)
-      } 
-      if(rotateControl$numberStarts > 1){
-        RandomSpinMatrix <- randStart(matrixDim)
-      }
+      # ## Perform rotation with the specified parameters
+      # ## if numberStarts = 1 then rotate from the unrotated
+      # ## solution
+      # if (rotateControl$numberStarts == 1) {
+      #   RandomSpinMatrix <- diag(matrixDim)
+      # } # END if (rotateControl$numberStarts == 1) 
+      # 
+      # if (rotateControl$numberStarts > 1) {
+      #   RandomSpinMatrix <- randStart(matrixDim)
+      # } # END if (rotateControl$numberStarts > 1) 
       
       switch(rotation,
              "none" = {
@@ -567,7 +577,7 @@ faMain <-
              },
              "oblimin" = {
                GPArotation::oblimin(lambda,
-                                    Tmat      = RandomSpinMatrix,
+                                    Tmat      = spinMatrix,
                                     gam       = cnRotate$gamma,
                                     normalize = FALSE,
                                     eps       = cnRotate$epsilon,
@@ -575,14 +585,14 @@ faMain <-
              },
              "quartimin" = {
                GPArotation::quartimin(lambda,
-                                      Tmat      = RandomSpinMatrix,
+                                      Tmat      = spinMatrix,
                                       maxit     = cnRotate$maxItr,
                                       eps       = cnRotate$epsilon,
                                       normalize = FALSE)
              },
              "targetT" = {
                GPArotation::targetT(lambda,
-                                    Tmat      = RandomSpinMatrix,
+                                    Tmat      = spinMatrix,
                                     Target    = targetMatrix,
                                     normalize = FALSE,
                                     eps       = cnRotate$epsilon,
@@ -590,7 +600,7 @@ faMain <-
              },
              "targetQ" = {
                GPArotation::targetQ(lambda,
-                                    Tmat      = RandomSpinMatrix,
+                                    Tmat      = spinMatrix,
                                     Target    = targetMatrix,
                                     normalize = FALSE,
                                     eps       = cnRotate$epsilon,
@@ -598,35 +608,35 @@ faMain <-
              },
              "oblimax" = {
                GPArotation::oblimax(lambda,
-                                    Tmat      = RandomSpinMatrix,
+                                    Tmat      = spinMatrix,
                                     normalize = FALSE,
                                     eps       = cnRotate$epsilon,
                                     maxit     = cnRotate$maxItr)
              },
              "entropy" = {
                GPArotation::entropy(lambda,
-                                    Tmat      = RandomSpinMatrix,
+                                    Tmat      = spinMatrix,
                                     normalize = FALSE,
                                     eps       = cnRotate$epsilon,
                                     maxit     = cnRotate$maxItr)
              },
              "quartimax" = {
                GPArotation::quartimax(lambda,
-                                      Tmat      = RandomSpinMatrix,
+                                      Tmat      = spinMatrix,
                                       normalize = FALSE,
                                       eps       = cnRotate$epsilon,
                                       maxit     = cnRotate$maxItr)
              },
              "varimax" = {
                GPArotation::Varimax(lambda,
-                                    Tmat      = RandomSpinMatrix,
+                                    Tmat      = spinMatrix,
                                     normalize = FALSE,
                                     eps       = cnRotate$epsilon,
                                     maxit     = cnRotate$maxItr)
              },
              "simplimax" = {
                GPArotation::simplimax(lambda,
-                                      Tmat      = RandomSpinMatrix,
+                                      Tmat      = spinMatrix,
                                       normalize = FALSE,
                                       eps       = cnRotate$epsilon,
                                       k         = cnRotate$k,
@@ -634,35 +644,35 @@ faMain <-
              },
              "bentlerT" = {
                GPArotation::bentlerT(lambda,
-                                     Tmat      = RandomSpinMatrix,
+                                     Tmat      = spinMatrix,
                                      maxit     = cnRotate$maxItr,
                                      eps       = cnRotate$epsilon,
                                      normalize = FALSE)
              },
              "bentlerQ" = {
                GPArotation::bentlerQ(lambda,
-                                     Tmat      = RandomSpinMatrix,
+                                     Tmat      = spinMatrix,
                                      maxit     = cnRotate$maxItr,
                                      eps       = cnRotate$epsilon,
                                      normalize = FALSE)
              },
              "tandemI" = {
                GPArotation::tandemI(lambda,
-                                    Tmat      = RandomSpinMatrix,
+                                    Tmat      = spinMatrix,
                                     maxit     = cnRotate$maxItr,
                                     eps       = cnRotate$epsilon,
                                     normalize = FALSE)
              },
              "tandemII" = {
                GPArotation::tandemII(lambda,
-                                     Tmat      = RandomSpinMatrix,
+                                     Tmat      = spinMatrix,
                                      maxit     = cnRotate$maxItr,
                                      eps       = cnRotate$epsilon,
                                      normalize = FALSE)
              },
              "geominT" = {
                GPArotation::geominT(lambda,
-                                    Tmat      = RandomSpinMatrix,
+                                    Tmat      = spinMatrix,
                                     delta     = cnRotate$delta,
                                     normalize = FALSE,
                                     eps       = cnRotate$epsilon,
@@ -670,7 +680,7 @@ faMain <-
              },
              "geominQ" = {
                GPArotation::geominQ(lambda,
-                                    Tmat      = RandomSpinMatrix,
+                                    Tmat      = spinMatrix,
                                     delta     = cnRotate$delta,
                                     normalize = FALSE,
                                     eps       = cnRotate$epsilon,
@@ -685,7 +695,7 @@ faMain <-
              },
              "cfT" = {
                GPArotation::cfT(lambda,
-                                Tmat      = RandomSpinMatrix,
+                                Tmat      = spinMatrix,
                                 kappa     = cnRotate$kappa,
                                 maxit     = cnRotate$maxItr,
                                 eps       = cnRotate$epsilon,
@@ -693,7 +703,7 @@ faMain <-
              },
              "cfQ" = {
                GPArotation::cfQ(lambda,
-                                Tmat      = RandomSpinMatrix,
+                                Tmat      = spinMatrix,
                                 kappa     = cnRotate$kappa,
                                 eps       = cnRotate$epsilon,
                                 normalize = FALSE,
@@ -701,35 +711,35 @@ faMain <-
              },
              "infomaxT" = {
                GPArotation::infomaxT(lambda,
-                                     Tmat      = RandomSpinMatrix,
+                                     Tmat      = spinMatrix,
                                      normalize = FALSE,
                                      eps       = cnRotate$epsilon,
                                      maxit     = cnRotate$maxItr)
              },
              "infomaxQ" = {
                GPArotation::infomaxQ(lambda,
-                                     Tmat      = RandomSpinMatrix,
+                                     Tmat      = spinMatrix,
                                      normalize = FALSE,
                                      eps       = cnRotate$epsilon,
                                      maxit     = cnRotate$maxItr)
              },
              "mccammon" = {
                GPArotation::mccammon(lambda,
-                                     Tmat      = RandomSpinMatrix,
+                                     Tmat      = spinMatrix,
                                      normalize = FALSE,
                                      eps       = cnRotate$epsilon,
                                      maxit     = cnRotate$maxItr)
              },
              "bifactorT" = {
                GPArotation::bifactorT(lambda,
-                                      Tmat      = RandomSpinMatrix,
+                                      Tmat      = spinMatrix,
                                       normalize = FALSE,
                                       eps       = cnRotate$epsilon,
                                       maxit     = cnRotate$maxItr)
              },
              "bifactorQ" = {
                GPArotation::bifactorQ(lambda,
-                                      Tmat      = RandomSpinMatrix,
+                                      Tmat      = spinMatrix,
                                       normalize = FALSE,
                                       eps       = cnRotate$epsilon,
                                       maxit     = cnRotate$maxItr)
@@ -852,12 +862,22 @@ faMain <-
     starts <- vector("list",
                      cnRotate$numberStarts)
     
+    ## Set the seed for reproducibility in random spin matrices
+    set.seed(seed = Seed)
+    
+    ## Create a list of matrices to randomly spin the factor structure
+    starts <- lapply(starts, function(x) randStart(dimension = ncol(lambda)))
+    
+    ## First start is always from the unrotated factor orientation
+    starts[[1]] <- diag(ncol(lambda))
+    
     ## For each list element, do the specified rotate and save all output
     starts <- lapply(starts, function(x) {
       
       ## Rotate the standardized factor structure matrix
       rotatedLambda <- internalRotate(lambda        = lambda,
                                       rotation      = rotate,
+                                      spinMatrix    = x,
                                       rotateControl = cnRotate)
       
       ## If an orthogonal model, make Phi identity matrix
@@ -876,38 +896,46 @@ faMain <-
       
     }) # END lapply(starts, function(x) )
     
-    #### ------- COUNT UNIQUE SOLUTIONS -------- ####
+    #### ------- ORDER UNIQUE SOLUTIONS -------- ####
     
-    ## Save the minimized discrepancy function for each attempt
+    ## Save the minimized Complexity function for each attempt
     ##    $Table[,2] is the value of criterion at each iteration, which.min
     ##    finds the minimum criterion value across each attempt
     
-    ## Evaluate the minimum disc functions to find smallest value
+    ## Evaluate the complexity functions to find smallest value
     if (rotate != "none") {
       
-      ## For each random start, find the evaluated discrepancy function
-      DiscrepFunc <- sapply(starts, function(attempt) min(attempt$Table[, 2]))
+      ## For each random start, find the evaluated Complexity function
+      ComplexityFunc <- sapply(starts, function(attempt) min(attempt$Table[, 2]))
       
     } # if (rotate != "none") 
     
-    ## No discrepancy function to evaluate when rotate = "none"
+    ## No Complexity function to evaluate when rotate = "none"
     if (rotate == "none") {
-      DiscrepFunc <- rep(1, cnRotate$numberStarts)
+      ComplexityFunc <- rep(1, cnRotate$numberStarts)
     } # END if (rotate == "none") {
     
-    ## Find the sort order (minimum first)
-    sortedDiscOrder <- order(DiscrepFunc)
+    ## Find the sort order (minimum first) of the rotation 
+    ## complexity fnc values
     
-    ## Create new list to hold the output
-    uniqueSolutions <- vector("list", length(sortedDiscOrder))
+    sortedComplexityOrder <- order(ComplexityFunc,
+                                   decreasing = FALSE)
+    
+    UnSpunPosition <- which.min(sortedComplexityOrder)
+    
+    ## Create new list to hold the rotated factor output 
+    ## (loadings, phi, complexity fnc etc)
+    uniqueSolutions <- vector("list", cnRotate$numberStarts)
     
     ## Create list of output from local solutions
-    for (numStart in 1:length(sortedDiscOrder)) {
+    for ( iternumStart in 1:cnRotate$numberStarts ) {
       
-      ## Determine which element of sortedDiscOrder to grab
-      num <- which(sortedDiscOrder == numStart)
+      ## Determine which element of sortedComplexityOrder to grab
+      ## Start with lowest Complexity value, end with highest
+      num <- sortedComplexityOrder[iternumStart]
       
       ## Extract the relevant factor loadings and Phi matrices
+      ## "starts" is the unsorted list of rotated output
       selected <- starts[[num]]
       
       #### ------- FACTOR SORT -------- ####
@@ -924,32 +952,32 @@ faMain <-
       selected$Phi      <- sortedSols$PhiMat
       
       ## Select the factor loadings
-      uniqueSolutions[[numStart]]$loadings <- selected$loadings
+      uniqueSolutions[[iternumStart]]$loadings <- selected$loadings
       
       ## Select factor correlations
-      uniqueSolutions[[numStart]]$Phi <- selected$Phi
+      uniqueSolutions[[iternumStart]]$Phi <- selected$Phi
       
-      ## Select discrepancy values
-      uniqueSolutions[[numStart]]$DiscrepValue <- DiscrepFunc[num]
+      ## Select complexity values
+      uniqueSolutions[[iternumStart]]$RotationComplexityValue <- ComplexityFunc[num]
       
       #### ----- FACTOR INDETERMINACY ----- ####
       ## if the user provides urloadings then do not 
       ## compute factor indeterminancy values
       if( !isTRUE(FLAGurLoadings) ){
-         ## Guttman's factor indeterminacy indices
-         uniqueSolutions[[numStart]]$facIndeterminacy <- 
-           GuttmanIndices(Lambda = selected$loadings, 
-                          PhiMat = selected$Phi,
-                          SampCorr = R )
+        ## Guttman's factor indeterminacy indices
+        uniqueSolutions[[iternumStart]]$facIndeterminacy <- 
+          GuttmanIndices(Lambda = selected$loadings, 
+                         PhiMat = selected$Phi,
+                         SampCorr = R )
       }# END if(!is.null((R)))
       
       ## Did the local optima solution converge
-      uniqueSolutions[[numStart]]$converged <- selected$convergence
+      uniqueSolutions[[iternumStart]]$RotationConverged <- selected$convergence
       
-    } # END for (numStart in 1:length(sortedDiscOrder))
+    } # END for (iternumStart in 1:length(sortedDiscOrder))
     
-    ## Extracted discrepancy values from uniqueSolutions to find solution sets
-    DisVal <- unlist(lapply(uniqueSolutions, function(x) x$DiscrepValue))
+    ## Extracted rotation complexity values from uniqueSolutions to find solution sets
+    DisVal <- unlist(lapply(uniqueSolutions, function(x) x$RotationComplexityValue))
     
     ## Round the discrepancy values to specified number of digits
     DisVal <- round(x      = DisVal,
@@ -986,7 +1014,7 @@ faMain <-
     ## to the target
     
     if ( !is.null(targetMatrix) && 
-        rotate %in% c("targetT", "targetQ", "none") == FALSE ) {
+         rotate %in% c("targetT", "targetQ", "none") == FALSE ) {
       minAlign   <- faAlign(F1          = targetMatrix, 
                             F2          = minLambda, 
                             Phi2        = minPhi,
@@ -1054,12 +1082,15 @@ faMain <-
         ## Find the "global" min out of all the random starting configurations
         bsStarts <- vector("list", cnRotate$numberStarts)
         
+        bsStarts <- lapply(bsStarts, function(x) randStart(dimension = numFactors))
+        
         ## Conduct rotations from random start values
         bsStarts <- lapply(bsStarts, function(x) {
           
           ## Rotate the bootstrapped samples
           bsRotated <- internalRotate(lambda        = bsLambda,
                                       rotation      = rotate,
+                                      spinMatrix    = x,
                                       rotateControl = cnRotate)
           
           ## If an orthogonal model, turn Phi into an identity matrix
@@ -1080,16 +1111,16 @@ faMain <-
         if ( rotate != "none" ) {
           
           ## For each random start, find the evaluated discrepancy function
-          bsDiscrepFunc <- sapply(bsStarts, function(attempt) min(attempt$Table[, 2]))
+          bootstrapComplexityFunc <- sapply(bsStarts, function(attempt) min(attempt$Table[, 2]))
           
         }# END if ( rotate != "none" ) 
         
         ## If no rotation, no discrepancy value to evaluate
-        if (rotate == "none") bsDiscrepFunc <- rep(1, cnRotate$numberStarts)
+        if (rotate == "none") bootstrapComplexityFunc <- rep(1, cnRotate$numberStarts)
         
         ## Of all random configs, determinine which has the lowest criterion value
-        bsLambda <- bsStarts[[which.min(bsDiscrepFunc)]]$loadings
-        bsPhi    <- bsStarts[[which.min(bsDiscrepFunc)]]$Phi
+        bsLambda <- bsStarts[[which.min(bootstrapComplexityFunc)]]$loadings
+        bsPhi    <- bsStarts[[which.min(bootstrapComplexityFunc)]]$Phi
         
         ## Unstandardize the minimum rotated solution for this bootstrap sample
         bsLambda <- bsStnd$DvInv %*% bsLambda
@@ -1278,28 +1309,32 @@ faMain <-
     
     #### ----- OUTPUT ----- ####
     
-    list(R                     = R,
-         loadings              = round(minLambda, digits),
-         Phi                   = round(minPhi,    digits),
-         facIndeterminacy      = facIndeter,
-         h2                    = rotateH2,
-         loadingsSE            = loadSE,
-         loadingsCIupper       = loadCI.upper,
-         loadingsCIlower       = loadCI.lower,
-         PhiSE                 = phiSE,
-         PhiCIupper            = phiCI.upper,
-         PhiCIlower            = phiCI.lower,
-         facIndeterminacySE    = FISE,
-         localSolutions        = uniqueSolutions,
-         numLocalSets          = nGrp,
-         localSolutionSets     = localGrps,
-         loadingsArray         = loadArray,
-         PhiArray              = phiArray,
-         facIndeterminacyArray = FIArray,
-         faControl             = faControl,
-         faFit                 = faModelFit,
-         rotateControl         = cnRotate,
-         itemOrder             = itemOrder,
-         Call                  = CALL)
+    fout <- list(R                     = R,
+            loadings              = minLambda,
+            Phi                   = minPhi,
+            facIndeterminacy      = facIndeter,
+            h2                    = rotateH2,
+            loadingsSE            = loadSE,
+            loadingsCIupper       = loadCI.upper,
+            loadingsCIlower       = loadCI.lower,
+            PhiSE                 = phiSE,
+            PhiCIupper            = phiCI.upper,
+            PhiCIlower            = phiCI.lower,
+            facIndeterminacySE    = FISE,
+            localSolutions        = uniqueSolutions,
+            numLocalSets          = nGrp,
+            localSolutionSets     = localGrps,
+            loadingsArray         = loadArray,
+            PhiArray              = phiArray,
+            facIndeterminacyArray = FIArray,
+            faControl             = faControl,
+            faFit                 = faModelFit,
+            rotateControl         = cnRotate,
+            itemOrder             = itemOrder,
+            unSpunSolution        = uniqueSolutions[[UnSpunPosition]],
+            Call                  = CALL)
+    class(fout) <- 'faMain'
+    fout
     
-  } ## END rotate()
+  } ## END faMAIN
+

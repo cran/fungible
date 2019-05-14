@@ -81,7 +81,8 @@ extraction (\code{\link{faX}}) function.
 \item{rotateControl}{(List) A list of control values to pass to the factor rotation algorithms.
 \itemize{
   \item \strong{numberStarts}: (Numeric) The number of random (orthogonal) 
-  starting configurations for the chosen rotation method (e.g., oblimin). 
+  starting configurations for the chosen rotation method (e.g., oblimin). The first
+  rotation will always commence from the unrotated factors orientation.
   Defaults to numberStarts = 10. 
   \item \strong{itemSort}: (Logical) If TRUE, sort the row order of all the following output 
   such that variables loading on a common factor are grouped together for 

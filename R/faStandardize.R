@@ -64,13 +64,15 @@ faStandardize <- function(method,
     NVar <- nrow(x)
     wghts <- rep(0, NVar)
     fpls <- x[,1] # First principle component loadings
-    acosi <- acos( NFac ^ (-1/2) )
+    acosi <- acos( NFac^(-1/2) )
     for (i in 1:NVar) {
       num <- (acosi - acos(abs(fpls[i])))
       dem <- (acosi -
                 (function(a, m) ifelse(abs(a) < (m ^ (-1/2)),
                                        pi/2, 0) )(fpls[i], NFac))
-      wghts[i] <- cos(num / dem * pi / 2) ^ 2
+      
+      ## see Cureton and Mulaik page 187
+      wghts[i] <- cos(num / dem * pi / 2)^2   + .001
     }
     return( diag(wghts) )
   } # END CM

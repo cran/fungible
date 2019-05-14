@@ -85,7 +85,8 @@ fareg <- function(R,
                   numFactors = 1,
                   facMethod = "rls"){
   
-  # Date: 04/03/2019
+  
+  # Date: 04/19/2019
   # Arguments:
   #
   # R  (numeric matrix) Input correlation matrix.
@@ -139,7 +140,16 @@ fareg <- function(R,
       UDU <- eigen(Ri)
       U <- UDU$vectors
       D <- UDU$values
-      F <- U[,1:numFactors] %*% diag(sqrt(D[1:numFactors]))
+      
+      if( numFactors == 1){
+        F <- U[,1] * sqrt(D[1])
+      }
+      
+      if( numFactors > 1){
+        F <- U[,1:numFactors] %*% diag(sqrt(D[1:numFactors]))
+      }
+      
+      
       Rhat <- F %*% t(F)
       rmsd(Ri, Rhat, 
            Symmetric = TRUE,
@@ -152,7 +162,15 @@ fareg <- function(R,
     UDU <- eigen(Ri)
     U <- UDU$vectors
     D <- UDU$values
-    F <- U[,1:numFactors] %*% diag(sqrt(D[1:numFactors]))
+    
+    if( numFactors == 1){
+      F <- U[,1] * sqrt(D[1])
+    }
+    
+    if( numFactors > 1){
+      F <- U[,1:numFactors] %*% diag(sqrt(D[1:numFactors]))
+    }
+    
     Rhat <- F %*% t(F)
     diag(Rhat) <- 1
     RhatInv <- solve(Rhat)
@@ -166,8 +184,16 @@ fareg <- function(R,
     UDU <- eigen(Ri)
     U <- UDU$vectors
     D <- UDU$values
+    
     # return unrotated factor loading matrix
-    U[,1:numFactors] %*% diag(sqrt(D[1:numFactors]))
+    if( numFactors == 1){
+      F <- U[,1] * sqrt(D[1])
+    }
+    
+    if( numFactors > 1){
+      F <- U[,1:numFactors] %*% diag(sqrt(D[1:numFactors]))
+    }
+    F
   }
   
   maxPsi <- max(diag(Psi))
@@ -191,7 +217,16 @@ fareg <- function(R,
   # Compute regularized loadings
   loadings <- faSolution(Lopt)
   
-  h2 <- apply(loadings^2, 1, sum)
+  if(numFactors == 1){
+    loadings <- as.matrix(loadings)
+    h2 <- as.vector(loadings^2)
+  }  
+  
+  if( numFactors > 1){
+      h2 <- apply(loadings^2, 1, sum)
+  }    
+  
+  
   Heywood <- FALSE
   # By design, Heywood should never be TRUE
   if(max(h2 > 1)) Heywood <- TRUE

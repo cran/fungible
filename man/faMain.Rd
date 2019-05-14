@@ -69,7 +69,7 @@ bootstrapSE = FALSE (no standard errors).}
 \item{CILevel}{(Numeric) The confidence level (between 0 and 1) of the bootstrap 
 confidence interval. Defaults to CILevel = .95.}
 
-\item{Seed}{(Numeric) Starting seed for reproducible bootstrap results. 
+\item{Seed}{(Numeric) Starting seed for reproducible bootstrap results and factor rotations. 
 Defaults to Seed = 1.}
 
 \item{digits}{(Numeric) Rounds the values to the specified number of decimal 
@@ -106,7 +106,8 @@ extraction (\code{\link{faX}}) function.
 \item{rotateControl}{(List) A list of control values to pass to the factor rotation algorithms.
 \itemize{
   \item \strong{numberStarts}: (Numeric) The number of random (orthogonal) 
-  starting configurations for the chosen rotation method (e.g., oblimin). 
+  starting configurations for the chosen rotation method (e.g., oblimin). The first
+  rotation will always commence from the unrotated factors orientation.
   Defaults to numberStarts = 10. 
   \item \strong{itemSort}: (Logical) If TRUE, sort the row order of all the following output 
   such that variables loading on a common factor are grouped together for 
@@ -196,13 +197,15 @@ to the rotated factor pattern matrix and the factor correlations.
   standard errors of Guttman's (1955) factor indeterminacy indices across the 
   bootstrap factor solutions. 
   \item \strong{localSolutions}: (List) A list containing all local solutions 
-  in ascending order of their discrepancy values (i.e., the first solution 
+  in ascending order of their factor loadings, rotation complexity values (i.e., the first solution 
   is the "global" minimum). Each solution returns the 
-  (a) factor loadings, 
-  (b) factor correlations, 
-  (c) the discrepancy value of the rotation algorithm, 
-  (d) A vector of factor indeterminacy indices for each common factor, and 
-  (d) whether the rotation procedure converged.
+  \itemize{
+     \item \strong{loadings}: (Matrix) the factor loadings, 
+     \item \strong{Phi}: (Matrix) factor correlations, 
+     \item \strong{RotationComplexityValue}: (Numeric) the complexity value of the rotation algorithm, 
+     \item \strong{facIndeterminacy}: (Vector) A vector of factor indeterminacy indices for each common factor, and 
+     \item \strong{RotationConverged}: (Logical) convergence status of the rotation algorithm. 
+     }
   \item \strong{numLocalSets} (Numeric) How many sets of local solutions
    with the same discrepancy value were obtained. 
   \item \strong{localSolutionSets}: (List) A list containing the sets of 
@@ -253,15 +256,17 @@ to the rotated factor pattern matrix and the factor correlations.
   \item \strong{rotateControl}: (List) A list of the control parameters 
   passed to the rotation algorithm.
   \item \strong{itemOrder}: (Vector) The final item order if \code{itemSort = TRUE}. 
+  \item \strong{unSpunSolution}: (List) A list of output parameters (e.g., loadings, Phi, etc) from 
+  the rotated solution that was obtained by rotating directly from the unrotated (i.e., unspun) common factor orientation. 
   \item \strong{Call}: (call) A copy of the function call.
 }
 }
 \description{
 This function conducts factor rotations (using the \pkg{GPArotation} package) 
 from a user-specified number of random (orthogonal) starting configurations. 
-Based on the resulting discrepancy function, the function determines the 
+Based on the resulting complexity function value, the function determines the 
 number of local minima and, among these local solutions, will find the 
-"global minimum" (i.e., the minimized discrepancy value from the finite 
+"global minimum" (i.e., the minimized complexity value from the finite 
 number of solutions). See Details below for an elaboration on the global 
 minimum. This function can also return bootstrap standard errors of the factor solution.
 }
