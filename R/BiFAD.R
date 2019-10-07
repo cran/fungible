@@ -195,10 +195,13 @@ BiFAD <- function(R,
   } # END if ( is.null(numFactors) )
   
   ## Extract rank-deficient factor loadings
+  
   faLoad <- faX(R          = R,
                 numFactors = numFactors,
                 facMethod  = facMethod,
                 faControl  = faControl)$loadings[]
+
+ 
   
   ## Append column of zeros to create rank deficient matrix
   L0 <- cbind(faLoad, 0)
@@ -210,11 +213,12 @@ BiFAD <- function(R,
   if ( is.null(B) )  Bflag <- 0
   
   if ( !Bflag & ( !is.null(numFactors) ) ) {
-    
+
     ## Rotate the rank-deficient factor structure to find B target
     B <- faMain(urLoadings    = faLoad,
                 rotate        = rotate,
                 rotateControl = rotateControl)$loadings[]
+    
     
     ## Record signs of loadings
     signB <- sign(B)

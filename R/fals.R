@@ -17,7 +17,8 @@
 #' solution.} \item{TreatHeywood}{(logical) Value of the TreatHeywood
 #' argument.} \item{converged}{(logical) TRUE if all values of the gradient are
 #' sufficiently close to zero.} \item{MaxAbsGrad}{The maximum absolute value of
-#' the gradient at the solution.  }
+#' the gradient at the solution.}  
+#' \item{f.value}{The discrepancy value associated with the final solution.}  
 #' @author Niels Waller
 #' @keywords Statistics
 #' @family Factor Analysis Routines
@@ -25,7 +26,7 @@
 #' @examples
 #' 
 #' 
-#' Rbig <- fungible::rcor(120)
+#' Rbig <- fungible::rcor(120)                   
 #' out1 <- fals(R = Rbig, 
 #'              nfactors = 2,
 #'              TreatHeywood = TRUE)
@@ -202,6 +203,7 @@ fals   <- function(R,           ## Correlation matrix
                       upper =  rep( 1,  nParam),
                       control = list(maxit=1E5))
       
+      
       # fl = unrotated factor loadings
       fl <- matrix(output$par, 
                    nrow  = NVar,
@@ -254,7 +256,8 @@ fals   <- function(R,           ## Correlation matrix
        Heywood    = Heywood,
        converged = as.logical(1 - output$convergence),
        MaxAbsGrad = MaxAbsGrad,
-       grdFALS = grdFALS)
+       grdFALS = grdFALS,
+       f.value = output$value/2) # we divide by 2 because R matrix is symetric
 
 } #end function fals
 

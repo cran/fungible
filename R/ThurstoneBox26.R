@@ -1,14 +1,14 @@
-#' R matrix for Thurstone's 26 hypothetical box attributes. 
+#' Factor Pattern Matrix for Thurstone's 26  box attributes. 
 #'
-#' Correlation matrix for Thurstone's 26 hypothetical box attributes. 
+#' Factor Pattern Matrix for Thurstone's 26  box attributes. 
 #'
 #' @docType data
 #' 
-#' @usage data(Box26)
+#' @usage data(ThurstoneBox26)
 #' 
-#' @format Correlation matrix for Thurstone's 26 hypothetical box attributes. 
-#' The so-called Thurstone invariant box problem contains measurements on the 
-#' following 26 functions of length, width, and height. 
+#' @format The original factor pattern (3 graphically rotated centroid factors) from Thurstone's 26 hypothetical box data as 
+#' reported by Thurstone (1947, p. 371). The so-called Thurstone invariant box problem 
+#' contains measurements on the following 26 functions of length (x), width (y), and height (z). 
 #'   \strong{Box26} variables:
 #'   \enumerate{
 #'   \item x
@@ -38,17 +38,14 @@
 #'   \item xyz
 #'   \item sqrt(x^2 + y^2 + z^2)
 #'   }
-#' \itemize{
-#'    \item \strong{x} Box length
-#'    \item \strong{y} Box width
-#'    \item \strong{z} Box height
-#'  }  
+#' 
+#' @keywords datasets
 #' 
 #' @details 
 #' Two data sets have been described in the literature as Thurstone's Box Data 
 #' (or Thurstone's Box Problem). The first consists of 20 measurements on a set of 20 
 #' hypothetical boxes (i.e., Thurstone made up the data).  Those data are available 
-#' in \strong{Box20}. The second data set,  which is described in this help file, was collected by 
+#' in \strong{Box20}. The second data set was collected by 
 #' Thurstone to provide an illustration of the invariance of simple structure 
 #' factor loadings. In his classic textbook on multiple factor analysis 
 #' (Thurstone, 1947), Thurstone states that ``[m]easurements of a random collection 
@@ -58,45 +55,17 @@
 #' raw data for this example were not published.  Rather, Thurstone reported a 
 #' correlation matrix for the 26 score functions (Thurstone, 1947, p. 370). Note that, presumably 
 #' due to rounding error in the reported correlations, the correlation matrix 
-#' for this example is non positive definite.
+#' for this example is non positive definite. This file includes the rotated centroid solution 
+#' that is reported in his book (Thurstone, 1947, p. 371).
 #' 
 #' @references 
 #' Thurstone, L. L.  (1947).  Multiple factor analysis.  Chicago: University of Chicago Press. 
-#' @keywords datasets
 #' 
 #' @seealso \code{\link{Box20}}, \code{\link{AmzBoxes}}
-#' @family Factor Analysis Routines
 #' 
 #' @examples 
-#' 
-#' data(Box26)
-#' fout <- faMain(R     = Box26,
-#'                numFactors    = 3,
-#'                facMethod     = "faregLS",
-#'                rotate        = "varimax",
-#'                bootstrapSE   = FALSE,
-#'         rotateControl = list(
-#'                numberStarts = 100,  
-#'                standardize  = "none"),
-#'                Seed = 123)
-#'
-#' summary(fout)  
-#'     
-#' # We now choose Cureton-Mulaik row standardization to reveal 
-#' # the underlying factor structure. 
-#'           
-#' fout <- faMain(R     = Box26,
-#'                numFactors    = 3,
-#'                facMethod     = "faregLS",
-#'                rotate        = "varimax",
-#'                bootstrapSE   = FALSE,
-#'         rotateControl = list(
-#'                numberStarts = 100,  
-#'                standardize  = "CM"),
-#'                Seed = 123)
-#'
-#' summary(fout)  
-#' 
-#'
-"Box26"
+#' data(ThurstoneBox26)  
+#' ThurstoneBox26
+"ThurstoneBox26"
+
 

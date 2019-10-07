@@ -4,13 +4,16 @@
 \alias{faSort}
 \title{Sort a factor loadings matrix}
 \usage{
-faSort(fmat, phi = NULL, salient = 0.25, reflect = TRUE)
+faSort(fmat, phi = NULL, BiFactor = FALSE, salient = 0.25,
+  reflect = TRUE)
 }
 \arguments{
 \item{fmat}{factor loadings (pattern or structure) matrix.}
 
 \item{phi}{factor correlation matrix. Default = NULL. If reflect = TRUE then
 phi will be corrected to match the new factor orientations.}
+
+\item{BiFactor}{(logical) Is the solution a bifactor model?}
 
 \item{salient}{factor markers with loadings >= abs(salient) will be saved in
 the markers list. Note that a variable can be a marker of more than one
@@ -82,18 +85,20 @@ print(round( FloadSorted, 2) )
 # Print sorted items
 cat("\\n Items sorted by Factor\\n")
 cat("\\n",Items[out1$sortOrder])
-
 }
 \seealso{
 \code{\link{fals}}
 
 Other Factor Analysis Routines: \code{\link{BiFAD}},
-  \code{\link{GenerateBoxData}}, \code{\link{SLi}},
+  \code{\link{Box26}}, \code{\link{GenerateBoxData}},
+  \code{\link{Ledermann}}, \code{\link{SLi}},
   \code{\link{SchmidLeiman}}, \code{\link{faAlign}},
-  \code{\link{faMain}}, \code{\link{faStandardize}},
+  \code{\link{faEKC}}, \code{\link{faMain}},
+  \code{\link{faScores}}, \code{\link{faStandardize}},
   \code{\link{faX}}, \code{\link{fals}},
   \code{\link{fapa}}, \code{\link{fareg}},
-  \code{\link{orderFactors}}, \code{\link{promaxQ}}
+  \code{\link{orderFactors}}, \code{\link{print.faMain}},
+  \code{\link{promaxQ}}, \code{\link{summary.faMain}}
 }
 \author{
 Niels Waller

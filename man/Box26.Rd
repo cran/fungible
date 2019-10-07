@@ -47,12 +47,28 @@ data(Box26)
 \description{
 Correlation matrix for Thurstone's 26 hypothetical box attributes.
 }
+\details{
+Two data sets have been described in the literature as Thurstone's Box Data 
+(or Thurstone's Box Problem). The first consists of 20 measurements on a set of 20 
+hypothetical boxes (i.e., Thurstone made up the data).  Those data are available 
+in \strong{Box20}. The second data set,  which is described in this help file, was collected by 
+Thurstone to provide an illustration of the invariance of simple structure 
+factor loadings. In his classic textbook on multiple factor analysis 
+(Thurstone, 1947), Thurstone states that ``[m]easurements of a random collection 
+of thirty boxes were actually made in the Psychometric Laboratory and recorded 
+for this numerical example. The three dimensions, x, y, and z, were recorded 
+for each box. A list of 26 arbitrary score functions was then prepared'' (p. 369). The 
+raw data for this example were not published.  Rather, Thurstone reported a 
+correlation matrix for the 26 score functions (Thurstone, 1947, p. 370). Note that, presumably 
+due to rounding error in the reported correlations, the correlation matrix 
+for this example is non positive definite.
+}
 \examples{
 
 data(Box26)
 fout <- faMain(R     = Box26,
                numFactors    = 3,
-               facMethod     = "fapa",
+               facMethod     = "faregLS",
                rotate        = "varimax",
                bootstrapSE   = FALSE,
         rotateControl = list(
@@ -60,11 +76,14 @@ fout <- faMain(R     = Box26,
                standardize  = "none"),
                Seed = 123)
 
-        print( round(fout$loadings, 2 ) ) 
-        
+summary(fout)  
+    
+# We now choose Cureton-Mulaik row standardization to reveal 
+# the underlying factor structure. 
+          
 fout <- faMain(R     = Box26,
                numFactors    = 3,
-               facMethod     = "fapa",
+               facMethod     = "faregLS",
                rotate        = "varimax",
                bootstrapSE   = FALSE,
         rotateControl = list(
@@ -72,8 +91,26 @@ fout <- faMain(R     = Box26,
                standardize  = "CM"),
                Seed = 123)
 
-        print( round(fout$loadings, 2 ) ) 
+summary(fout)  
 
 
 }
+\references{
+Thurstone, L. L.  (1947).  Multiple factor analysis.  Chicago: University of Chicago Press.
+}
+\seealso{
+\code{\link{Box20}}, \code{\link{AmzBoxes}}
+
+Other Factor Analysis Routines: \code{\link{BiFAD}},
+  \code{\link{GenerateBoxData}}, \code{\link{Ledermann}},
+  \code{\link{SLi}}, \code{\link{SchmidLeiman}},
+  \code{\link{faAlign}}, \code{\link{faEKC}},
+  \code{\link{faMain}}, \code{\link{faScores}},
+  \code{\link{faSort}}, \code{\link{faStandardize}},
+  \code{\link{faX}}, \code{\link{fals}},
+  \code{\link{fapa}}, \code{\link{fareg}},
+  \code{\link{orderFactors}}, \code{\link{print.faMain}},
+  \code{\link{promaxQ}}, \code{\link{summary.faMain}}
+}
+\concept{Factor Analysis Routines}
 \keyword{datasets}

@@ -84,13 +84,6 @@ extraction (\code{\link{faX}}) function.
   starting configurations for the chosen rotation method (e.g., oblimin). The first
   rotation will always commence from the unrotated factors orientation.
   Defaults to numberStarts = 10. 
-  \item \strong{itemSort}: (Logical) If TRUE, sort the row order of all the following output 
-  such that variables loading on a common factor are grouped together for 
-  ease of interpretation: (a) the global minimum factor loadings, 
-  (b) indicator communalities, (c) factor-loading bootstrap standard errors, 
-  (d) factor-loading bootstrap confidence interval quantiles (both upper and 
-  lower), and (e) the array of all factor-loading bootstrap results. 
-  Defaults to itemSort = FALSE.
   \item \strong{gamma}: (Numeric) This is a tuning parameter (between 0 
   and 1, inclusive) for an oblimin rotation.  See the \pkg{GPArotation} 
   library's oblimin documentation for more details. Defaults to gamma = 0 
@@ -206,12 +199,15 @@ hierarchical factor solutions. \emph{Psychometrika, 22}(1), 53-61.
 }
 \seealso{
 Other Factor Analysis Routines: \code{\link{BiFAD}},
-  \code{\link{GenerateBoxData}}, \code{\link{SLi}},
-  \code{\link{faAlign}}, \code{\link{faMain}},
+  \code{\link{Box26}}, \code{\link{GenerateBoxData}},
+  \code{\link{Ledermann}}, \code{\link{SLi}},
+  \code{\link{faAlign}}, \code{\link{faEKC}},
+  \code{\link{faMain}}, \code{\link{faScores}},
   \code{\link{faSort}}, \code{\link{faStandardize}},
   \code{\link{faX}}, \code{\link{fals}},
   \code{\link{fapa}}, \code{\link{fareg}},
-  \code{\link{orderFactors}}, \code{\link{promaxQ}}
+  \code{\link{orderFactors}}, \code{\link{print.faMain}},
+  \code{\link{promaxQ}}, \code{\link{summary.faMain}}
 }
 \author{
 \itemize{

@@ -144,8 +144,10 @@ faX <- function(R,
   
   ## Positive definite
   eigs <- eigen(R)$values
-  if ( min(eigs) <= 0 ) {
-    warning("R (or Cov) is not a positive definite matrix.")
+  ## CG EDITS 11 Sept 2019: added "&& facMethod != "fals")
+  ## CG EDITS 27 Sept 2019: Removed "(or Cov)" from error check: no cov arg
+  if ( min(eigs) <= 0 && facMethod != "fals") {
+    warning("R is not a positive definite matrix.")
   } # END if ( min(eigs) <= 0 )
   
   ## Check n
@@ -203,6 +205,8 @@ faX <- function(R,
     cnFA[names(faControl)] <- faControl
     
   } # END if ( !is.null(faControl) )
+  
+  
   
   ## Check digits
   
@@ -262,14 +266,14 @@ faX <- function(R,
                                            lower  = 1 - cnFA$maxCommunality))
                 },
                  "faregLS" = {
-                  fareg(R   = R,
-                        numFactors  = numFactors,
-                        facMethod = "rls")
+                  fareg(R          = R,
+                        numFactors = numFactors,
+                        facMethod  = "rls")
                 },
                 "faregML" = {
-                  fareg(R   = R,
-                        numFactors  = numFactors,
-                        facMethod = "rml")
+                  fareg(R          = R,
+                        numFactors = numFactors,
+                        facMethod  = "rml")
                 },
                 "fapa" = {
                   fapa(R            = R,
@@ -302,6 +306,10 @@ faX <- function(R,
                        h2        = h2,
                        converged = TRUE)
                 })
+  
+  ## CG EDITS 27 Sept 2019: Re-update faControl after factor extraction
+   ## Rationale: 'fapa' updates communality estimate if using SMC on NPD matrix
+  cnFA[names(Out$faControl)] <- Out$faControl
   
   ## ------- Model Fit Indices -------- ## 
   
@@ -357,9 +365,11 @@ faX <- function(R,
     warning("The factor extraction method failed to converge.")
   } # END if (modelFit$converged == FALSE) 
   
+
   list(loadings = round(Out$loadings[], digits),
        h2       = modelFit$h2,
-       faFit    = modelFit)
+       faFit    = modelFit,
+       faControl = cnFA)
   
 } # END factExtract
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/smoothKB.R
 \name{smoothKB}
 \alias{smoothKB}
-\title{Smooth a Non PD Correlation Matrix}
+\title{Smooth a Non PD Correlation Matrix using the Knol-Berger algorithm}
 \usage{
 smoothKB(R, eps = 1e+08 * .Machine$double.eps)
 }

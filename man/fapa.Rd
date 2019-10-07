@@ -92,12 +92,15 @@ Widaman, K. F., & Herringer, L. G. (1985). Iterative least squares estimates of 
 }
 \seealso{
 Other Factor Analysis Routines: \code{\link{BiFAD}},
-  \code{\link{GenerateBoxData}}, \code{\link{SLi}},
+  \code{\link{Box26}}, \code{\link{GenerateBoxData}},
+  \code{\link{Ledermann}}, \code{\link{SLi}},
   \code{\link{SchmidLeiman}}, \code{\link{faAlign}},
-  \code{\link{faMain}}, \code{\link{faSort}},
+  \code{\link{faEKC}}, \code{\link{faMain}},
+  \code{\link{faScores}}, \code{\link{faSort}},
   \code{\link{faStandardize}}, \code{\link{faX}},
   \code{\link{fals}}, \code{\link{fareg}},
-  \code{\link{orderFactors}}, \code{\link{promaxQ}}
+  \code{\link{orderFactors}}, \code{\link{print.faMain}},
+  \code{\link{promaxQ}}, \code{\link{summary.faMain}}
 }
 \author{
 \itemize{

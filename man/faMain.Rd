@@ -109,13 +109,6 @@ extraction (\code{\link{faX}}) function.
   starting configurations for the chosen rotation method (e.g., oblimin). The first
   rotation will always commence from the unrotated factors orientation.
   Defaults to numberStarts = 10. 
-  \item \strong{itemSort}: (Logical) If TRUE, sort the row order of all the following output 
-  such that variables loading on a common factor are grouped together for 
-  ease of interpretation: (a) the global minimum factor loadings, 
-  (b) indicator communalities, (c) factor-loading bootstrap standard errors, 
-  (d) factor-loading bootstrap confidence interval quantiles (both upper and 
-  lower), and (e) the array of all factor-loading bootstrap results. 
-  Defaults to itemSort = FALSE.
   \item \strong{gamma}: (Numeric) This is a tuning parameter (between 0 
   and 1, inclusive) for an oblimin rotation.  See the \pkg{GPArotation} 
   library's oblimin documentation for more details. Defaults to gamma = 0 
@@ -178,6 +171,8 @@ to the rotated factor pattern matrix and the factor correlations.
   \item \strong{loadingsSE}: (Matrix) The matrix of factor-loading standard 
   errors across the bootstrapped factor solutions. Each matrix element is 
   the standard deviation of all bootstrapped factor loadings for that element position.
+  \item \strong{CILevel} (Numeric) The user-defined confidence level (between 0 and 1) of the bootstrap 
+   confidence interval. Defaults to CILevel = .95.
   \item \strong{loadingsCIupper}: (Matrix) Contains the upper confidence 
   interval of the bootstrapped factor loadings matrix. The confidence 
   interval width is specified by the user.
@@ -255,9 +250,9 @@ to the rotated factor pattern matrix and the factor correlations.
   }
   \item \strong{rotateControl}: (List) A list of the control parameters 
   passed to the rotation algorithm.
-  \item \strong{itemOrder}: (Vector) The final item order if \code{itemSort = TRUE}. 
   \item \strong{unSpunSolution}: (List) A list of output parameters (e.g., loadings, Phi, etc) from 
   the rotated solution that was obtained by rotating directly from the unrotated (i.e., unspun) common factor orientation. 
+  \item \strong{targetMatrix} (Matrix) The input target matrix if supplied by the user.
   \item \strong{Call}: (call) A copy of the function call.
 }
 }
@@ -280,9 +275,9 @@ minimum. This function can also return bootstrap standard errors of the factor s
   Rozeboom, 1992). As is recommended, our function returns all local 
   solutions so users can make their own judgements.
   \item \strong{Finding clusters of local minima}: We find local-solution sets by sorting the rounded  
-  rotation discrepancy values (to the number of  digits specified in the \code{epsilon} 
+  rotation complexity values (to the number of  digits specified in the \code{epsilon} 
   argument of the \code{rotateControl} list) into sets with equivalent values. For example, 
-  by default \code{epsilon = 1e-5.} and thus \code{} will only evaluate the discrepancy 
+  by default \code{epsilon = 1e-5.} and thus \code{} will only evaluate the complexity 
   values to five significant digits. Any differences beyond that value will not effect the final sorting. 
 }
 }
@@ -328,7 +323,6 @@ Out1 <- faMain(X             = X,
                CILevel       = .80,
                faControl     = list(treatHeywood = TRUE),
                rotateControl = list(numberStarts = 2,  
-                                    itemSort     = TRUE,
                                     power        = 4,
                                     standardize  = "Kaiser"),
                digits        = 2)
@@ -419,19 +413,22 @@ analysis. \emph{Multivariate Behavioral Research, 49}(4), 339-353.
 }
 \seealso{
 Other Factor Analysis Routines: \code{\link{BiFAD}},
-  \code{\link{GenerateBoxData}}, \code{\link{SLi}},
+  \code{\link{Box26}}, \code{\link{GenerateBoxData}},
+  \code{\link{Ledermann}}, \code{\link{SLi}},
   \code{\link{SchmidLeiman}}, \code{\link{faAlign}},
+  \code{\link{faEKC}}, \code{\link{faScores}},
   \code{\link{faSort}}, \code{\link{faStandardize}},
   \code{\link{faX}}, \code{\link{fals}},
   \code{\link{fapa}}, \code{\link{fareg}},
-  \code{\link{orderFactors}}, \code{\link{promaxQ}}
+  \code{\link{orderFactors}}, \code{\link{print.faMain}},
+  \code{\link{promaxQ}}, \code{\link{summary.faMain}}
 }
 \author{
 \itemize{
-  \item Casey Giordano (Giord023@umn.edu)
   \item Niels G. Waller (nwaller@umn.edu)
+  \item Casey Giordano (Giord023@umn.edu)
   \item The authors thank Allie Cooperman and Hoang
-   Nguyen for their help  implementing the standard error estimation and the 
+   Nguyen for their help implementing the standard error estimation and the 
    Cureton-Mulaik standardization procedure.
 }
 }

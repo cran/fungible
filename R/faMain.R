@@ -93,13 +93,6 @@
 #'   starting configurations for the chosen rotation method (e.g., oblimin). The first
 #'   rotation will always commence from the unrotated factors orientation.
 #'   Defaults to numberStarts = 10. 
-#'   \item \strong{itemSort}: (Logical) If TRUE, sort the row order of all the following output 
-#'   such that variables loading on a common factor are grouped together for 
-#'   ease of interpretation: (a) the global minimum factor loadings, 
-#'   (b) indicator communalities, (c) factor-loading bootstrap standard errors, 
-#'   (d) factor-loading bootstrap confidence interval quantiles (both upper and 
-#'   lower), and (e) the array of all factor-loading bootstrap results. 
-#'   Defaults to itemSort = FALSE.
 #'   \item \strong{gamma}: (Numeric) This is a tuning parameter (between 0 
 #'   and 1, inclusive) for an oblimin rotation.  See the \pkg{GPArotation} 
 #'   library's oblimin documentation for more details. Defaults to gamma = 0 
@@ -154,9 +147,9 @@
 #'   Rozeboom, 1992). As is recommended, our function returns all local 
 #'   solutions so users can make their own judgements.
 #'   \item \strong{Finding clusters of local minima}: We find local-solution sets by sorting the rounded  
-#'   rotation discrepancy values (to the number of  digits specified in the \code{epsilon} 
+#'   rotation complexity values (to the number of  digits specified in the \code{epsilon} 
 #'   argument of the \code{rotateControl} list) into sets with equivalent values. For example, 
-#'   by default \code{epsilon = 1e-5.} and thus \code{} will only evaluate the discrepancy 
+#'   by default \code{epsilon = 1e-5.} and thus \code{} will only evaluate the complexity 
 #'   values to five significant digits. Any differences beyond that value will not effect the final sorting. 
 #' }
 #'
@@ -177,6 +170,8 @@
 #'   \item \strong{loadingsSE}: (Matrix) The matrix of factor-loading standard 
 #'   errors across the bootstrapped factor solutions. Each matrix element is 
 #'   the standard deviation of all bootstrapped factor loadings for that element position.
+#'   \item \strong{CILevel} (Numeric) The user-defined confidence level (between 0 and 1) of the bootstrap 
+#'    confidence interval. Defaults to CILevel = .95.
 #'   \item \strong{loadingsCIupper}: (Matrix) Contains the upper confidence 
 #'   interval of the bootstrapped factor loadings matrix. The confidence 
 #'   interval width is specified by the user.
@@ -254,9 +249,9 @@
 #'   }
 #'   \item \strong{rotateControl}: (List) A list of the control parameters 
 #'   passed to the rotation algorithm.
-#'   \item \strong{itemOrder}: (Vector) The final item order if \code{itemSort = TRUE}. 
 #'   \item \strong{unSpunSolution}: (List) A list of output parameters (e.g., loadings, Phi, etc) from 
 #'   the rotated solution that was obtained by rotating directly from the unrotated (i.e., unspun) common factor orientation. 
+#'   \item \strong{targetMatrix} (Matrix) The input target matrix if supplied by the user.
 #'   \item \strong{Call}: (call) A copy of the function call.
 #' }
 #' 
@@ -287,10 +282,10 @@
 #'
 #' @author
 #' \itemize{
-#'   \item Casey Giordano (Giord023@umn.edu)
 #'   \item Niels G. Waller (nwaller@umn.edu)
+#'   \item Casey Giordano (Giord023@umn.edu)
 #'   \item The authors thank Allie Cooperman and Hoang
-#'    Nguyen for their help  implementing the standard error estimation and the 
+#'    Nguyen for their help implementing the standard error estimation and the 
 #'    Cureton-Mulaik standardization procedure.
 #'}
 #'
@@ -336,7 +331,6 @@
 #'                CILevel       = .80,
 #'                faControl     = list(treatHeywood = TRUE),
 #'                rotateControl = list(numberStarts = 2,  
-#'                                     itemSort     = TRUE,
 #'                                     power        = 4,
 #'                                     standardize  = "Kaiser"),
 #'                digits        = 2)
@@ -442,6 +436,11 @@ faMain <-
       stop("The 'rotate' argument is incorrectly specified. Check for spelling errors (case sensitive).")
     } # END if (rotate %in% PlausibleRotations == FALSE) {
     
+    ## Create nVar object, used in defining 'k' param in cnRotate list
+    if (!is.null(X))          nVar <- ncol(X)
+    if (!is.null(R))          nVar <- ncol(R)
+    if (!is.null(urLoadings)) nVar <- nrow(urLoadings)
+    
     ## Check R
     
     ## Make sure either corr mat or factor structure is supplied
@@ -458,6 +457,7 @@ faMain <-
     
     ## Only check the following if X is specified
     if ( !is.null(X) ) {
+      
       
       ## Missingness in data?
       if (nrow(X) != nrow(X[complete.cases(X),])) {
@@ -491,11 +491,10 @@ faMain <-
     
     ## Assign the default values for the rotateControl list
     cnRotate <- list(numberStarts = 10,
-                     itemSort     = FALSE,
                      gamma        = 0,
                      delta        = .01,
                      kappa        = 0,
-                     k            = nrow(urLoadings),
+                     k            = nVar,
                      standardize  = "none",
                      epsilon      = 1e-5,
                      power        = 4,
@@ -760,11 +759,13 @@ faMain <-
       
       Rinv  <-try(solve(SampCorr), silent = TRUE)
       if( class(Rinv) == "try-error"){
-        warning("\n\nEncountered a singular R matrix when computing factor indeterminancy values\n")
+       # warning("\n\nEncountered a singular R matrix when computing factor indeterminancy values\n")
         return( rep(NA, ncol(Lambda) ) )
       }
       ## Factor indeterminacy solution
-      sqrt( diag( t(facStruct) %*% Rinv %*% facStruct))
+      FI <- sqrt( diag( t(facStruct) %*% Rinv %*% facStruct))
+      if(max(FI)>1) FI <- rep(NA, length(FI))
+      FI
     } # END GuttmanIndices
     
     #### ------- VARIABLE NAME RETENTION -------- ####
@@ -806,6 +807,11 @@ faMain <-
     ## If unrotated loadings specified, 
     if ( !is.null(urLoadings) ) {
       
+      ## September 3, 2019  Check Changes
+      # needed if no factor extraction occurs
+      faOut <- vector(mode="list")
+      faOut$faControl <- NULL
+      
       ## No model fit stuff
       faModelFit <- NULL
       
@@ -818,11 +824,17 @@ faMain <-
     if ( is.null(urLoadings) ) {
       
       ## Call faX function to extract factor structure matrix
+      ## September 3, 2019  Check Changes
+      faOut <- vector(mode="list")
+      faOut$faControl <- NULL
+      
       faOut <- faX(R          = R,
                    n          = n,
                    numFactors = numFactors,
                    facMethod  = facMethod,
                    faControl  = faControl)
+      
+      
       
       ## Extract factor loadings
       urLoadings <- faOut$loadings[]
@@ -918,9 +930,16 @@ faMain <-
     ## Find the sort order (minimum first) of the rotation 
     ## complexity fnc values
     
+    ## Order func creates an ordered vector with scalars representing 
+    ## pre-ordered location
+    
+    ## E.g., if the smallest value is originally the 3rd element,
+    ## order will create a vector with the 3rd element as "1"
     sortedComplexityOrder <- order(ComplexityFunc,
                                    decreasing = FALSE)
     
+    
+    ## UnSpun is *always* 1st rotation. Find where "1" is in ordered vector
     UnSpunPosition <- which.min(sortedComplexityOrder)
     
     ## Create new list to hold the rotated factor output 
@@ -928,7 +947,7 @@ faMain <-
     uniqueSolutions <- vector("list", cnRotate$numberStarts)
     
     ## Create list of output from local solutions
-    for ( iternumStart in 1:cnRotate$numberStarts ) {
+    for ( iternumStart in 1:cnRotate$numberStarts ){
       
       ## Determine which element of sortedComplexityOrder to grab
       ## Start with lowest Complexity value, end with highest
@@ -940,16 +959,24 @@ faMain <-
       
       #### ------- FACTOR SORT -------- ####
       
-      ## sort loadings and Phi matrix
-      sortedSols <- 
-        orderFactors(Lambda  = selected$loadings,
-                     PhiMat  = selected$Phi,
-                     salient = .01,
-                     reflect = TRUE)
       
-      ## Overwrite "selected" list
-      selected$loadings <- sortedSols$Lambda
-      selected$Phi      <- sortedSols$PhiMat
+      ## June 27, 2019: Do not  order factors when Procrustes rotation chosen
+      ##
+      ## sort loadings and Phi matrix for non Procrstes
+      if( rotate != "targetT" & rotate != "targetQ"){
+        sortedSols <- 
+          orderFactors(Lambda  = selected$loadings,
+                       PhiMat  = selected$Phi,
+                       salient = .01,
+                       reflect = TRUE)
+        
+        ## Overwrite "selected" list
+        selected$loadings <- sortedSols$Lambda
+        selected$Phi      <- sortedSols$PhiMat
+      }
+      
+      
+      
       
       ## Select the factor loadings
       uniqueSolutions[[iternumStart]]$loadings <- selected$loadings
@@ -963,13 +990,18 @@ faMain <-
       #### ----- FACTOR INDETERMINACY ----- ####
       ## if the user provides urloadings then do not 
       ## compute factor indeterminancy values
+    
       if( !isTRUE(FLAGurLoadings) ){
         ## Guttman's factor indeterminacy indices
         uniqueSolutions[[iternumStart]]$facIndeterminacy <- 
           GuttmanIndices(Lambda = selected$loadings, 
                          PhiMat = selected$Phi,
-                         SampCorr = R )
-      }# END if(!is.null((R)))
+                         SampCorr = R ) 
+      }else{
+        uniqueSolutions[[iternumStart]]$facIndeterminacy <- rep(NA, numFactors)
+      }
+      
+      # END if(!is.null((R)))
       
       ## Did the local optima solution converge
       uniqueSolutions[[iternumStart]]$RotationConverged <- selected$convergence
@@ -1006,7 +1038,9 @@ faMain <-
     ## uniqueSolutions is ordered so 1 is minimum discrep value
     minLambda  <- uniqueSolutions[[1]]$loadings
     minPhi     <- uniqueSolutions[[1]]$Phi
-    facIndeter <- uniqueSolutions[[1]]$facIndeterminacy
+    ## CG EDITS (30 sept 19): Changed "facIndeter" to a column vector
+    facIndeter <- data.frame("FI" = uniqueSolutions[[1]]$facIndeterminacy)
+
     ## If factor indeter. not computed, give NA values
     if ( is.null(facIndeter) ) facIndeter <- rep(NA, ncol(minLambda))
     
@@ -1021,20 +1055,20 @@ faMain <-
                             MatchMethod = "LS")
       minLambda  <- minAlign$F2
       minPhi     <- minAlign$Phi2
-      facIndeter <- facIndeter[ minAlign$FactorMap[2, ] ]
+      facIndeter <- data.frame("FI" = facIndeter[ minAlign$FactorMap[2, ], ])
     }
     
     
     
-    
+    ## CG EDITS (30 sept 19): Moved communality computation to before bootstraps
+    ## Compute communalities. If orthogonal model, Phi is identity matrix
+    communalityDF <- 
+      data.frame("h2" = diag(minLambda %*% minPhi %*% t(minLambda)))
     
     #### -------- BOOTSTRAP SETUP -------- ####
     
     ## If true, compute bootstrap standard errors
     if (bootstrapSE == TRUE) {
-      
-      # Number of scale items
-      nVar <- ncol(X)
       
       # Number of subjects
       nSubj <- nrow(X)
@@ -1045,12 +1079,14 @@ faMain <-
         ## Hold factor correlations from bootstraps
         phiList <- 
         ## Hold factor indeterminacy indices from bootstraps
-        FIList <- vector("list", numBoot)
+        FIList <- 
+        ## Hold communality estimates from bootstraps
+        h2List <- vector("list", numBoot)
       
       ## Number of rows, used below for bootstrap sampling
       rows <- 1:nSubj
       
-      #### -------- BOOTSTRAP FOR LOOP -------- ####
+      #### ----____BOOTSTRAP FOR LOOP -------- ####
       
       ## Analyses on 'numBoot' number of random resamples of X matrix
       for (iSample in seq_len(numBoot)) {
@@ -1064,7 +1100,8 @@ faMain <-
                            replace = TRUE)
         
         ## Create correlation matrix from the bootstrap sample
-        Rsamp <- cor(X[bsSample, ], ...)
+        # Rsamp <- cor(X[bsSample, ], ...)
+        Rsamp <- cor(X[bsSample, ])
         
         ## Extract unrotated factors using resampled data matrix
         bsLambda <- faX(R          = Rsamp,
@@ -1160,14 +1197,20 @@ faMain <-
                                             PhiMat = AlignedPhi,
                                             SampCorr = Rsamp)
         
+        ## CG EDITS (30 sept 19): Added list of computed h^2 values
+        ## Save communality estimates
+        h2List[[iSample]] <- diag(AlignedLambda %*% AlignedPhi %*% t(AlignedLambda))
+        
       } # END for (iSample in seq_len(numBoot))
       
-      #### ----- STANDARD ERRORS ----- ####
+      #### -----____ BootStrap STANDARD ERRORS ----- ####
       
       # Convert list of matrices into array
       loadArray <- array(unlist(fList), c(nVar, numFactors, numBoot))
       phiArray  <- array(unlist(phiList), c(numFactors, numFactors, numBoot))
       FIArray   <- array(unlist(FIList), c(1, numFactors, numBoot))
+      ## CG EDITS (30 sept 19): Added array for h2 values
+      h2Array   <- array(unlist(h2List), c(nVar, 1, numBoot))
       
       
       # Bootstrap standard errors for factor loadings
@@ -1178,9 +1221,10 @@ faMain <-
       phiSE <- apply(phiArray, 1:2, sd)
       phiSE <- round(phiSE, digits)
       
-      ## Bootstrap standard errors for factor indeterminacy
-      FISE <- apply(FIArray, 1:2, sd)
-      FISE <- round(FISE, digits)
+      
+      ## CG EDITS (30 sept 19): Added bootstrap SEs for communalities
+      h2SE <- apply(h2Array, 1, sd)
+      
       
       ## ----- CONFIDENCE INTERVALS ----- ##
       
@@ -1203,6 +1247,49 @@ faMain <-
       phiCI.upper <- round(phiCI.upper, digits)
       phiCI.lower <- round(phiCI.lower, digits)
       
+      ## CG EDITS (30 sept 19): Added CIs for fact indeterminacy estimates
+      ## ----____Bootstrap SE FI----
+      if(!any(is.na(FIArray))){
+          FISE <- apply(FIArray, 1:2, sd)
+         # FISE <- round(FISE, digits)
+          FICI.upper <- apply(FIArray, 2, quantile, 1 - (alpha / 2))
+          FICI.lower <- apply(FIArray, 2, quantile, (alpha / 2))
+      
+          ## CG EDITS (30 sept 19): Create data frame of fac indeterminacy estimates
+          facIndeter <- data.frame(facIndeter,
+                               t(FISE),
+                               FICI.lower,
+                               FICI.upper)
+          ## CG EDITS (30 sept 19): Add column names to data frame of FI estimates
+          colnames(facIndeter) <- c("FI",
+                                    "SE",
+                                    paste0((alpha / 2) * 100, "th percentile"),
+                                    paste0((1 - (alpha / 2)) * 100, "th percentile")) 
+          rownames(facIndeter) <-  paste0("f", 1:numFactors)
+      }else{
+        facIndeter <- NA
+        FISE <- NA
+      }    
+      
+    
+      
+      ## CG EDITS (30 sept 19): Added CIs for communality estimates
+      h2CI.upper <- apply(h2Array, 1, quantile, 1 - (alpha / 2))
+      h2CI.lower <- apply(h2Array, 1, quantile, (alpha / 2))
+      
+      ## CG EDITS (30 sept 19): Create data frame of communalities
+      communalityDF <- data.frame(communalityDF, ## Obtained communalities
+                                  h2SE,          ## Communality stand. errors
+                                  h2CI.lower,    ## Lower CI bound
+                                  h2CI.upper)    ## Upper CI bound
+      
+      ## CG EDITS (30 sept 19): Add column names to data frame of communalities
+      colnames(communalityDF) <- 
+        c("h2",  
+          "SE", 
+          paste0((alpha / 2) * 100, "th percentile"),
+          paste0((1 - (alpha / 2)) * 100, "th percentile")) 
+      
       #### ------- NAME BOOTSTRAP OBJECTS -------- ####
       
       ## Dimension names
@@ -1219,31 +1306,33 @@ faMain <-
         colnames(phiSE) <- rownames(phiSE) <-
         colnames(phiCI.upper) <- rownames(phiCI.upper) <-
         colnames(phiCI.lower) <- rownames(phiCI.lower) <-
-        colnames(FISE) <- paste0("f", 1:numFactors)
+        paste0("f", 1:numFactors)
       
     } # END if (bootstrapSE == TRUE)
     
     ## If not specified, return NULL
     if (bootstrapSE == FALSE) {
-      loadSE         <-
-        loadCI.upper <-
-        loadCI.lower <-
-        loadArray    <-
-        phiSE        <-
-        phiCI.upper  <-
-        phiCI.lower  <-
-        phiArray     <- 
-        FIArray      <- 
-        FISE         <- NULL
+      loadSE          <-
+        loadCI.upper  <-
+        loadCI.lower  <-
+        loadArray     <-
+        phiSE         <-
+        phiCI.upper   <-
+        phiCI.lower   <-
+        phiArray      <- 
+        FIArray       <- 
+        FISE          <- 
+        FICI.upper    <- 
+        FICI.lower    <- 
+        h2SE          <- 
+        h2CI.upper    <- 
+        h2CI.lower    <- NULL
     } # END if (bootstrapSE == FALSE)
     
-    #### ------- COMMUNALITIES -------- ####
+    #### ------- BOOTSTRAP COMMUNALITIES -------- ####
     
-    ## Compute communalities. If orthogonal model, Phi is identity matrix
-    rotateH2 <- diag(minLambda %*% minPhi %*% t(minLambda))
-    
-    ## Check to ensure rotateH2 and faH2 are equivalent
-    CheckEquiv <- all.equal(rotateH2, faXh2, 
+    ## Check to ensure communalityDF and faH2 are equivalent
+    CheckEquiv <- all.equal(communalityDF$h2, faXh2, 
                             check.attributes = FALSE, ## Ignoring attribute names
                             tolerance        = 1e-6)  ## precision for equivalence
     
@@ -1256,10 +1345,11 @@ faMain <-
     
     ## Designate the factor names
     facNames <- paste0("f", 1:numFactors)
-    
+
     ## Name objects to have factor indicator names
-    rownames(minLambda) <- 
-      names(rotateH2)   <- varNames
+    rownames(minLambda) <-
+      ## CG EDITS (30 sept 19): Add row names to data frame of communalities
+      rownames(communalityDF)   <- varNames
     
     ## Name objects to have factor names
     ## Change made March 4, 2019 NGW
@@ -1270,69 +1360,40 @@ faMain <-
       colnames(minPhi)  <- facNames
     
     ## facIndeter is NA if urLoadings is specified
-    if ( any(is.na(facIndeter)) == FALSE) names(facIndeter) <- facNames
-    
-    #### ------- SORT ITEMS -------- ####
-    
-    if (cnRotate$itemSort == TRUE) {
-      
-      ## Save all output from item sorting function
-      itemSorting <- faSort(fmat = minLambda,
-                            phi  = minPhi)
-      
-      ## Determine the order in which items are sorted
-      itemOrder <- itemSorting$sortOrder
-      
-      ## Sort items in global min lambda
-      minLambda <- minLambda[itemOrder, , drop=FALSE]
-      
-      ## Sort items in rotateH2 (communality of indicators)
-      rotateH2 <- rotateH2[itemOrder]
-      
-      ## If bootstrap is done, re-order factor indicators
-      if (bootstrapSE == TRUE) {
-        loadSE       <- loadSE[itemOrder, , drop=FALSE]
-        loadCI.upper <- loadCI.upper[itemOrder, , drop=FALSE]
-        loadCI.lower <- loadCI.lower[itemOrder, , drop=FALSE]
-        loadArray    <- loadArray[itemOrder, , ,  drop=FALSE]
-        
-      } # END if (bootstrapSE == TRUE)
-      
-    } # END if (cnRotate$itemSort == TRUE) 
-    
-    ## If no itemSort-ing, return a NULL value
-    if (cnRotate$itemSort == FALSE) itemOrder <- NULL
-    
+    if ( any(is.na(facIndeter)) == FALSE) rownames(facIndeter) <- facNames
     
     ## Add rotation convergence status to faFit
-    faModelFit$convergedR <- uniqueSolutions[[1]]$converged
+    faModelFit$convergedR <- uniqueSolutions[[1]]$RotationConverged
     
     #### ----- OUTPUT ----- ####
     
     fout <- list(R                     = R,
-            loadings              = minLambda,
-            Phi                   = minPhi,
-            facIndeterminacy      = facIndeter,
-            h2                    = rotateH2,
-            loadingsSE            = loadSE,
-            loadingsCIupper       = loadCI.upper,
-            loadingsCIlower       = loadCI.lower,
-            PhiSE                 = phiSE,
-            PhiCIupper            = phiCI.upper,
-            PhiCIlower            = phiCI.lower,
-            facIndeterminacySE    = FISE,
-            localSolutions        = uniqueSolutions,
-            numLocalSets          = nGrp,
-            localSolutionSets     = localGrps,
-            loadingsArray         = loadArray,
-            PhiArray              = phiArray,
-            facIndeterminacyArray = FIArray,
-            faControl             = faControl,
-            faFit                 = faModelFit,
-            rotateControl         = cnRotate,
-            itemOrder             = itemOrder,
-            unSpunSolution        = uniqueSolutions[[UnSpunPosition]],
-            Call                  = CALL)
+                 loadings              = minLambda,
+                 Phi                   = minPhi,
+                 facIndeterminacy      = facIndeter,
+                 h2                    = communalityDF,
+                 loadingsSE            = loadSE,
+                 CILevel               = CILevel,
+                 loadingsCIupper       = loadCI.upper,
+                 loadingsCIlower       = loadCI.lower,
+                 PhiSE                 = phiSE,
+                 PhiCIupper            = phiCI.upper,
+                 PhiCIlower            = phiCI.lower,
+                 facIndeterminacySE    = FISE,
+                 localSolutions        = uniqueSolutions,
+                 numLocalSets          = nGrp,
+                 localSolutionSets     = localGrps,
+                 loadingsArray         = loadArray,
+                 PhiArray              = phiArray,
+                 facIndeterminacyArray = FIArray,
+                 faControl             = faOut$faControl,
+                 faFit                 = faModelFit,
+                 rotate                = rotate,
+                 rotateControl         = cnRotate,
+                 unSpunSolution        = uniqueSolutions[[UnSpunPosition]],
+                 targetMatrix          = targetMatrix,
+                 Call                  = CALL)
+    
     class(fout) <- 'faMain'
     fout
     

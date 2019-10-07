@@ -6,8 +6,9 @@
 \usage{
 GenerateBoxData(XYZ, BoxStudy = 20, Reliability = 0.75,
   ModApproxErrVar = 0.1, SampleSize = NULL, NMinorFac = 50,
-  epsTKL = 0.2, SeedErrorFactors = 1, SeedMinorFactors = 2,
-  PRINT = FALSE, LB = FALSE, LBVal = 1, Constant = 0)
+  epsTKL = 0.2, Seed = 1, SeedErrorFactors = 2,
+  SeedMinorFactors = 3, PRINT = FALSE, LB = FALSE, LBVal = 1,
+  Constant = 0)
 }
 \arguments{
 \item{XYZ}{(Matrix) Length, width, and height measurements for N boxes.   The Amazon Box data 
@@ -36,6 +37,8 @@ generating model approximation error. Default: \code{NMinorFac = 50.}}
 \item{epsTKL}{(Numeric [0, 1])  A parameter of the 
 Tucker, Koopman, and Linn (1969) algorithm that controls the spread of the influence of the minor factors.
 Default: \code{epsTKL = .20.}}
+
+\item{Seed}{(Integer)  Starting seed for box sampling.}
 
 \item{SeedErrorFactors}{(Integer)  Starting seed for the error-factor scores.}
 
@@ -141,6 +144,10 @@ that  were used to illustrate topics in factor analysis. The  first (fictitious)
   \item xyz
   \item sqrt(x^2 + y^2 + z^2)
   }
+
+Note that when generating unreliable data (i.e., variables with 
+reliability values less than 1) and/or data with model error, 
+\strong{SampleSize} must be greater than \strong{NMinorFac}.
 }
 \examples{
 
@@ -152,6 +159,7 @@ that  were used to illustrate topics in factor analysis. The  first (fictitious)
                               SampleSize = 300, 
                               NMinorFac = 50,
                               epsTKL = .20,
+                              Seed = 1,
                               SeedErrorFactors = 1,
                               SeedMinorFactors = 2,
                               PRINT = FALSE,
@@ -162,16 +170,18 @@ that  were used to illustrate topics in factor analysis. The  first (fictitious)
    BoxData <- BoxList$BoxData
    
    RBoxes <- cor(BoxData)
-   out <- faMain(R = RBoxes,
+   fout <- faMain(R = RBoxes,
                  numFactors = 3,
                  facMethod = "fals",
                  rotate = "geominQ",
                  rotateControl = list(numberStarts = 100,
                                       standardize = "CM")) 
                                       
-  round(out$loadings, 2)   
+  summary(fout)  
 }
 \references{
+Cureton, E. E. & Mulaik, S. A. (1975). The weighted varimax rotation and the 
+promax rotation. Psychometrika, 40(2), 183-195. 
 Kaiser, H. F. and Horst, P.  (1975).  A score matrix for Thurstone's box problem.  
 Multivariate Behavioral Research, 10(1), 17-26.  
 
@@ -184,12 +194,15 @@ analytic research procedures by means of simulated correlation matrices.
 }
 \seealso{
 Other Factor Analysis Routines: \code{\link{BiFAD}},
+  \code{\link{Box26}}, \code{\link{Ledermann}},
   \code{\link{SLi}}, \code{\link{SchmidLeiman}},
-  \code{\link{faAlign}}, \code{\link{faMain}},
+  \code{\link{faAlign}}, \code{\link{faEKC}},
+  \code{\link{faMain}}, \code{\link{faScores}},
   \code{\link{faSort}}, \code{\link{faStandardize}},
   \code{\link{faX}}, \code{\link{fals}},
   \code{\link{fapa}}, \code{\link{fareg}},
-  \code{\link{orderFactors}}, \code{\link{promaxQ}}
+  \code{\link{orderFactors}}, \code{\link{print.faMain}},
+  \code{\link{promaxQ}}, \code{\link{summary.faMain}}
 }
 \author{
 Niels G. Waller (nwaller@umn.edu)

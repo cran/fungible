@@ -1,4 +1,4 @@
-#' Smooth a Non PD Correlation Matrix
+#' Smooth a Non PD Correlation Matrix using the Knol-Berger algorithm
 #' 
 #' A function for smoothing a non-positive definite correlation matrix by the
 #' method of Knol and Berger (1991).
@@ -31,12 +31,13 @@ smoothKB <- function(R, eps = 1E8 * .Machine$double.eps){
   ##  October 31, 2012
   ##  updated August 12, 2015
   ##  updated  Sept 25 2015
+  ##  updated May 18, 2019
   ##  Niels Waller
   ##
   ##  Smooth a non-positive definite R matrix by the method of 
   ##  Knol and Berger 1991 Eq (27)
   ##--------------------------------------#
-  
+     Nvar <- nrow(R)
      KDK <- eigen(R)
      Dplus <- D <- KDK$values
      Dplus[D <= 0]<- eps
@@ -46,8 +47,9 @@ smoothKB <- function(R, eps = 1E8 * .Machine$double.eps){
      Rtmp <- K %*% Dplus %*% t(K)
      invSqrtDiagRtmp <- diag(1/sqrt(diag(Rtmp)))
      RKB <- invSqrtDiagRtmp %*% Rtmp %*% invSqrtDiagRtmp
+     
       
-    colnames(RKB) <- rownames(RKB) <- colnames(R)
+     colnames(RKB) <- rownames(RKB) <- colnames(R)
 
 	 list(RKB = RKB, eps = eps)
 }

@@ -22,6 +22,7 @@
 #' @param  epsTKL (Numeric [0, 1])  A parameter of the 
 #'    Tucker, Koopman, and Linn (1969) algorithm that controls the spread of the influence of the minor factors.
 #'    Default: \code{epsTKL = .20.} 
+#' @param  Seed (Integer)  Starting seed for box sampling.     
 #' @param SeedErrorFactors (Integer)  Starting seed for the error-factor scores. 
 #' @param SeedMinorFactors (Integer)  Starting seed for the minor common-factor scores. 
 #' @param PRINT (Logical) If PRINT = TRUE then the computed reliabilites will 
@@ -101,7 +102,9 @@
 #'   \item xyz
 #'   \item sqrt(x^2 + y^2 + z^2)
 #'   }
-#' 
+#' @details Note that when generating unreliable data (i.e., variables with 
+#' reliability values less than 1) and/or data with model error, 
+#' \strong{SampleSize} must be greater than \strong{NMinorFac}.
 #' @return 
 #' \itemize{
 #'   \item \strong{XYZ} The length (x), width (y), and height (z) measurements for the sampled boxes. 
@@ -126,6 +129,10 @@
 #' @family Factor Analysis Routines
 #' 
 #' @references 
+#' 
+#' Cureton, E. E. & Mulaik, S. A. (1975). The weighted varimax rotation and the 
+#' promax rotation. Psychometrika, 40(2), 183-195. 
+
 #' Kaiser, H. F. and Horst, P.  (1975).  A score matrix for Thurstone's box problem.  
 #' Multivariate Behavioral Research, 10(1), 17-26.  
 #' 
@@ -146,6 +153,7 @@
 #'                               SampleSize = 300, 
 #'                               NMinorFac = 50,
 #'                               epsTKL = .20,
+#'                               Seed = 1,
 #'                               SeedErrorFactors = 1,
 #'                               SeedMinorFactors = 2,
 #'                               PRINT = FALSE,
@@ -156,14 +164,14 @@
 #'    BoxData <- BoxList$BoxData
 #'    
 #'    RBoxes <- cor(BoxData)
-#'    out <- faMain(R = RBoxes,
+#'    fout <- faMain(R = RBoxes,
 #'                  numFactors = 3,
 #'                  facMethod = "fals",
 #'                  rotate = "geominQ",
 #'                  rotateControl = list(numberStarts = 100,
 #'                                       standardize = "CM")) 
 #'                                       
-#'   round(out$loadings, 2)   
+#'   summary(fout)  
 #' @export
 
 GenerateBoxData <- function(XYZ,
@@ -173,19 +181,20 @@ GenerateBoxData <- function(XYZ,
                        SampleSize = NULL, 
                        NMinorFac = 50,
                        epsTKL = .20,
-                       SeedErrorFactors = 1,
-                       SeedMinorFactors = 2,
+                       Seed = 1,
+                       SeedErrorFactors = 2,
+                       SeedMinorFactors = 3,
                        PRINT = FALSE,
                        LB = FALSE,
                        LBVal = 1,
                        Constant = 0
                        ){
 
-
   if(Constant != 0){
     XYZ <- XYZ + Constant
   }  
   
+  set.seed(Seed)
   
   ## ----Generate Sample Data ----
   if(!is.null(SampleSize)){
@@ -194,12 +203,22 @@ GenerateBoxData <- function(XYZ,
                    replace = TRUE, 
                    prob = NULL)
     XYZ <- XYZ[rows, ]
-  }#END Generate Sample Data
+  }else{     #END Generate Sample Data
+    SampleSize <- nrow(XYZ)
+  }  
+  
+  #----Error Checking----
+  if(ModApproxErrVar > 0){
+      if(SampleSize < NMinorFac){ 
+        stop("\n*** FATAL ERROR: Insufficient sample size for model parameters ***")
+      }
+  }
   
 
   # x = length, 
   # y = width 
   # z = height
+  # xT = true (input) x values 
   x <- xT <- XYZ[, 1]
   y <- yT <- XYZ[, 2]
   z <- zT <- XYZ[, 3]
@@ -210,7 +229,7 @@ GenerateBoxData <- function(XYZ,
   
   
   
-  ## ---- Error Factors ----
+  ## ---- AddRandomError ----
   AddRandomError <- function(X, Rel, iter) {
     
     # X is a single variable
@@ -222,11 +241,9 @@ GenerateBoxData <- function(XYZ,
     
     random.error <- rnorm(NBoxes)
     e <- scale(resid(lm(random.error ~ X))) * e.sd
-    
-    
+ 
     # Xobs equal true plus error scores
     Xobs <- X + e
-    
     
     # Dont allow negative measurements
     # minimum box dimension = 1 inch
@@ -245,8 +262,7 @@ GenerateBoxData <- function(XYZ,
     
     # MEVar comes in as a percent of total variance
     # Need to scale it
-    tmp <- MEVar/(1 - MEVar)
-    MEVar <- tmp
+    gamma <- MEVar/(1 - MEVar)
     
     # X is input data (98 by 26)
     # MEVar = model approximation error
@@ -273,23 +289,38 @@ GenerateBoxData <- function(XYZ,
     }# END for (i in 0:(NMinorFactors - 1)) {
     
    
-    # SS of unscaled random loadings
+    # row SS of unscaled random loadings
     wsq <- diag(W %*% t(W))
     
     #
-    ModelErrorVar <- rep(MEVar, NVar)
+    ModelErrorVar <- rep(gamma, NVar)
   
     # Rescale loadings
-     W <- diag(sqrt(ModelErrorVar/wsq)) %*% W
-    
-     Z.ME <- scale(svd(matrix(rnorm(NBoxes * NMinorFactors), 
-                             nrow = NBoxes,
-                             ncol = NMinorFactors))$u) 
+    W <- diag(sqrt(ModelErrorVar/wsq)) %*% W
+     
 
-    ModelErrorFactorScores <- Z.ME %*% t(W)
+    # Create scores for minor factors
+     ranData <- matrix(rnorm(NBoxes * NMinorFactors), 
+                       nrow = NBoxes,
+                       ncol = NMinorFactors)
+     
+     # these should be orthogonal to X
+     for(i in 1:NMinorFactors){
+       ranData[,i] <- scale(resid(lm(ranData[,i] ~ X)))
+     }   
+     
+     # Orthogonalize and scale minor factor scores
+     Z.ME <- scale( svd(ranData)$u ) 
+ 
+
+     ModelErrorFactorScores <- Z.ME %*% t(W)
     
-    BoxDataME <- scale(X + ModelErrorFactorScores)
+    # scale final scores to Z-scores
+     BoxDataME <- scale(X + ModelErrorFactorScores)
     
+    # check
+    #print( var(X[,19])/var(X[,19] + ModelErrorFactorScores[,19]) ) 
+
     BoxDataME
     
   }#END AddModelError
@@ -412,18 +443,20 @@ GenerateBoxData <- function(XYZ,
    }
   
    BoxDataE <- NULL
-   # Create Unreliable Box Data
+   # ----Create BoxDataE----
    if(Reliability < 1){
        BoxDataE <- BoxData
        set.seed(SeedErrorFactors)
        for (j in 1:ncol(BoxDataE)) {
          BoxDataE[, j] <- AddRandomError(BoxDataE[, j], 
                                            Reliability, 
-                                          iter = j)
+                                           iter = j)
        }
-   } # END  if(Reliability < 1)  
+   } # END  if(Reliability < 1) 
+   
+   
  
-  # Unreliable and Model Approximation Error 
+  # # ----Create BoxDataEME----
    BoxDataEME <- NULL
    if(ModApproxErrVar > 0){
        # First add model Error  
