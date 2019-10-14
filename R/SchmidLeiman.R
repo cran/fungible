@@ -20,6 +20,12 @@
 #' the group factors is no longer correct.
 #' @inheritParams faMain
 #'
+#' @details The obtained Schmid-Leiman (SL) factor structure matrix is rescaled if 
+#'  its communalities differ from those of the  original first-order 
+#'  solution (due to the presence of one or more Heywood cases in a solution of any order). 
+#'  Rescaling will produce SL communalities that match those of 
+#'  the original first-order  solution.
+#'
 #' @return
 #' \itemize{
 #'   \item \strong{L1}: (Matrix) The first-order (oblique) factor pattern matrix.
@@ -30,15 +36,19 @@
 #'   \item \strong{Phi2}: (Matrix) The second-order factor correlation matrix.
 #'   \item \strong{Phi3}: (Matrix, NULL) The third-order factor pattern matrix 
 #'   (if applicable).
-#'   \item \strong{Usq1}: (Matrix) The first-order factor uniquenesses (variances).
-#'   \item \strong{Usq2}: (Matrix) The second-order factor uniquenesses (variances).
-#'   \item \strong{Usq3}: (Matrix, NULL) The third-order factor uniquenesses 
-#'   (variances) (if applicable).
+#'   \item \strong{U1}: (Matrix) The square root of the first-order factor 
+#'   uniquenesses (i.e., factor standard deviations).
+#'   \item \strong{U2}: (Matrix) The square root of the second-order factor 
+#'   uniquenesses (i.e., factor standard deviations).
+#'   \item \strong{U3}: (Matrix, NULL) The square root of the third-order factor 
+#'   uniquenesses (i.e., factor standard deviations) (if applicable).
 #'   \item \strong{B}: (Matrix) The resulting Schmid-Leiman transformation.
 #'   \item \strong{rotateControl}: (List) A list of the control parameters 
 #'   passed to the \code{\link{faMain}} function.
 #'   \item \strong{faControl}: (List) A list of optional parameters passed to 
 #'   the factor extraction (\code{\link{faX}}) function.
+#'   \item{strong{HeywoodFlag}}(Integer) An integer indicating whether one or more 
+#'    Heywood cases were encountered during estimation.
 #'}
 #'
 #' @references Abad, F. J., Garcia-Garzon, E., Garrido, L. E., & Barrada, J. R. 
@@ -121,19 +131,17 @@ SchmidLeiman <-
     commRescale <- function(lambda,
                             threshold = 1.0,
                             rescaleTo = .98) {
-      ## Rescale the factor structure matrix when Heywood case is detected
-      hsq.new <-
-        hsq.old <-
-        apply(lambda^2, 1, sum)
       
+      ## Rescale the factor pattern matrix when Heywood case is detected
+      # lambda is an unrotated factor structure matrix
+      hsq.new <- hsq.old <- apply(lambda^2, 1, sum)
+    
       ## communalities that exceed threshold will be rescaled
       hsq.new[which(hsq.old >= threshold)] <- rescaleTo
       
       ## Norm lambda by dividing each row by its communality
       ## Then pre-multiply by the new (sqrt) communality diagonal matrix
-      newLambda <- diag(sqrt(hsq.new)) %*%
-        sqrt(diag(1 / hsq.old)) %*%
-        lambda
+      newLambda <- diag( sqrt( hsq.new / hsq.old) ) %*% lambda
       
       newLambda
     } # END commRescale
@@ -153,7 +161,7 @@ SchmidLeiman <-
       stop("The 'numFactors' argument must be a vector of 2 or 3 values.")
     } # END if (length(numFactors) <=1)
     
-    ## If digits is not specified, give arbitrarily large value
+    ## If digits is not specified, give default values
     if ( is.null(digits) ) {
       digits <- options()$digits
     } # END if ( is.null(digits) )
@@ -162,7 +170,9 @@ SchmidLeiman <-
     ##         First-level hierarchical factor analysis         ##
     ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~##
     
-    ## Extract 1st level of the hierarchy
+    ## ----First Level ----
+    
+    ## ----____Extract Factors----
     
     ## Extract the factor solution
     L1Out <- faX(R          = R,
@@ -172,6 +182,32 @@ SchmidLeiman <-
     
     ## Save the factor loadings for rotation
     L1 <- L1Out$loadings
+    
+    ## Save level-one communality values
+    HSquare <- L1Out$h2
+    
+    ## ~~~~~~~~~~~~~~~~~~~~~~~ ##
+    ## Check for Heywood cases ##
+    ## ~~~~~~~~~~~~~~~~~~~~~~~ ##
+    
+    HeywoodFlag <- 0
+    ## ----____Check for Heywood cases----
+    
+    ## If any communalities are greater than lambda > 1.0, re-scale problem items
+    if ( L1Out$faFit$Heywood == TRUE ) {
+      
+    ## Rescale the communalities larger than 'threshold' to 'rescaleTo'
+      L1 <- commRescale(lambda    = L1,
+                        threshold = 1.0,
+                        rescaleTo = rescaleH2)
+      HeywoodFlag <- 1
+     
+      ## Find new communality values after rescaling
+      HSquare <- apply(L1^2, 1, sum)
+      
+    } # END if ( L1Out$Heywood == TRUE )
+    
+    ## ----____Rotate first order solution----
     
     ## Rotate the factor structure
     firstRot <- faMain(urLoadings    = L1,
@@ -193,38 +229,17 @@ SchmidLeiman <-
     L1 <- facOrder$Lambda
     R1 <- facOrder$PhiMat
     
-    ## ~~~~~~~~~~~~~~~~~~~~~~~ ##
-    ## Check for Heywood cases ##
-    ## ~~~~~~~~~~~~~~~~~~~~~~~ ##
-    
-    ## Save level-one communality values
-    HSquare <- L1Out$h2
-    
-    ## If any communalities are greater than lambda > 1.0, re-scale problem items
-    if ( L1Out$faFit$Heywood == TRUE ) {
-      
-      ## Rescale the communalities larger than 'threshold' to 'rescaleTo'
-      L1 <- commRescale(lambda    = L1,
-                        threshold = 1.0,
-                        rescaleTo = rescaleH2)
-      
-      message("A Heywood case was detected in the first-order factor pattern. Communalities have been rescaled.")
-      
-      ## Find new communality values after rescaling
-      HSquare <- apply(L1^2, 1, sum)
-      
-    } # END if ( L1Out$Heywood == TRUE )
-    
-    ## Lower bound of uniqueness is defined at .05 (1 - newCommunality)
-    U2_1 <- diag(1 - as.vector(HSquare))
-    
-    ## Save sqrt of U2_1 for later orthogonalization
-    U_1 <- sqrt(U2_1)
+    ## CG (11 Oct 2019): No need to retain uniquenesses, just need their sqrt
+    ## Save sqrt of U_1 for later orthogonalization
+    U_1 <- sqrt( diag(1 - as.vector(HSquare)) )
     
     ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~##
     ##         Second-level hierarchical factor analysis        ##
     ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~##
     
+    ## ----Second Level----
+    
+    ## ----____Extract Factors-----
     ## Unrotated factor loadings of the 2nd level of analysis
     L2Out <- faX(R          = R1,
                  numFactors = numFactors[2],
@@ -233,6 +248,34 @@ SchmidLeiman <-
     
     ## Save the factor loadings
     L2 <- L2Out$loadings[]
+
+    ## Extract communalities to create uniqueness matrix
+    HSquare.2 <- L2Out$h2
+    
+    ## ~~~~~~~~~~~~~~~~~~~~~~~ ##
+    ## Check for Heywood cases ##
+    ## ~~~~~~~~~~~~~~~~~~~~~~~ ##
+    
+    ## ----____Check for Heywood cases----
+    
+    ## If any communalities in L2 are greater than lambda > 1.0, re-scale problem items
+    if ( L2Out$faFit$Heywood == TRUE ) {
+      
+      ## Rescale the communalities larger than 'threshold' to 'rescaleTo'
+      L2 <- commRescale(lambda    = L2,
+                        threshold = 1.0,
+                        rescaleTo = rescaleH2)
+      HeywoodFlag <- 2
+      
+      
+      ## Find new communality values after rescaling
+      HSquare.2.new <- apply(L2^2, 1, sum)
+      
+    } # END if ( L1Out$Heywood == TRUE )
+    
+    
+    ## ----____Rotate or reflect second order solution----
+    
     
     ## Only needs to rotate obliquely if more than 1 factor is extracted
     if (numFactors[2] > 1) {
@@ -245,29 +288,9 @@ SchmidLeiman <-
       ## Store the Phi matrix and rotated loadings matrix
       L2 <- secondRot$loadings
       
-      ## Detect if Heywood cases are present
-      HSquare.2 <- L2Out$h2
-      
-      ## Stop if a Heywood case is detected
-      if ( L2Out$faFit$Heywood == TRUE ) {
-        
-        ## Rescale the communalities larger than 'threshold' to 'rescaleTo'
-        L2 <- commRescale(lambda    = L2,
-                          threshold = 1.0,
-                          rescaleTo = rescaleH2)
-        
-        message("A Heywood case was detected in the second-order factor pattern. Communalities have been rescaled.")
-        
-        ## Find rescaled communalities
-        HSquare.2 <- apply(L2^2, 1, sum)
-        
-      } # END if ( L2Out$Heywood == TRUE )
-      
-      ## Factor uniqueness values
-      U2_2 <- diag(1 - as.vector(HSquare.2))
-      
-      ## Save factor standard deviations for orthogonalization
-      U_2 <- sqrt(U2_2)
+      ## CG (11 Oct 2019): Used to retain uniquenesses, only need their sqrt
+      ## Save for orthogonalization later
+      U_2 <- sqrt( diag(1 - as.vector(HSquare.2)) )
       
       ## Save the phi matrix
       R2 <- secondRot$Phi
@@ -285,47 +308,46 @@ SchmidLeiman <-
       
     } else {  #END if(numFactors[2] > 1)
       
-      ## Check for Heywood cases
-      HSquare.2 <- L2Out$h2
+      ## CG (11 Oct 2019): Did not previously reflect in 1 gen fac models
+      ## Reflect loadings of 1 factor model
+      reflect <- sign( sum( L2 ) )
       
-      if ( L2Out$faFit$Heywood == TRUE ) {
-        
-        ## Rescale the communalities larger than 'threshold' to 'rescaleTo'
-        L2 <- commRescale(lambda    = L2,
-                          threshold = 1.0,
-                          rescaleTo = rescaleH2)
-        
-        message("A Heywood case was detected in the second-order factor pattern.
-              Communalities have been rescaled.")
-        
-        ## Extract rescaled communality
-        HSquare.2 <- L2^2
-        
-      } # END if ( any(HSquare >= .99) )
+      ## CG (11 Oct 2019): Did not previously reflect in 1 gen fac models
+      ## If reflection is 0, set to 1 
+      if (reflect == 0) reflect <- 1
       
-      ## Factor uniqueness values
-      U2_2 <- diag(1 - as.vector(HSquare.2))
+      ## CG (11 Oct 2019): Did not previously reflect in 1 gen fac models
+      ## Orient the single factor
+      L2 <- L2 * reflect
+      
+      ## CG (11 Oct 2019): Used to retain uniquenesses, only need their sqrt
+      ## Save for orthogonalization later
+      U_2 <- sqrt( diag(1 - as.vector(HSquare.2)) )
       
       ## No phi matrix when only 1 factor is present, set at unity
       R2 <- 1
       
-      ## Save for orthogonalization later
-      U_2 <- sqrt(U2_2)
-      
     } # END if (numFactors[2] > 1)
     
-    ## Orthogonalize, Final step in Schmid & Leiman ('57) with 2 levels
+    
+    ## ---- 2-Level Orthogonalization ----
     B.out <- cbind(L1 %*% L2, L1 %*% U_2)
     
     ## Reflect all factors by default
     BSign <- diag( sign( colSums(B.out) ) )
     B.out <- B.out %*% BSign
     
+
+    
     ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~##
     ##         Third-level hierarchical factor analysis         ##
     ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~##
     
     ## If a 3rd level of hierarchy exists, begin the process
+    
+    ## ----Third Level-----
+    
+    ## ----____Extract Factors----
     
     if (length(numFactors) == 3) {
       
@@ -336,7 +358,29 @@ SchmidLeiman <-
                    faControl  = faControl)
       
       ## Save the factor loadings
-      L3 <- L3Out$loadings[]
+      L3 <- L3Out$loadings
+      
+      ## Compute the communality estimate
+      HSquare.3 <- apply(L3^2, 1, sum)
+      
+      ## ----____Check for Heywood cases ----
+      
+      ## Detect if Heywood cases are present
+      if ( L3Out$faFit$Heywood == TRUE ) {
+        
+        ## Rescale the communalities larger than 'threshold' to 'rescaleTo'
+        L3 <- commRescale(lambda    = L3,
+                          threshold = 1.0,
+                          rescaleTo = rescaleH2)
+        
+        HeywoodFlag <- 3
+        
+        ## Find rescaled communality
+        HSquare.3 <- apply(L3^2, 1, sum)
+        
+      } # END if ( any(HSquare.3 > 1.0) )
+      
+      ## ----____Rotate or reflect third order solution----
       
       ## If multiple factors exist in the 3rd level, rotate obliquely
       if (numFactors[3] > 1) {
@@ -349,42 +393,35 @@ SchmidLeiman <-
         ## Obliquely rotated factor loadings in the 3rd level
         L3 <- thirdRot$loadings
         
-        ## Compute the communality estimate
-        HSquare.3 <- apply(L3^2, 1, sum)
-        
-        ## Detect if Heywood cases are present
-        if ( any(HSquare.3 > 1.0) ) {
-          
-          ## Rescale the communalities larger than 'threshold' to 'rescaleTo'
-          L3 <- commRescale(lambda    = L3,
-                            threshold = 1.0,
-                            rescaleTo = rescaleH2)
-          
-          message("A Heywood case was detected in the third-order factor pattern.
-                Communalities have been rescaled.")
-          
-          ## Find rescaled communality
-          HSquare.3 <- apply(L3^2, 1, sum)
-          
-        } # END if ( any(HSquare.3 > 1.0) )
-        
-        ## Faster to compute from saved output
-        U2_3 <- diag(1 - as.vector(HSquare.3))
-        
         ## Set the 3rd level phi matrix
         R3 <- thirdRot$Phi
         
+        ## Faster to compute from saved output
+        U_3 <- sqrt( diag(1 - as.vector(HSquare.3)) )
+        
       } else { ## if(numFactors[3] == 1)
         
-        ## Compute the uniqueness matrix
-        U2_3 <- diag(1 - as.vector(L3^2))
+        ## CG (11 Oct 2019): Did not previously reflect in 1 gen fac models
+        ## Reflect loadings of 1 factor model
+        reflect <- sign( sum( L3 ) )
+        
+        ## CG (11 Oct 2019): Did not previously reflect in 1 gen fac models
+        ## If reflection is 0, set to 1 
+        if (reflect == 0) reflect <- 1
+        
+        ## CG (11 Oct 2019): Did not previously reflect in 1 gen fac models
+        ## Orient the single factor
+        L3 <- L3 * reflect
+        
+        ## Compute the sqrt of the uniqueness matrix
+        U_3 <- sqrt( diag(1 - as.vector(L3^2)) )
         
         ## Set phi matrix to unity (only 1 factor)
         R3 <- 1
+        
       } # END if(numFactors[3] == 1)
       
-      ## No matter how U2_3 is found, save the sqrt of it
-      U_3 <- sqrt(U2_3)
+      ## ---- 3-Level Orthogonalization ----
       
       ## Start orthogonalization for 3 levels
       B3    <- cbind(L3, U_3)
@@ -394,6 +431,8 @@ SchmidLeiman <-
       ## Reflect all factors by default
       BSign <- diag( sign( colSums(B.out) ) )
       B.out <- B.out %*% BSign
+      
+      ## ----____Dim names of 3 level solution ----
       
       ## Give the 3-level analysis some labels
       colnames(B.out) <-
@@ -407,6 +446,8 @@ SchmidLeiman <-
       
     } else { ## Do this if only 2 levels exist
       
+      ## ----____Dim names of 2 level solution ----
+      
       ## Give the 2-level analysis some labels, ARBITRARY order
       colnames(B.out) <-
         c(paste(rep("g", numFactors[2]), c(1:numFactors[2]), sep = ""),
@@ -417,7 +458,16 @@ SchmidLeiman <-
       
     }## END if(length(numFactors) == 3){
     
-    ## Available output
+    # Rescuale to maintain communalities of the L1 solution
+     HSquare.B <- diag(B.out %*% t(B.out))
+     B.out <- diag(sqrt(HSquare/HSquare.B)) %*% B.out
+     
+     if(HeywoodFlag > 0){
+      cat("\n\nWARNING:  A Heywood case was detected i one of the factor solutions.\n")
+     } 
+     
+    
+    ## ----Available output----
     SLOutput <-
       list(L1            = round(L1, digits),    ## level 1 loadings
            L2            = round(L2, digits),    ## level 2 loadings
@@ -425,19 +475,20 @@ SchmidLeiman <-
            Phi1          = round(R1, digits),    ## level 1 phi matrix
            Phi2          = round(R2, digits),    ## level 2 phi matrix
            Phi3          = NULL,  ## level 3 phi matrix
-           Usq1          = round(U2_1, digits),  ## level 1 uniquenesses
-           Usq2          = round(U2_2, digits),  ## level 2 uniquenesses
-           Usq3          = NULL,  ## level 3 uniquenesses
+           U1            = round(U_1, digits),   ## Level 1 sqrt of uniqueness
+           U2            = round(U_2, digits),   ## Level 2 sqrt of uniqueness
+           U3            = NULL,  ## level 3 sqrt of uniquenesses
            B             = round(B.out, digits),
            rotateControl = rotateControl,
-           faControl     = faControl) ## final bifactor solution
+           faControl     = faControl,
+           HeywoodFlag = HeywoodFlag) ## final bifactor solution
     
     ## If a 3-rd order solution is produced, populate the output of the 3rd level
     if ( length(numFactors) == 3 ) {
       
-      SLOutput$L3   <- round(L3,   digits)
-      SLOutput$Phi3 <- round(R3,   digits)
-      SLOutput$Usq3 <- round(U2_3, digits)
+      SLOutput$L3   <- round(L3,  digits)
+      SLOutput$Phi3 <- round(R3,  digits)
+      SLOutput$Usq3 <- round(U_3, digits)
       
     } # END if ( length(numFactors) == 3 )
     

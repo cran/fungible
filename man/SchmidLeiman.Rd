@@ -125,21 +125,32 @@ extraction (\code{\link{faX}}) function.
   \item \strong{Phi2}: (Matrix) The second-order factor correlation matrix.
   \item \strong{Phi3}: (Matrix, NULL) The third-order factor pattern matrix 
   (if applicable).
-  \item \strong{Usq1}: (Matrix) The first-order factor uniquenesses (variances).
-  \item \strong{Usq2}: (Matrix) The second-order factor uniquenesses (variances).
-  \item \strong{Usq3}: (Matrix, NULL) The third-order factor uniquenesses 
-  (variances) (if applicable).
+  \item \strong{U1}: (Matrix) The square root of the first-order factor 
+  uniquenesses (i.e., factor standard deviations).
+  \item \strong{U2}: (Matrix) The square root of the second-order factor 
+  uniquenesses (i.e., factor standard deviations).
+  \item \strong{U3}: (Matrix, NULL) The square root of the third-order factor 
+  uniquenesses (i.e., factor standard deviations) (if applicable).
   \item \strong{B}: (Matrix) The resulting Schmid-Leiman transformation.
   \item \strong{rotateControl}: (List) A list of the control parameters 
   passed to the \code{\link{faMain}} function.
   \item \strong{faControl}: (List) A list of optional parameters passed to 
   the factor extraction (\code{\link{faX}}) function.
+  \item{strong{HeywoodFlag}}(Integer) An integer indicating whether one or more 
+   Heywood cases were encountered during estimation.
 }
 }
 \description{
 The Schmid-Leiman (SL) procedure orthogonalizes a higher-order factor 
 structure into a rank-deficient bifactor structure. The Schmid-Leiman method 
 is a generalization of Thomson's orthogonalization routine.
+}
+\details{
+The obtained Schmid-Leiman (SL) factor structure matrix is rescaled if 
+ its communalities differ from those of the  original first-order 
+ solution (due to the presence of one or more Heywood cases in a solution of any order). 
+ Rescaling will produce SL communalities that match those of 
+ the original first-order  solution.
 }
 \examples{
 ## Dataset used in Schmid & Leiman (1957) rounded to 2 decimal places

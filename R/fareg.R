@@ -115,7 +115,7 @@ fareg <- function(R,
   communality <- "SMC"  
   ## Check to ensure that R is positive definite 
   eigenVal <- eigen(R)$value
-  if ( min(eigenVal) <= 1E-8 ) {
+  if ( min(eigenVal) <= 1E-6 ) {
     warning("Inverting the correlation matrix for SMC communality estimates requires a positive-definite matrix.")
     communality <- "maxr"  
   } # END if ( min(eigenVal) <= 1E-8 )
@@ -151,6 +151,9 @@ fareg <- function(R,
       
       
       Rhat <- F %*% t(F)
+    
+      
+      #return fnc
       rmsd(Ri, Rhat, 
            Symmetric = TRUE,
            IncludeDiag = FALSE)
@@ -170,6 +173,7 @@ fareg <- function(R,
     if( numFactors > 1){
       F <- U[,1:numFactors] %*% diag(sqrt(D[1:numFactors]))
     }
+    
     
     Rhat <- F %*% t(F)
     diag(Rhat) <- 1
@@ -193,15 +197,17 @@ fareg <- function(R,
     if( numFactors > 1){
       F <- U[,1:numFactors] %*% diag(sqrt(D[1:numFactors]))
     }
+
     F
   }
   
   maxPsi <- max(diag(Psi))
-  Lup <- 1/maxPsi
+  Lup <- 1/maxPsi + .001
+ 
   
   # optimize function
   if(facMethod == "rls"){
-     out <- optimize(f = FncRidgeULS, lower = 0, upper = Lup)
+     out <- optimize(f = FncRidgeULS, lower = .001, upper = Lup)
   }
   if(facMethod == "rml"){
     out <- optimize(f = FncRidgeMLE, lower = 0, upper = Lup)

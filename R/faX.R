@@ -129,6 +129,7 @@ faX <- function(R,
                 facMethod  = "fals",
                 faControl  = NULL,
                 digits     = NULL) {
+
   
   ## ~~~~~~~~~~~~~~~~~~ ##
   #### Error Checking ####
@@ -144,7 +145,7 @@ faX <- function(R,
   
   ## Positive definite
   eigs <- eigen(R)$values
-  ## CG EDITS 11 Sept 2019: added "&& facMethod != "fals")
+ 
   ## CG EDITS 27 Sept 2019: Removed "(or Cov)" from error check: no cov arg
   if ( min(eigs) <= 0 && facMethod != "fals") {
     warning("R is not a positive definite matrix.")

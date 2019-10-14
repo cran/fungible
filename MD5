@@ -1,4 +1,4 @@
-ce3be5f1ebc2a3f7ba591f99f021b516 *DESCRIPTION
+aa92c352b06967e1f6da70d579ff98c6 *DESCRIPTION
 cf13b9cb1f4aa36f4359ed3be822e2f8 *NAMESPACE
 53ad1be8b029222f11eb610bfb773a30 *R/AmzBoxes.R
 1ced5d605e634705bb85f7252a53e0ec *R/BiFAD.R
@@ -13,7 +13,7 @@ d279bf1c91a76af0847c87c224e9c878 *R/FMPMonotonicityCheck.R
 aabbd89acf9b58629bd41ed875b3915b *R/Omega.R
 89e6426522e5ba0a18c75f166d2015d0 *R/RnpdMAP.R
 d0dc6521a5790068d0e3422efe9b8692 *R/SLi.R
-6587198a9cfcc9ca0839cc7e28e10758 *R/SchmidLeiman.R
+53196d4a115f8715c8fd90a302b3b73f *R/SchmidLeiman.R
 e196a47af6c1df80c5de87a7d8847cac *R/ThurstoneBox20.R
 02443ab1d7b2beed362e4c8000e25900 *R/ThurstoneBox26.R
 ccd00ff429a80a0b44c1efb5e1ef3609 *R/adfCor.R
@@ -34,10 +34,10 @@ c6e30b60ebcba25db3e6487d7bad169c *R/faMain.R
 23d271757eafc739b5558ba9b6891365 *R/faScores.R
 6f0b0a407513ae8d63dc032f31593a01 *R/faSort.R
 8b4543faa6da943f6d1446dfdaf554ab *R/faStandardize.R
-f53d8a79c33ed09f0b24f9ecf5ebf52b *R/faX.R
+153ea777cf4e85ff809c3cc3a0f38407 *R/faX.R
 b0e79f361ed18d59a8a6378447dae111 *R/fals.R
 1371895bfa32f193e4753eb8b2499acc *R/fapa.R
-4e6e52a8498827a3de851773c25e508c *R/fareg.R
+2a819daf1447f7133f01364bc9f3a1f7 *R/fareg.R
 daa04badedf3e598a1fbd3205e40d0f4 *R/fungible-package.R
 7aa62c41ba1ab4475fd4f474a8bbec93 *R/fungible.R
 e136c751dda171f9ddfe2d467b78d149 *R/fungibleExtrema.R
@@ -118,7 +118,7 @@ fe2e6469c7d549b2100363890154a1d4 *man/GenerateBoxData.Rd
 6b0ac28de102d8d70eb0b1841d1b16da *man/Omega.Rd
 627fc471a91a534f009d5fee659b9731 *man/RnpdMAP.Rd
 dbd5f02da19464591afc3815671240bf *man/SLi.Rd
-26d23dc017d37a0f3ae78b9136c05352 *man/SchmidLeiman.Rd
+69ac0c154db031749cc7cfff2e51e6e7 *man/SchmidLeiman.Rd
 61b7b48928b467f5516f39fb5922695e *man/ThurstoneBox20.Rd
 bdd55746bb3c45ff7d2df28fa0d12166 *man/ThurstoneBox26.Rd
 89fbebaa7a3cc0b7aa2f27d81a27dd84 *man/adfCor.Rd
