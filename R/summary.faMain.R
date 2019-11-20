@@ -666,15 +666,14 @@ summary.faMain <- function(object,
 
   }## END if( !is.null(fout$loadingsSE) && Set == 1  )
   
-  
-  
   #----____Print Factor Indeterminancy----  
   if(!onlyLoadings){
     sectionHeading("Factor Indeterminacy")
     
     Lmin <- eigen(fout$R)$values[nrow(FS)]
     if(Lmin > 1E-6){
-      #BOOTSTRAP RESULTS AVAILABLE
+   
+        #BOOTSTRAP RESULTS AVAILABLE
       if( !is.null(fout$loadingsSE) && Set == 1  ){ 
           cat("\nBootstrap Factor Determinancy Values\n")
           facIndeterminacy <- fout$facIndeterminacy
@@ -687,21 +686,19 @@ summary.faMain <- function(object,
              if(max(F_view_facIndeterminacy) > 1){
                 cat("\nObserved R computationally singular. Unable to calculate FI values.\n")
                 facIndeterminacy <- rep(NA, ncol(fout$loadings))
-           }else{
-             cat("\n")
-              print( F_view_facIndeterminacy, digits)
-              facIndeterminacy <- F_view_facIndeterminacy
-           }
+             }else{
+               cat("\n")
+                print( F_view_facIndeterminacy, digits)
+                facIndeterminacy <- F_view_facIndeterminacy
+             }# END else
            
        }# END if NO BOOTSTRAP RESULTS AVAILABLE
-    }
-    else{
-      cat("\nObserved R computationally singular. Unable to calculate FI values.\n")
-      ## September 30, 2019 Make this more efficient someday
-      facIndeterminacy <- rep(NA, ncol(fout$loadings))
-    }##if(Lmin > 1E-6)
-    ##END Print factor indeterminancy
+    }# END if(Lmin > 1E-6)
     
+    if(Lmin < 1E-6){
+      cat("\nObserved R computationally singular. Unable to calculate FI values.\n")
+      facIndeterminacy <- rep(NA, ncol(fout$loadings))
+    }
     
     #----____Print Model Fit
     #Model Fit:
@@ -716,9 +713,14 @@ summary.faMain <- function(object,
     cat("\nRMSAD (|R|,|Rhat|) = ", round(RMSAD, digits + 1))
     cat("\n\n")
     
-    ## END Print output 
-    
   } ##END if( !onlyLoadings)  
+  # END Print output 
+  
+  # Cannot compute Fac determinancy values without R matrix
+  # Also ccanot compute Rhat fit measures
+  if(onlyLoadings == TRUE){
+      facIndeterminacy <- rep(NA, ncol(fout$loadings))
+  }#END if(onlyLoadings == TRUE)
   
   
   ##  RETURN VALUES

@@ -4,10 +4,20 @@
 \alias{SLi}
 \title{Conduct a Schmid-Leiman Iterated (SLi) Target Rotation}
 \usage{
-SLi(R, SL = NULL, rotate = "geominQ", numFactors = NULL,
-  facMethod = "fals", salient = 0.2, urLoadings = NULL,
-  freelyEstG = TRUE, gFac = 1, maxSLiItr = 20, digits = NULL,
-  rotateControl = NULL, faControl = NULL)
+SLi(
+  R,
+  SL = NULL,
+  rotate = "geominQ",
+  numFactors = NULL,
+  facMethod = "fals",
+  salient = 0.2,
+  urLoadings = NULL,
+  freelyEstG = TRUE,
+  gFac = 1,
+  maxSLiItr = 20,
+  rotateControl = NULL,
+  faControl = NULL
+)
 }
 \arguments{
 \item{R}{(Matrix) A correlation matrix}
@@ -47,8 +57,6 @@ factoring, "faregLS" for regularized least squares,
 \item{gFac}{(Numeric, Vector) The position of the general factor(s) to be estimated. Solutions with multiple general factors may be estimated. Must either (a) freely estimate all loadings on the general factors or (b) only freely estimate general factor loadings that are above the salient threshold. The default column position is 1.}
 
 \item{maxSLiItr}{(Numeric) The maximum number of iterations for the SLi procedure. Typically, 10 iterations is usually sufficient to converge (cf. Abad et al., 2017). The default is 20 iterations.}
-
-\item{digits}{(Numeric) The number of digits to round all output to. The default is no rounding.}
 
 \item{rotateControl}{(List) A list of control values to pass to the factor rotation algorithms.
 \itemize{
@@ -147,8 +155,7 @@ R <- bifactor \%*\% t(bifactor)
 diag(R) <- 1
 
 Out1 <- SLi(R          = R,
-            numFactors = c(3, 1),
-            digits     = 2)
+            numFactors = c(3, 1))
 
 }
 \references{
@@ -163,16 +170,26 @@ Reise, S. P., Moore, T. M., & Haviland, M. G. (2010). Bifactor models and rotati
 Schmid, J., & Leiman, J. M. (1957). The development of hierarchical factor solutions. \emph{Psychometrika, 22}(1), 53-61.
 }
 \seealso{
-Other Factor Analysis Routines: \code{\link{BiFAD}},
-  \code{\link{Box26}}, \code{\link{GenerateBoxData}},
-  \code{\link{Ledermann}}, \code{\link{SchmidLeiman}},
-  \code{\link{faAlign}}, \code{\link{faEKC}},
-  \code{\link{faMain}}, \code{\link{faScores}},
-  \code{\link{faSort}}, \code{\link{faStandardize}},
-  \code{\link{faX}}, \code{\link{fals}},
-  \code{\link{fapa}}, \code{\link{fareg}},
-  \code{\link{orderFactors}}, \code{\link{print.faMain}},
-  \code{\link{promaxQ}}, \code{\link{summary.faMain}}
+Other Factor Analysis Routines: 
+\code{\link{BiFAD}()},
+\code{\link{Box26}},
+\code{\link{GenerateBoxData}()},
+\code{\link{Ledermann}()},
+\code{\link{SchmidLeiman}()},
+\code{\link{faAlign}()},
+\code{\link{faEKC}()},
+\code{\link{faMain}()},
+\code{\link{faScores}()},
+\code{\link{faSort}()},
+\code{\link{faStandardize}()},
+\code{\link{faX}()},
+\code{\link{fals}()},
+\code{\link{fapa}()},
+\code{\link{fareg}()},
+\code{\link{orderFactors}()},
+\code{\link{print.faMain}()},
+\code{\link{promaxQ}()},
+\code{\link{summary.faMain}()}
 }
 \author{
 \itemize{

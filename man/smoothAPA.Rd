@@ -4,8 +4,7 @@
 \alias{smoothAPA}
 \title{Smooth a NPD R matrix to PD using the Alternating Projection Algorithm}
 \usage{
-smoothAPA(R, delta = 1e-06, fixR = NULL, Wghts = NULL,
-  maxTries = 1000)
+smoothAPA(R, delta = 1e-06, fixR = NULL, Wghts = NULL, maxTries = 1000)
 }
 \arguments{
 \item{R}{A p x p indefinite matrix.}

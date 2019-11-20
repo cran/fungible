@@ -4,10 +4,20 @@
 \alias{monte}
 \title{Simulate Clustered Data with User-Defined Properties}
 \usage{
-monte(seed = 123, nvar = 4, nclus = 3, clus.size = c(50, 50, 50),
-  eta2 = c(0.619, 0.401, 0.941, 0.929), cor.list = NULL,
-  random.cor = FALSE, skew.list = NULL, kurt.list = NULL,
-  secor = NULL, compactness = NULL, sortMeans = TRUE)
+monte(
+  seed = 123,
+  nvar = 4,
+  nclus = 3,
+  clus.size = c(50, 50, 50),
+  eta2 = c(0.619, 0.401, 0.941, 0.929),
+  cor.list = NULL,
+  random.cor = FALSE,
+  skew.list = NULL,
+  kurt.list = NULL,
+  secor = NULL,
+  compactness = NULL,
+  sortMeans = TRUE
+)
 }
 \arguments{
 \item{seed}{Required: An integer to be used as the random number seed.}

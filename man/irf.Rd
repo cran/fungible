@@ -4,8 +4,16 @@
 \alias{irf}
 \title{Plot item response functions for polynomial IRT models.}
 \usage{
-irf(data, bParams, item, plotERF = TRUE, thetaEAP = NULL,
-  minCut = -3, maxCut = 3, NCuts = 9)
+irf(
+  data,
+  bParams,
+  item,
+  plotERF = TRUE,
+  thetaEAP = NULL,
+  minCut = -3,
+  maxCut = 3,
+  NCuts = 9
+)
 }
 \arguments{
 \item{data}{N(subjects)-by-p(items) matrix of 0/1 item response data.}

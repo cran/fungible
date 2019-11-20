@@ -4,8 +4,7 @@
 \alias{faX}
 \title{Factor Extraction (faX) Routines}
 \usage{
-faX(R, n = NULL, numFactors = NULL, facMethod = "fals",
-  faControl = NULL, digits = NULL)
+faX(R, n = NULL, numFactors = NULL, facMethod = "fals", faControl = NULL)
 }
 \arguments{
 \item{R}{(Matrix) A correlation matrix used for factor extraction.}
@@ -60,9 +59,6 @@ extraction (\code{\link{faX}}) function.
   \item \strong{maxItr}: (Numeric) In \code{fapa}, the maximum number of 
   iterations to reach convergence. Defaults to maxItr = 15,000.
 }}
-
-\item{digits}{(Numeric) Rounds the values to the specified number of decimal 
-places. Defaults to digits = NULL (no rounding).}
 }
 \value{
 This function returns a list of output relating to the extracted factor loadings.
@@ -159,16 +155,26 @@ estimates of communality: Initial estimate need not affect stabilized value.
 \emph{Psychometrika, 50}(4), 469-477.
 }
 \seealso{
-Other Factor Analysis Routines: \code{\link{BiFAD}},
-  \code{\link{Box26}}, \code{\link{GenerateBoxData}},
-  \code{\link{Ledermann}}, \code{\link{SLi}},
-  \code{\link{SchmidLeiman}}, \code{\link{faAlign}},
-  \code{\link{faEKC}}, \code{\link{faMain}},
-  \code{\link{faScores}}, \code{\link{faSort}},
-  \code{\link{faStandardize}}, \code{\link{fals}},
-  \code{\link{fapa}}, \code{\link{fareg}},
-  \code{\link{orderFactors}}, \code{\link{print.faMain}},
-  \code{\link{promaxQ}}, \code{\link{summary.faMain}}
+Other Factor Analysis Routines: 
+\code{\link{BiFAD}()},
+\code{\link{Box26}},
+\code{\link{GenerateBoxData}()},
+\code{\link{Ledermann}()},
+\code{\link{SLi}()},
+\code{\link{SchmidLeiman}()},
+\code{\link{faAlign}()},
+\code{\link{faEKC}()},
+\code{\link{faMain}()},
+\code{\link{faScores}()},
+\code{\link{faSort}()},
+\code{\link{faStandardize}()},
+\code{\link{fals}()},
+\code{\link{fapa}()},
+\code{\link{fareg}()},
+\code{\link{orderFactors}()},
+\code{\link{print.faMain}()},
+\code{\link{promaxQ}()},
+\code{\link{summary.faMain}()}
 }
 \author{
 \itemize{

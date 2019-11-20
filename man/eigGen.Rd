@@ -4,8 +4,7 @@
 \alias{eigGen}
 \title{Generate eigenvalues for R matrices with underlying component structure}
 \usage{
-eigGen(nDimensions = 15, nMajorFactors = 5, PrcntMajor = 0.8,
-  threshold = 0.5)
+eigGen(nDimensions = 15, nMajorFactors = 5, PrcntMajor = 0.8, threshold = 0.5)
 }
 \arguments{
 \item{nDimensions}{Total number of dimensions (variables).}

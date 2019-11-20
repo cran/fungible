@@ -4,11 +4,22 @@
 \alias{GenerateBoxData}
 \title{Generate Thurstone's Box Data From length, width, and height box measurements}
 \usage{
-GenerateBoxData(XYZ, BoxStudy = 20, Reliability = 0.75,
-  ModApproxErrVar = 0.1, SampleSize = NULL, NMinorFac = 50,
-  epsTKL = 0.2, Seed = 1, SeedErrorFactors = 2,
-  SeedMinorFactors = 3, PRINT = FALSE, LB = FALSE, LBVal = 1,
-  Constant = 0)
+GenerateBoxData(
+  XYZ,
+  BoxStudy = 20,
+  Reliability = 0.75,
+  ModApproxErrVar = 0.1,
+  SampleSize = NULL,
+  NMinorFac = 50,
+  epsTKL = 0.2,
+  Seed = 1,
+  SeedErrorFactors = 2,
+  SeedMinorFactors = 3,
+  PRINT = FALSE,
+  LB = FALSE,
+  LBVal = 1,
+  Constant = 0
+)
 }
 \arguments{
 \item{XYZ}{(Matrix) Length, width, and height measurements for N boxes.   The Amazon Box data 
@@ -193,16 +204,26 @@ analytic research procedures by means of simulated correlation matrices.
 \emph{Psychometrika, 34}(4), 421-459.
 }
 \seealso{
-Other Factor Analysis Routines: \code{\link{BiFAD}},
-  \code{\link{Box26}}, \code{\link{Ledermann}},
-  \code{\link{SLi}}, \code{\link{SchmidLeiman}},
-  \code{\link{faAlign}}, \code{\link{faEKC}},
-  \code{\link{faMain}}, \code{\link{faScores}},
-  \code{\link{faSort}}, \code{\link{faStandardize}},
-  \code{\link{faX}}, \code{\link{fals}},
-  \code{\link{fapa}}, \code{\link{fareg}},
-  \code{\link{orderFactors}}, \code{\link{print.faMain}},
-  \code{\link{promaxQ}}, \code{\link{summary.faMain}}
+Other Factor Analysis Routines: 
+\code{\link{BiFAD}()},
+\code{\link{Box26}},
+\code{\link{Ledermann}()},
+\code{\link{SLi}()},
+\code{\link{SchmidLeiman}()},
+\code{\link{faAlign}()},
+\code{\link{faEKC}()},
+\code{\link{faMain}()},
+\code{\link{faScores}()},
+\code{\link{faSort}()},
+\code{\link{faStandardize}()},
+\code{\link{faX}()},
+\code{\link{fals}()},
+\code{\link{fapa}()},
+\code{\link{fareg}()},
+\code{\link{orderFactors}()},
+\code{\link{print.faMain}()},
+\code{\link{promaxQ}()},
+\code{\link{summary.faMain}()}
 }
 \author{
 Niels G. Waller (nwaller@umn.edu)

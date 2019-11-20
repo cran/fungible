@@ -237,6 +237,9 @@ smoothBY <- function(R, const = .98, eps = .001){
       list(RBY = NULL, constant = NULL, convergence = FALSE, eps = eps)
     } 
     
+    # insure perfect symmetry
+    RBY <- .5 * (RBY + t(RBY))
+    
     return(list(RBY = RBY, 
                 constant = const, 
                 convergence = convergence,

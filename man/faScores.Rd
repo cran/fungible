@@ -4,8 +4,13 @@
 \alias{faScores}
 \title{Factor Scores}
 \usage{
-faScores(X = NULL, faMainObject = NULL, Loadings = NULL,
-  Phi = NULL, Method = "Thurstone")
+faScores(
+  X = NULL,
+  faMainObject = NULL,
+  Loadings = NULL,
+  Phi = NULL,
+  Method = "Thurstone"
+)
 }
 \arguments{
 \item{X}{(Matrix) An N \code{x}  variables data matrix.  If X is a matrix of raw scores then
@@ -140,16 +145,26 @@ print( cor(fscores, CommonFS) )
  }
 }
 \seealso{
-Other Factor Analysis Routines: \code{\link{BiFAD}},
-  \code{\link{Box26}}, \code{\link{GenerateBoxData}},
-  \code{\link{Ledermann}}, \code{\link{SLi}},
-  \code{\link{SchmidLeiman}}, \code{\link{faAlign}},
-  \code{\link{faEKC}}, \code{\link{faMain}},
-  \code{\link{faSort}}, \code{\link{faStandardize}},
-  \code{\link{faX}}, \code{\link{fals}},
-  \code{\link{fapa}}, \code{\link{fareg}},
-  \code{\link{orderFactors}}, \code{\link{print.faMain}},
-  \code{\link{promaxQ}}, \code{\link{summary.faMain}}
+Other Factor Analysis Routines: 
+\code{\link{BiFAD}()},
+\code{\link{Box26}},
+\code{\link{GenerateBoxData}()},
+\code{\link{Ledermann}()},
+\code{\link{SLi}()},
+\code{\link{SchmidLeiman}()},
+\code{\link{faAlign}()},
+\code{\link{faEKC}()},
+\code{\link{faMain}()},
+\code{\link{faSort}()},
+\code{\link{faStandardize}()},
+\code{\link{faX}()},
+\code{\link{fals}()},
+\code{\link{fapa}()},
+\code{\link{fareg}()},
+\code{\link{orderFactors}()},
+\code{\link{print.faMain}()},
+\code{\link{promaxQ}()},
+\code{\link{summary.faMain}()}
 }
 \author{
 Niels Waller

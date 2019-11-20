@@ -1,6 +1,6 @@
 Package: fungible
-Version: 1.92
-Date: 2019-10-14
+Version: 1.93
+Date: 2019-11-19
 Title: Psychometric Functions from the Waller Lab
 Authors@R: c(
     person("Niels", "Waller", role = c("aut", "cre"), email="nwaller@umn.edu" ),
@@ -24,10 +24,10 @@ Description: Computes fungible coefficients and Monte Carlo data. Underlying the
 License: GPL (>= 2)
 Encoding: UTF-8
 NeedsCompilation: no
-RoxygenNote: 6.1.1
-Packaged: 2019-10-14 15:19:31 UTC; nielswaller
+RoxygenNote: 7.0.0
+Packaged: 2019-11-20 16:34:11 UTC; nielswaller
 Author: Niels Waller [aut, cre],
   Jeff Jones [ctb],
   Casey Giordano [ctb]
 Repository: CRAN
-Date/Publication: 2019-10-14 15:40:05 UTC
+Date/Publication: 2019-11-20 20:20:06 UTC

@@ -4,9 +4,17 @@
 \alias{RnpdMAP}
 \title{Generate Random NPD R matrices from a user-supplied population R}
 \usage{
-RnpdMAP(Rpop, Lp = NULL, NNegEigs = 1, NSmoothPosEigs = 4,
-  NSubjects = NULL, NSamples = 0, MaxIts = 15000, PRINT = FALSE,
-  Seed = NULL)
+RnpdMAP(
+  Rpop,
+  Lp = NULL,
+  NNegEigs = 1,
+  NSmoothPosEigs = 4,
+  NSubjects = NULL,
+  NSamples = 0,
+  MaxIts = 15000,
+  PRINT = FALSE,
+  Seed = NULL
+)
 }
 \arguments{
 \item{Rpop}{input (PD or PSD) p x p Population correlation matrix.}

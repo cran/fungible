@@ -4,8 +4,7 @@
 \alias{genFMPData}
 \title{Generate item response data for a filtered monotonic polynomial IRT model}
 \usage{
-genFMPData(NSubj, bParams, theta = NULL, thetaMN = 0, thetaVar = 1,
-  seed)
+genFMPData(NSubj, bParams, theta = NULL, thetaMN = 0, thetaVar = 1, seed)
 }
 \arguments{
 \item{NSubj}{the desired number of subject response vectors.}

@@ -127,10 +127,9 @@ faX <- function(R,
                 n          = NULL,
                 numFactors = NULL,
                 facMethod  = "fals",
-                faControl  = NULL,
-                digits     = NULL) {
+                faControl  = NULL){
+               
 
-  
   ## ~~~~~~~~~~~~~~~~~~ ##
   #### Error Checking ####
   ## ~~~~~~~~~~~~~~~~~~ ##
@@ -146,7 +145,7 @@ faX <- function(R,
   ## Positive definite
   eigs <- eigen(R)$values
  
-  ## CG EDITS 27 Sept 2019: Removed "(or Cov)" from error check: no cov arg
+  
   if ( min(eigs) <= 0 && facMethod != "fals") {
     warning("R is not a positive definite matrix.")
   } # END if ( min(eigs) <= 0 )
@@ -208,13 +207,9 @@ faX <- function(R,
   } # END if ( !is.null(faControl) )
   
   
+
   
-  ## Check digits
   
-  ## If not specified, give it a value
-  if ( is.null(digits) ) {
-    digits <- options()$digits
-  } # END if ( is.null(digits) )
   
   ## ~~~~~~~~~~~~~~~~~~~~~~~ ##
   #### Define Utility Func ####
@@ -367,7 +362,7 @@ faX <- function(R,
   } # END if (modelFit$converged == FALSE) 
   
 
-  list(loadings = round(Out$loadings[], digits),
+  list(loadings = Out$loadings[],
        h2       = modelFit$h2,
        faFit    = modelFit,
        faControl = cnFA)

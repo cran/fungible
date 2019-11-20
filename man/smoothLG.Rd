@@ -4,8 +4,14 @@
 \alias{smoothLG}
 \title{Smooth NPD to Nearest PSD or PD Matrix}
 \usage{
-smoothLG(R, start.val = NULL, Wghts = NULL, PD = FALSE,
-  Penalty = 50000, eps = 1e-07)
+smoothLG(
+  R,
+  start.val = NULL,
+  Wghts = NULL,
+  PD = FALSE,
+  Penalty = 50000,
+  eps = 1e-07
+)
 }
 \arguments{
 \item{R}{Indefinite Matrix.}

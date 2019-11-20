@@ -4,8 +4,15 @@
 \alias{gen4PMData}
 \title{Generate item response data for 1, 2, 3, or 4-parameter IRT models}
 \usage{
-gen4PMData(NSubj = NULL, abcdParams, D = 1.702, seed = NULL,
-  theta = NULL, thetaMN = 0, thetaVar = 1)
+gen4PMData(
+  NSubj = NULL,
+  abcdParams,
+  D = 1.702,
+  seed = NULL,
+  theta = NULL,
+  thetaMN = 0,
+  thetaVar = 1
+)
 }
 \arguments{
 \item{NSubj}{the desired number of subject response vectors.}

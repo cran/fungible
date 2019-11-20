@@ -5,8 +5,13 @@
 \alias{print.summary.monte}
 \title{Summary Method for an Object of Class Monte}
 \usage{
-\method{summary}{monte}(object, digits = 3, compute.validities = FALSE,
-  Total.stats = TRUE, ...)
+\method{summary}{monte}(
+  object,
+  digits = 3,
+  compute.validities = FALSE,
+  Total.stats = TRUE,
+  ...
+)
 }
 \arguments{
 \item{object}{An object of class \code{monte}, usually, a result of a call

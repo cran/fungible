@@ -61,16 +61,26 @@ matrix in multiple-factor analysis. \emph{Psychometrika, 2}(2), 85-93.
 Thurstone, L. L. (1947). Multiple-factor analysis; a development and expansion of The Vectors of Mind.
 }
 \seealso{
-Other Factor Analysis Routines: \code{\link{BiFAD}},
-  \code{\link{Box26}}, \code{\link{GenerateBoxData}},
-  \code{\link{SLi}}, \code{\link{SchmidLeiman}},
-  \code{\link{faAlign}}, \code{\link{faEKC}},
-  \code{\link{faMain}}, \code{\link{faScores}},
-  \code{\link{faSort}}, \code{\link{faStandardize}},
-  \code{\link{faX}}, \code{\link{fals}},
-  \code{\link{fapa}}, \code{\link{fareg}},
-  \code{\link{orderFactors}}, \code{\link{print.faMain}},
-  \code{\link{promaxQ}}, \code{\link{summary.faMain}}
+Other Factor Analysis Routines: 
+\code{\link{BiFAD}()},
+\code{\link{Box26}},
+\code{\link{GenerateBoxData}()},
+\code{\link{SLi}()},
+\code{\link{SchmidLeiman}()},
+\code{\link{faAlign}()},
+\code{\link{faEKC}()},
+\code{\link{faMain}()},
+\code{\link{faScores}()},
+\code{\link{faSort}()},
+\code{\link{faStandardize}()},
+\code{\link{faX}()},
+\code{\link{fals}()},
+\code{\link{fapa}()},
+\code{\link{fareg}()},
+\code{\link{orderFactors}()},
+\code{\link{print.faMain}()},
+\code{\link{promaxQ}()},
+\code{\link{summary.faMain}()}
 }
 \author{
 Casey Giordano

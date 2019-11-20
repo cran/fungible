@@ -4,9 +4,16 @@
 \alias{BiFAD}
 \title{Bifactor Analysis via Direct Schmid-Leiman (DSL) Transformations}
 \usage{
-BiFAD(R, B = NULL, numFactors = NULL, facMethod = "fals",
-  rotate = "oblimin", salient = 0.25, digits = NULL,
-  rotateControl = NULL, faControl = NULL)
+BiFAD(
+  R,
+  B = NULL,
+  numFactors = NULL,
+  facMethod = "fals",
+  rotate = "oblimin",
+  salient = 0.25,
+  rotateControl = NULL,
+  faControl = NULL
+)
 }
 \arguments{
 \item{R}{(Matrix) A correlation matrix.}
@@ -38,9 +45,6 @@ factoring, "faregLS" for regularized least squares,
 \item{rotate}{(Character) Designate which rotation algorithm to apply. See the \code{\link{faMain}} function for more details about possible rotations. An oblimin rotation is the default.}
 
 \item{salient}{(Numeric) Threshold value for creating an empirical target matrix.}
-
-\item{digits}{(Numeric) Rounds the values to the specified number of decimal 
-places. Defaults to digits = NULL (no rounding).}
 
 \item{rotateControl}{(List) A list of control values to pass to the factor rotation algorithms.
 \itemize{
@@ -198,16 +202,26 @@ print( round(out.ex2$BstarFR, 2) )
 }
 }
 \seealso{
-Other Factor Analysis Routines: \code{\link{Box26}},
-  \code{\link{GenerateBoxData}}, \code{\link{Ledermann}},
-  \code{\link{SLi}}, \code{\link{SchmidLeiman}},
-  \code{\link{faAlign}}, \code{\link{faEKC}},
-  \code{\link{faMain}}, \code{\link{faScores}},
-  \code{\link{faSort}}, \code{\link{faStandardize}},
-  \code{\link{faX}}, \code{\link{fals}},
-  \code{\link{fapa}}, \code{\link{fareg}},
-  \code{\link{orderFactors}}, \code{\link{print.faMain}},
-  \code{\link{promaxQ}}, \code{\link{summary.faMain}}
+Other Factor Analysis Routines: 
+\code{\link{Box26}},
+\code{\link{GenerateBoxData}()},
+\code{\link{Ledermann}()},
+\code{\link{SLi}()},
+\code{\link{SchmidLeiman}()},
+\code{\link{faAlign}()},
+\code{\link{faEKC}()},
+\code{\link{faMain}()},
+\code{\link{faScores}()},
+\code{\link{faSort}()},
+\code{\link{faStandardize}()},
+\code{\link{faX}()},
+\code{\link{fals}()},
+\code{\link{fapa}()},
+\code{\link{fareg}()},
+\code{\link{orderFactors}()},
+\code{\link{print.faMain}()},
+\code{\link{promaxQ}()},
+\code{\link{summary.faMain}()}
 }
 \author{
 \itemize{

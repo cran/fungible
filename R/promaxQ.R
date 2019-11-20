@@ -168,7 +168,6 @@ promaxQ <- function(R           = NULL,
                     standardize = "Kaiser",
                     epsilon     = 1e-4,
                     maxItr      = 15000,
-                    digits      = NULL,
                     faControl   = NULL) {
   
   ## ~~~~~~~~~~~~~~~~~~ ##
@@ -183,13 +182,6 @@ promaxQ <- function(R           = NULL,
   if ( is.null(urLoadings) & is.null(numFactors) ) {
     stop("An unrotated factor matrix is not provided, please specify the number of factors to extract to generate this loadings matrix.")
   } # END if ( is.null(urLoadings) & is.null(numFactors) )
-  
-  ## Check digits
-  
-  ## If digits is not specified, give an arbitrarily big value
-  if ( is.null(digits) ) {
-    digits <- options()$digits
-  } # END if ( is.null(digits) )
   
   ## Check faControl
   
@@ -299,11 +291,11 @@ promaxQ <- function(R           = NULL,
   Phi <- facOrder$PhiMat
   
   ## Return a list with all the output
-  list(loadings        = round(PromaxLoadings,  digits),
-       vmaxLoadings    = round(VMaxLoadings,    digits),
-       rotMatrix       = round(rescaledTMatrix, digits),
-       Phi             = round(Phi,             digits),
-       vmaxDiscrepancy = round(VMaxDisc,        digits),
+  list(loadings        = PromaxLoadings,
+       vmaxLoadings    = VMaxLoadings,  
+       rotMatrix       = rescaledTMatrix,
+       Phi             = Phi,           
+       vmaxDiscrepancy = VMaxDisc,      
        convergence     = convergence,
        Table           = VarimaxOutput$Table,
        rotateControl   = list(power       = power,

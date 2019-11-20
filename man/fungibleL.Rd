@@ -4,8 +4,16 @@
 \alias{fungibleL}
 \title{Generate Fungible Logistic Regression Weights}
 \usage{
-fungibleL(X, y, Nsets = 1000, method = "LLM", RsqDelta = NULL,
-  rLaLb = NULL, s = 0.3, Print = TRUE)
+fungibleL(
+  X,
+  y,
+  Nsets = 1000,
+  method = "LLM",
+  RsqDelta = NULL,
+  rLaLb = NULL,
+  s = 0.3,
+  Print = TRUE
+)
 }
 \arguments{
 \item{X}{An n by nvar matrix of predictor scores without the leading column

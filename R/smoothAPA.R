@@ -202,6 +202,8 @@ smoothAPA <- function(R, delta = 1e-06, fixR = NULL, Wghts = NULL, maxTries = 10
   
   ## Reconstruct smoothed matrix at solution
   Ck <- DwInv %*% V %*% Lplus %*% t(V) %*% DwInv
+  # guarantee perfect symmetry
+  Ck <- .5 * (Ck + t(Ck))
   colnames(Ck) <- rownames(Ck) <- colnames(R)
   
   if(tries >= maxTries)  convergence <- 1

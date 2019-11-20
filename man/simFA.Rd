@@ -4,10 +4,19 @@
 \alias{simFA}
 \title{Generate Factor Analysis Models and Data Sets for Simulation Studies}
 \usage{
-simFA(Model = list(), Loadings = list(), CrossLoadings = list(),
-  Phi = list(), ModelError = list(), Bifactor = list(),
-  MonteCarlo = list(), FactorScores = list(), Missing = list(),
-  Control = list(), Seed = NULL)
+simFA(
+  Model = list(),
+  Loadings = list(),
+  CrossLoadings = list(),
+  Phi = list(),
+  ModelError = list(),
+  Bifactor = list(),
+  MonteCarlo = list(),
+  FactorScores = list(),
+  Missing = list(),
+  Control = list(),
+  Seed = NULL
+)
 }
 \arguments{
 \item{Model}{(list) 

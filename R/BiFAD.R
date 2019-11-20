@@ -111,7 +111,6 @@ BiFAD <- function(R,
                   facMethod     = "fals",
                   rotate        = "oblimin",
                   salient       = .25,
-                  digits        = NULL,
                   rotateControl = NULL,
                   faControl     = NULL) {
   
@@ -169,10 +168,7 @@ BiFAD <- function(R,
     stop("\n\n FATAL ERROR: Either B or numFactors must be specified")
   } # END if (is.null(B) & is.null(nGroup))
   
-  ## Set default for digits if null
-  if ( is.null(digits) ) {
-    digits <- options()$digits
-  } # END if ( is.null(digits) )
+
   
   ## ~~~~~~~~~~~~~~~~~~ ##
   #### Begin Function ####
@@ -253,9 +249,9 @@ BiFAD <- function(R,
     rmsrFR = sqrt(mean((B - BstarFR)^2))
   } # END if (Bflag == 1)
   
-  list(B       = round(B,       digits),
-       BstarSL = round(BstarSL, digits),
-       BstarFR = round(BstarFR, digits),
+  list(B       = B,
+       BstarSL = BstarSL,
+       BstarFR = BstarFR,
        rmsrSL  = rmsrSL,
        rmsrFR  = rmsrFR)
   

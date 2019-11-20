@@ -85,8 +85,7 @@
 #'          nrow = 12, ncol = 12, byrow = TRUE)
 #'
 #' Out1 <- SchmidLeiman(R          = SLdata,
-#'                      numFactors = c(6, 3, 1),
-#'                      digits     = 2)$B
+#'                      numFactors = c(6, 3, 1))$B
 #'
 #' ## An orthogonalization of a two-order structure
 #' bifactor <- matrix(c(.46, .57, .00, .00,
@@ -98,7 +97,7 @@
 #'                      .47, .00, .00, .48,
 #'                      .50, .00, .00, .50,
 #'                      .49, .00, .00, .49),
-#'                    nrow = 9, ncol = 3, byrow = TRUE)
+#'                    nrow = 9, ncol = 4, byrow = TRUE)
 #'
 #' ## Model-implied correlation (covariance) matrix
 #' R <- bifactor %*% t(bifactor)
@@ -108,8 +107,7 @@
 #'
 #' Out2 <- SchmidLeiman(R          = R,
 #'                      numFactors = c(3, 1),
-#'                      rotate     = "oblimin",
-#'                      digits     = 2)$B
+#'                      rotate     = "oblimin")$B
 #'
 #' @export
 
@@ -119,7 +117,6 @@ SchmidLeiman <-
            facMethod     = "fals",    ## Factor extraction method
            rotate        = "oblimin", ## Oblique rotation
            rescaleH2     = .98,       ## Rescale communalities
-           digits        = NULL,      ## Round all output
            faControl     = NULL,      ## Arguments passed to faX
            rotateControl = NULL){     ## Arguments passed to rotate
     
@@ -160,11 +157,6 @@ SchmidLeiman <-
     if (length(numFactors) <= 1) {
       stop("The 'numFactors' argument must be a vector of 2 or 3 values.")
     } # END if (length(numFactors) <=1)
-    
-    ## If digits is not specified, give default values
-    if ( is.null(digits) ) {
-      digits <- options()$digits
-    } # END if ( is.null(digits) )
     
     ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~##
     ##         First-level hierarchical factor analysis         ##
@@ -469,26 +461,26 @@ SchmidLeiman <-
     
     ## ----Available output----
     SLOutput <-
-      list(L1            = round(L1, digits),    ## level 1 loadings
-           L2            = round(L2, digits),    ## level 2 loadings
+      list(L1            = L1,    ## level 1 loadings
+           L2            = L2,    ## level 2 loadings
            L3            = NULL,  ## level 3 loadings
-           Phi1          = round(R1, digits),    ## level 1 phi matrix
-           Phi2          = round(R2, digits),    ## level 2 phi matrix
+           Phi1          = R1,    ## level 1 phi matrix
+           Phi2          = R2,    ## level 2 phi matrix
            Phi3          = NULL,  ## level 3 phi matrix
-           U1            = round(U_1, digits),   ## Level 1 sqrt of uniqueness
-           U2            = round(U_2, digits),   ## Level 2 sqrt of uniqueness
+           U1            = U_1,   ## Level 1 sqrt of uniqueness
+           U2            = U_2,   ## Level 2 sqrt of uniqueness
            U3            = NULL,  ## level 3 sqrt of uniquenesses
-           B             = round(B.out, digits),
+           B             = B.out,
            rotateControl = rotateControl,
            faControl     = faControl,
-           HeywoodFlag = HeywoodFlag) ## final bifactor solution
+           HeywoodFlag   = HeywoodFlag) ## final bifactor solution
     
     ## If a 3-rd order solution is produced, populate the output of the 3rd level
     if ( length(numFactors) == 3 ) {
       
-      SLOutput$L3   <- round(L3,  digits)
-      SLOutput$Phi3 <- round(R3,  digits)
-      SLOutput$Usq3 <- round(U_3, digits)
+      SLOutput$L3   <- L3
+      SLOutput$Phi3 <- R3
+      SLOutput$Usq3 <- U_3
       
     } # END if ( length(numFactors) == 3 )
     

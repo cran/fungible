@@ -94,6 +94,9 @@ faSort <- function(fmat,
   rowNames <- rownames(fmat) 
   rowNumbers <- 1:Nrow
   
+  ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ##
+  ## ---- Sort 1 Factor Models  ####
+  ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ##
   
   ## If single factor model
   if (Nfac == 1) {
@@ -113,6 +116,10 @@ faSort <- function(fmat,
     )   
   } ## END if Nfac == 1
   
+  ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ##
+  ## ---- Sort 2+ Factor Models ####
+  ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ##
+  
   # backup of unsorted loadings
   Floadings <- fmat
   
@@ -124,26 +131,25 @@ faSort <- function(fmat,
   FacAssignments <- apply(abs(fmat[,1:Nfac]), 1, which.max)
   
   
-  ## CG EDITS (6 Sept 2019)
+  
+  ## ----____ Group indicators to factors ####
+  
   ## Vector to count how many salient indicators per factor, start with zero
   NumberSalient <- rep(0, Nfac)
   names(NumberSalient) <- paste(seq_len(Nfac)) ## Add names
   
-  ## CG EDITS (6 Sept 2019)
+  
   ## Count salient loadings per factor
   countSalient <- table(FacAssignments)
   
-  ## CG EDITS (6 Sept 2019)
+  
   ## Overwrite placeholders in NumberSalient with salient count
   NumberSalient[names(countSalient)] <- countSalient
   
-  # Calculate number of salient loadings on each factor
-  ## NOTE: This  blows up if a factor has no salient indicators
-  # NumberSalient <- as.vector(table( FacAssignments ))
   
   # varsOnFacs is a vector that lists the variables that load
   # on each factor
-  ## CG NOTE: pre-allocation does not work, multiple values per loop
+  
   varsOnFacs <- NA
   for (i in 1:Nfac) {
     varsOnFacs <- c(varsOnFacs, rowNumbers[FacAssignments == i])
@@ -151,6 +157,9 @@ faSort <- function(fmat,
   
   ## Drop the initial NA value
   varsOnFacs <- varsOnFacs[-1]
+  
+  
+  #### ----____ Unsorted 'staircase' pattern ####
   
   # Sort loadings so that loadings
   # on a common factor are grouped together
@@ -162,59 +171,68 @@ faSort <- function(fmat,
   # for each factor
   
   ## Find variable number where each factor ends
-  ## CG NOTE: start with 0, next loop adds 1 
+  ## Start with 0, next loop adds 1 
   Frows <- c(0, cumsum(NumberSalient))
   
   # Start/End matrix
-  se <- matrix(0, nrow=Nfac, ncol = 2)
+  se <- matrix(0, nrow = Nfac, ncol = 2)
   for (i in 1:Nfac) {
-    
-    ## CG EDITS (13 sept 19): comments added
-    ## 1st element: Factor i starts where factor (i - 1) ends, plus one 
-    ## 2nd element: Factor i ends in Frow[i] but we appended a zero to Frow
+      ## 1st element: Factor i starts where factor (i - 1) ends, plus one 
+      ## 2nd element: Factor i ends in Frow[i] but we appended a zero to Frow
       ## such that we need to take Frow[i + 1] instead
-    se[i, ] <- (c(Frows[i] + 1, Frows[i+1]))
+      se[i, ] <- (c(Frows[i] + 1, Frows[i + 1]))
   } # END for (i in 1:Nfac) 
   
   
-  ## If no general factor found then sort items 
-    ## within factors
-  if (se[1, 2] != Nrow ) { ## If all items load on the first factor...
+  #### ----____ Sort 'staircase' pattern ####
+  
+  
+  ## Create matrix to update each loop below (i.e., 'if (se[1, 2] != Nrow)')
+  #fmatUpdated <- fmat
+  FStaircase <- rep(99, Nfac+1)
+  
+  ## If no general factor found then sort items within factors
+  if (se[1, 2] != Nrow ) { ## If all items do not load on the first factor...
     
     # Sort loadings by abs value within factors
     fmatAbs <- abs(fmat)
     for (i in 1:Nfac) {
       
-      ## CG EDITS: If factor has no salient items, do nothing 
-      if (NumberSalient[i] == 0) {
-        ## If a factor has no salient markers, do not sort it
-        ## Do nothing, ignore this factor
-        fmat <- fmat
-      } else {
+       ## If factor has no salient items, do nothing 
+        if (NumberSalient[i] == 0) {
+          ## If a factor has no salient markers, do not sort it
+        } else {
         
-        ## CG EDITS (13 sept 19): Added comments
-        
-        ## For factor i, only sort items with salient markers on that factor
-        ## Vector is sorted order of items loading on factor i
-        r_order <- Frows[i] + sort.list(fmatAbs[(se[i, 1]:se[i, 2]), i], 
+          ## For factor i, only sort items with salient markers on that factor
+          ## Vector is sorted order of items loading on factor i
+          r_order <- Frows[i] + sort.list(fmatAbs[(se[i, 1]:se[i, 2]), i], 
                                         decreasing = TRUE)
-        ## Updated loadings matrix with new item order
-        fmat[(se[i,1]:se[i,2]), ] <- fmat[r_order, ]
+       
+          ## **** Build F staircase ****
+          FStaircase <- rbind(FStaircase,fmat[r_order, , drop=FALSE ] )
+            
+            
       } # END if (NumberSalient[i] == 0) 
       
     } # END for (i in 1:Nfac) 
   } # END  if (se[1,2] != Nrow )
   
+ 
+  fmat <- FStaircase[-1, ] # delete row of 99's
+ 
   
+  #### ----____ Create sortOrder object ####
   
-  
+
   # sortOrder gives the sort order of the 
   # original variables
   ## CG EDITS (13 sept 19): Nfac + 1 is "rowNumbers"
   sortOrder <- fmat[, Nfac + 1]
   
   ## Drop rowNumbers column from fmat, no longer needed
-  fmat <- fmat[, -(Nfac+1)]
+  fmat <- fmat[, -(Nfac + 1)]
+  
+  #### ----____ Create markers object ####
   
   # find factor markers (variables that load 
   # above a user-defined salient threhold) 
@@ -225,11 +243,13 @@ faSort <- function(fmat,
     markers[[iMark]] <- sortOrder[ abs(fmat[, iMark]) >= salient ] 
   } # END for (iMark in 1:Nfac) 
   
+  #### ----____ Reflect factors ####
+  
   # If reflect = TRUE then reflect factors s.t.
   # salient loadings are positive
   if (reflect == TRUE) {
     ## Determine whether factors are negatively oriented
-    Dsgn <- diag(sign(colSums(fmat^3))) ## CG (13 sept 19): Is the cube needed??
+    Dsgn <- diag(sign(colSums(fmat^3))) 
     ## If factors negatively oriented, multiply by -1, else multiply by 1
     fmat <- fmat %*% Dsgn
     if (!is.null(phi)) {
@@ -238,11 +258,15 @@ faSort <- function(fmat,
     } # END if (!is.null(phi)) 
   } # END if (reflect == TRUE) 
   
+  #### ----____ Sort 'markers' object ####
+  
   # Sort markers by |factor loading|
   for (i in 1:Nfac) {
-    markers[[i]] <- markers[[i]][sort.list(abs(Floadings[markers[[i]],i]), 
+    markers[[i]] <- markers[[i]][sort.list(abs(Floadings[markers[[i]], i]), 
                                            decreasing = TRUE)]
   } # END for (i in 1:Nfac) 
+  
+  #### ----____ Name the output objects ####
   
   ## CG EDITS (13 sept 19): Add names to list of factor markers
   names(markers) <- paste("Factor", 1:Nfac, "markers")
@@ -251,12 +275,13 @@ faSort <- function(fmat,
   rownames(se) <- paste0("f", 1:Nfac)  
   colnames(se) <-c("Start", "End")
   
-  if(!BiFactor){
+  if (!BiFactor) {
     fmatReturn <- fmat
-  }
-  if(BiFactor){
+  } # END if (!BiFactor)
+  
+  if (BiFactor) {
     fmatReturn <- cbind(fmatOriginal[sortOrder, 1], fmat)
-  }
+  } # END if (BiFactor)
   
   ## Return list of output
   list(loadings  = fmatReturn, 

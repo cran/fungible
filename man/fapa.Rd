@@ -4,8 +4,13 @@
 \alias{fapa}
 \title{Iterated Principal Axis Factor Analysis (fapa)}
 \usage{
-fapa(R, numFactors = NULL, epsilon = 1e-04, communality = "SMC",
-  maxItr = 15000, digits = NULL)
+fapa(
+  R,
+  numFactors = NULL,
+  epsilon = 1e-04,
+  communality = "SMC",
+  maxItr = 15000
+)
 }
 \arguments{
 \item{R}{(Matrix) A correlation matrix to be analyzed.}
@@ -22,8 +27,6 @@ fapa(R, numFactors = NULL, epsilon = 1e-04, communality = "SMC",
 }}
 
 \item{maxItr}{(Numeric) The maximum number of iterations to reach convergence. The default is 15,000.}
-
-\item{digits}{(Scalar) The number of digits with which to round all output.}
 }
 \value{
 The main output is the matrix of unrotated factor loadings.
@@ -91,16 +94,26 @@ all.equal(Out1$loadings, Out2$loadings)
 Widaman, K. F., & Herringer, L. G. (1985). Iterative least squares estimates of communality: Initial estimate need not affect stabilized value. \emph{Psychometrika, 50}(4), 469-477.
 }
 \seealso{
-Other Factor Analysis Routines: \code{\link{BiFAD}},
-  \code{\link{Box26}}, \code{\link{GenerateBoxData}},
-  \code{\link{Ledermann}}, \code{\link{SLi}},
-  \code{\link{SchmidLeiman}}, \code{\link{faAlign}},
-  \code{\link{faEKC}}, \code{\link{faMain}},
-  \code{\link{faScores}}, \code{\link{faSort}},
-  \code{\link{faStandardize}}, \code{\link{faX}},
-  \code{\link{fals}}, \code{\link{fareg}},
-  \code{\link{orderFactors}}, \code{\link{print.faMain}},
-  \code{\link{promaxQ}}, \code{\link{summary.faMain}}
+Other Factor Analysis Routines: 
+\code{\link{BiFAD}()},
+\code{\link{Box26}},
+\code{\link{GenerateBoxData}()},
+\code{\link{Ledermann}()},
+\code{\link{SLi}()},
+\code{\link{SchmidLeiman}()},
+\code{\link{faAlign}()},
+\code{\link{faEKC}()},
+\code{\link{faMain}()},
+\code{\link{faScores}()},
+\code{\link{faSort}()},
+\code{\link{faStandardize}()},
+\code{\link{faX}()},
+\code{\link{fals}()},
+\code{\link{fareg}()},
+\code{\link{orderFactors}()},
+\code{\link{print.faMain}()},
+\code{\link{promaxQ}()},
+\code{\link{summary.faMain}()}
 }
 \author{
 \itemize{

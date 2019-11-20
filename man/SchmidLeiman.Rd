@@ -4,9 +4,15 @@
 \alias{SchmidLeiman}
 \title{Schmid-Leiman Orthogonalization to a (Rank-Deficient) Bifactor Structure}
 \usage{
-SchmidLeiman(R, numFactors, facMethod = "fals", rotate = "oblimin",
-  rescaleH2 = 0.98, digits = NULL, faControl = NULL,
-  rotateControl = NULL)
+SchmidLeiman(
+  R,
+  numFactors,
+  facMethod = "fals",
+  rotate = "oblimin",
+  rescaleH2 = 0.98,
+  faControl = NULL,
+  rotateControl = NULL
+)
 }
 \arguments{
 \item{R}{(Matrix) A correlation matrix.}
@@ -46,9 +52,6 @@ higher-order factor analyses, rescale the communality value to continue with
 the matrix algebra. When a Heywood case occurs, the uniquenesses (i.e., 
 specific-factor variances) will be negative and the SL orthogonalization of 
 the group factors is no longer correct.}
-
-\item{digits}{(Numeric) Rounds the values to the specified number of decimal 
-places. Defaults to digits = NULL (no rounding).}
 
 \item{faControl}{(List) A list of optional parameters passed to the factor 
 extraction (\code{\link{faX}}) function.
@@ -170,8 +173,7 @@ SLdata <-
          nrow = 12, ncol = 12, byrow = TRUE)
 
 Out1 <- SchmidLeiman(R          = SLdata,
-                     numFactors = c(6, 3, 1),
-                     digits     = 2)$B
+                     numFactors = c(6, 3, 1))$B
 
 ## An orthogonalization of a two-order structure
 bifactor <- matrix(c(.46, .57, .00, .00,
@@ -183,7 +185,7 @@ bifactor <- matrix(c(.46, .57, .00, .00,
                      .47, .00, .00, .48,
                      .50, .00, .00, .50,
                      .49, .00, .00, .49),
-                   nrow = 9, ncol = 3, byrow = TRUE)
+                   nrow = 9, ncol = 4, byrow = TRUE)
 
 ## Model-implied correlation (covariance) matrix
 R <- bifactor \%*\% t(bifactor)
@@ -193,8 +195,7 @@ diag(R) <- 1
 
 Out2 <- SchmidLeiman(R          = R,
                      numFactors = c(3, 1),
-                     rotate     = "oblimin",
-                     digits     = 2)$B
+                     rotate     = "oblimin")$B
 
 }
 \references{
@@ -209,16 +210,26 @@ Schmid, J., & Leiman, J. M. (1957). The development of
 hierarchical factor solutions. \emph{Psychometrika, 22}(1), 53-61.
 }
 \seealso{
-Other Factor Analysis Routines: \code{\link{BiFAD}},
-  \code{\link{Box26}}, \code{\link{GenerateBoxData}},
-  \code{\link{Ledermann}}, \code{\link{SLi}},
-  \code{\link{faAlign}}, \code{\link{faEKC}},
-  \code{\link{faMain}}, \code{\link{faScores}},
-  \code{\link{faSort}}, \code{\link{faStandardize}},
-  \code{\link{faX}}, \code{\link{fals}},
-  \code{\link{fapa}}, \code{\link{fareg}},
-  \code{\link{orderFactors}}, \code{\link{print.faMain}},
-  \code{\link{promaxQ}}, \code{\link{summary.faMain}}
+Other Factor Analysis Routines: 
+\code{\link{BiFAD}()},
+\code{\link{Box26}},
+\code{\link{GenerateBoxData}()},
+\code{\link{Ledermann}()},
+\code{\link{SLi}()},
+\code{\link{faAlign}()},
+\code{\link{faEKC}()},
+\code{\link{faMain}()},
+\code{\link{faScores}()},
+\code{\link{faSort}()},
+\code{\link{faStandardize}()},
+\code{\link{faX}()},
+\code{\link{fals}()},
+\code{\link{fapa}()},
+\code{\link{fareg}()},
+\code{\link{orderFactors}()},
+\code{\link{print.faMain}()},
+\code{\link{promaxQ}()},
+\code{\link{summary.faMain}()}
 }
 \author{
 \itemize{

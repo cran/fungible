@@ -49,15 +49,25 @@ fungible::orderFactors(Lambda = Loadings,
 
 }
 \seealso{
-Other Factor Analysis Routines: \code{\link{BiFAD}},
-  \code{\link{Box26}}, \code{\link{GenerateBoxData}},
-  \code{\link{Ledermann}}, \code{\link{SLi}},
-  \code{\link{SchmidLeiman}}, \code{\link{faAlign}},
-  \code{\link{faEKC}}, \code{\link{faMain}},
-  \code{\link{faScores}}, \code{\link{faSort}},
-  \code{\link{faStandardize}}, \code{\link{faX}},
-  \code{\link{fals}}, \code{\link{fapa}},
-  \code{\link{fareg}}, \code{\link{print.faMain}},
-  \code{\link{promaxQ}}, \code{\link{summary.faMain}}
+Other Factor Analysis Routines: 
+\code{\link{BiFAD}()},
+\code{\link{Box26}},
+\code{\link{GenerateBoxData}()},
+\code{\link{Ledermann}()},
+\code{\link{SLi}()},
+\code{\link{SchmidLeiman}()},
+\code{\link{faAlign}()},
+\code{\link{faEKC}()},
+\code{\link{faMain}()},
+\code{\link{faScores}()},
+\code{\link{faSort}()},
+\code{\link{faStandardize}()},
+\code{\link{faX}()},
+\code{\link{fals}()},
+\code{\link{fapa}()},
+\code{\link{fareg}()},
+\code{\link{print.faMain}()},
+\code{\link{promaxQ}()},
+\code{\link{summary.faMain}()}
 }
 \concept{Factor Analysis Routines}

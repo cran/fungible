@@ -11,7 +11,6 @@
 #' @param freelyEstG (Logical) Specify whether the general factor loadings are freely estimated (in the partially-specified target matrix). If set to FALSE, only general factor loadings above the salient threshold will be estimated in the partially-specified target rotation.
 #' @param gFac (Numeric, Vector) The position of the general factor(s) to be estimated. Solutions with multiple general factors may be estimated. Must either (a) freely estimate all loadings on the general factors or (b) only freely estimate general factor loadings that are above the salient threshold. The default column position is 1.
 #' @param maxSLiItr (Numeric) The maximum number of iterations for the SLi procedure. Typically, 10 iterations is usually sufficient to converge (cf. Abad et al., 2017). The default is 20 iterations. 
-#' @param digits (Numeric) The number of digits to round all output to. The default is no rounding.
 #' @inheritParams faMain
 #'
 #' @return This function iterates the Schmid-Leiman target rotation and returns several relevant output.
@@ -56,8 +55,7 @@
 #' diag(R) <- 1
 #'
 #' Out1 <- SLi(R          = R,
-#'             numFactors = c(3, 1),
-#'             digits     = 2)
+#'             numFactors = c(3, 1))
 #'
 #' @export
 #'
@@ -73,7 +71,6 @@ SLi <-
            freelyEstG    = TRUE,      ## Freely estimate all general factor loadings?
            gFac          = 1,         ## Column(s) of general factor(s)
            maxSLiItr     = 20,        ## Max num of iterations
-           digits        = NULL,      ## Round the output
            rotateControl = NULL,      ## Control rotation tuning parameters
            faControl     = NULL){     ## Control parameters of factor extraction
     
@@ -144,11 +141,6 @@ SLi <-
     #   faControl <- cnFA
     # 
     # } # END if ( is.null(faControl) )
-    
-    ## If digits is not specified, give it an arbitrarily large value
-    if ( is.null(digits) ) {
-      digits <- options()$digits
-    } # END if ( is.null(digits) )
     
     ## ~~~~~~~~~~~~~~ ##
     #### Begin Code ####
@@ -271,21 +263,21 @@ SLi <-
     SLi.loadings <- SLt$loadings
     
     ## Give proper column names
+    ## CG Edits: (8 Nov 2019): Updated column naming scheme
+      ## Previous code required numFactors, an optional argument
     colnames(SLi.loadings) <-
-      c(paste(rep("g", numFactors[2]), c(1:numFactors[2]), sep = ""),
-        paste(rep("F", numFactors[1]), c(1:numFactors[1]), sep = ""))
+      c(paste(rep("g", times = length(gFac)), seq_len(length(gFac)), sep = ""),
+        paste(rep("F", times = numberFactors - length(gFac)), 
+              seq.int(from = max(length(gFac)) + 1, to = max(numberFactors)), sep = ""))
+                  
     
     ## Reflect all factors by default
     SLiSign <- diag( sign( colSums(SLi.loadings) ) )
     SLi.loadings <- SLi.loadings %*% SLiSign
-    
-    ## Final output list
-    ##    [[1]]: the final iterated Schmid-Leiman matrix of loadings
-    ##    [[2]]: number of iterations to achieve final output
-    
-    list(loadings      = round(SLi.loadings, digits),
-         iterations    = round(numIters, digits),
+   
+    list(loadings      = SLi.loadings,
+         iterations    = numIters,
          rotateControl = rotateControl,
          faControl     = faControl)
     
-  } # END SchmidLeimanIterated()
+  } # END SLi

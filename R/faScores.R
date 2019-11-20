@@ -151,7 +151,7 @@
      
      if(!is.null(Loadings)){
        fload <- Loadings
-       if(is.null(Phi)) Phi <- diag(nrow(Loadings))
+       if(is.null(Phi)) Phi <- diag(ncol(Loadings))
        R <- cor(X)
      }
      

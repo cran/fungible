@@ -4,11 +4,24 @@
 \alias{faMain}
 \title{Automatic Factor Rotation from Random Configurations with Bootstrap Standard Errors}
 \usage{
-faMain(X = NULL, R = NULL, n = NULL, numFactors = NULL,
-  facMethod = "fals", urLoadings = NULL, rotate = "oblimin",
-  targetMatrix = NULL, bootstrapSE = FALSE, numBoot = 1000,
-  CILevel = 0.95, Seed = 1, digits = NULL, faControl = NULL,
-  rotateControl = NULL, ...)
+faMain(
+  X = NULL,
+  R = NULL,
+  n = NULL,
+  numFactors = NULL,
+  facMethod = "fals",
+  urLoadings = NULL,
+  rotate = "oblimin",
+  targetMatrix = NULL,
+  bootstrapSE = FALSE,
+  numBoot = 1000,
+  CILevel = 0.95,
+  Seed = 1,
+  digits = NULL,
+  faControl = NULL,
+  rotateControl = NULL,
+  ...
+)
 }
 \arguments{
 \item{X}{(Matrix) A raw data matrix (or data frame).}
@@ -412,16 +425,26 @@ Zhang, G. (2014). Estimating standard errors in exploratory factor
 analysis. \emph{Multivariate Behavioral Research, 49}(4), 339-353.
 }
 \seealso{
-Other Factor Analysis Routines: \code{\link{BiFAD}},
-  \code{\link{Box26}}, \code{\link{GenerateBoxData}},
-  \code{\link{Ledermann}}, \code{\link{SLi}},
-  \code{\link{SchmidLeiman}}, \code{\link{faAlign}},
-  \code{\link{faEKC}}, \code{\link{faScores}},
-  \code{\link{faSort}}, \code{\link{faStandardize}},
-  \code{\link{faX}}, \code{\link{fals}},
-  \code{\link{fapa}}, \code{\link{fareg}},
-  \code{\link{orderFactors}}, \code{\link{print.faMain}},
-  \code{\link{promaxQ}}, \code{\link{summary.faMain}}
+Other Factor Analysis Routines: 
+\code{\link{BiFAD}()},
+\code{\link{Box26}},
+\code{\link{GenerateBoxData}()},
+\code{\link{Ledermann}()},
+\code{\link{SLi}()},
+\code{\link{SchmidLeiman}()},
+\code{\link{faAlign}()},
+\code{\link{faEKC}()},
+\code{\link{faScores}()},
+\code{\link{faSort}()},
+\code{\link{faStandardize}()},
+\code{\link{faX}()},
+\code{\link{fals}()},
+\code{\link{fapa}()},
+\code{\link{fareg}()},
+\code{\link{orderFactors}()},
+\code{\link{print.faMain}()},
+\code{\link{promaxQ}()},
+\code{\link{summary.faMain}()}
 }
 \author{
 \itemize{

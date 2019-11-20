@@ -12,7 +12,6 @@
 #'   \item \strong{"unity"}: Initial communalities equal 1.0 for all variables.
 #'}
 #' @param maxItr (Numeric) The maximum number of iterations to reach convergence. The default is 15,000.
-#' @param digits (Scalar) The number of digits with which to round all output.
 #'
 #' @details
 #' \itemize{
@@ -87,8 +86,7 @@ fapa <- function(R,
                  numFactors    = NULL,
                  epsilon       = 1e-4,
                  communality   = "SMC",
-                 maxItr        = 15000,
-                 digits        = NULL) {
+                 maxItr        = 15000) {
   
   ## ~~~~~~~~~~~~~~~~~~ ##
   #### Error Checking ####
@@ -110,11 +108,6 @@ fapa <- function(R,
   if (communality == "SMC")     hsq <- 1 - 1 / diag(solve(R))
   if (communality == "maxr")    hsq <- apply( abs((R - diag(ncol(R)))) , 2, max)
   if (communality == "unity")   hsq <- rep(1, ncol(R))
-  
-  ## If digits is not set, select arbitrarily big value
-  if ( is.null(digits) ) {
-    digits <- options()$digits
-  } # END if ( is.null(digits) )
   
   ## ~~~~~~~~~~~~~~~~~~ ##
   #### Begin Function ####
@@ -185,8 +178,8 @@ fapa <- function(R,
   
   
   ## List of the final output
-  list(loadings   = round(Lambda, digits),
-       h2         = round(hsq, digits),
+  list(loadings   = Lambda,
+       h2         = hsq,
        iterations = iter,
        converged  = convergence,
        faControl  = list(epsilon     = epsilon,

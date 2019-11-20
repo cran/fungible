@@ -4,9 +4,17 @@
 \alias{promaxQ}
 \title{Conduct an Oblique Promax Rotation}
 \usage{
-promaxQ(R = NULL, urLoadings = NULL, facMethod = "fals",
-  numFactors = NULL, power = 4, standardize = "Kaiser",
-  epsilon = 1e-04, maxItr = 15000, digits = NULL, faControl = NULL)
+promaxQ(
+  R = NULL,
+  urLoadings = NULL,
+  facMethod = "fals",
+  numFactors = NULL,
+  power = 4,
+  standardize = "Kaiser",
+  epsilon = 1e-04,
+  maxItr = 15000,
+  faControl = NULL
+)
 }
 \arguments{
 \item{R}{(Matrix) A correlation matrix.}
@@ -57,9 +65,6 @@ varimax rotation. The default value is 1e-4 (i.e., .0001).}
 
 \item{maxItr}{(Scalar) The maximum number of iterations allowed for computing 
 the varimax rotation. The default value is 15,000 iterations.}
-
-\item{digits}{(Numeric) Rounds the values to the specified number of decimal 
-places. Defaults to digits = NULL (no rounding).}
 
 \item{faControl}{(List) A list of optional parameters passed to the factor 
 extraction (\code{\link{faX}}) function.
@@ -221,16 +226,26 @@ Mulaik, S. A. (2009). \emph{Foundations of Factor Analysis}.
 Chapman and Hall/CRC.
 }
 \seealso{
-Other Factor Analysis Routines: \code{\link{BiFAD}},
-  \code{\link{Box26}}, \code{\link{GenerateBoxData}},
-  \code{\link{Ledermann}}, \code{\link{SLi}},
-  \code{\link{SchmidLeiman}}, \code{\link{faAlign}},
-  \code{\link{faEKC}}, \code{\link{faMain}},
-  \code{\link{faScores}}, \code{\link{faSort}},
-  \code{\link{faStandardize}}, \code{\link{faX}},
-  \code{\link{fals}}, \code{\link{fapa}},
-  \code{\link{fareg}}, \code{\link{orderFactors}},
-  \code{\link{print.faMain}}, \code{\link{summary.faMain}}
+Other Factor Analysis Routines: 
+\code{\link{BiFAD}()},
+\code{\link{Box26}},
+\code{\link{GenerateBoxData}()},
+\code{\link{Ledermann}()},
+\code{\link{SLi}()},
+\code{\link{SchmidLeiman}()},
+\code{\link{faAlign}()},
+\code{\link{faEKC}()},
+\code{\link{faMain}()},
+\code{\link{faScores}()},
+\code{\link{faSort}()},
+\code{\link{faStandardize}()},
+\code{\link{faX}()},
+\code{\link{fals}()},
+\code{\link{fapa}()},
+\code{\link{fareg}()},
+\code{\link{orderFactors}()},
+\code{\link{print.faMain}()},
+\code{\link{summary.faMain}()}
 }
 \author{
 \itemize{

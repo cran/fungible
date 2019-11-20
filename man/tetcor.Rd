@@ -4,8 +4,15 @@
 \alias{tetcor}
 \title{Compute ML Tetrachoric Correlations}
 \usage{
-tetcor(X, y = NULL, BiasCorrect = TRUE, stderror = FALSE,
-  Smooth = TRUE, max.iter = 5000, PRINT = TRUE)
+tetcor(
+  X,
+  y = NULL,
+  BiasCorrect = TRUE,
+  stderror = FALSE,
+  Smooth = TRUE,
+  max.iter = 5000,
+  PRINT = TRUE
+)
 }
 \arguments{
 \item{X}{Either a matrix or vector of (0/1) binary data.}

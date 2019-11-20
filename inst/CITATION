@@ -4,10 +4,10 @@ citEntry(entry = "Manual",
          title = "fungible: Psychometric Functions from the Waller Lab.",
          author = personList(as.person("Niels G. Waller")),
          year = "2019",
-         note = "version 1.91",
+         note = "version 1.93",
 textVersion = 
  paste("Waller, N. G. (2019).",
         "fungible: Psychometric Functions from the Waller Lab.
-        R package version 1.91")
+        R package version 1.93")
 )
 

@@ -245,7 +245,10 @@ grFNC <- function(x){
 
     colnames(Rsmooth) <- rownames(Rsmooth) <- colnames(R)
     colnames(RKB) <- rownames(RKB) <- colnames(R)
-  
+    
+    Rsmooth <- .5 * (Rsmooth + t(Rsmooth))
+    RKB     <- .5 * (RKB + t(RKB))
+    
     list(RLG = Rsmooth, 
          RKB = RKB, 
          convergence = out$convergence,

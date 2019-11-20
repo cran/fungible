@@ -4,9 +4,16 @@
 \alias{summary.faMain}
 \title{Summary Method for an Object of Class faMain}
 \usage{
-\method{summary}{faMain}(object, digits = 2, Set = 1,
-  HPthreshold = 0.05, PrintLevel = 1, DiagnosticsLevel = 1,
-  itemSort = FALSE, ...)
+\method{summary}{faMain}(
+  object,
+  digits = 2,
+  Set = 1,
+  HPthreshold = 0.05,
+  PrintLevel = 1,
+  DiagnosticsLevel = 1,
+  itemSort = FALSE,
+  ...
+)
 }
 \arguments{
 \item{object}{(Object of class \code{\link{faMain}}) The returned object 
@@ -236,16 +243,26 @@ Cattell, R. (1978). The scientific use of factor analysis in behavioral and life
  New York, New York, Plenum.
 }
 \seealso{
-Other Factor Analysis Routines: \code{\link{BiFAD}},
-  \code{\link{Box26}}, \code{\link{GenerateBoxData}},
-  \code{\link{Ledermann}}, \code{\link{SLi}},
-  \code{\link{SchmidLeiman}}, \code{\link{faAlign}},
-  \code{\link{faEKC}}, \code{\link{faMain}},
-  \code{\link{faScores}}, \code{\link{faSort}},
-  \code{\link{faStandardize}}, \code{\link{faX}},
-  \code{\link{fals}}, \code{\link{fapa}},
-  \code{\link{fareg}}, \code{\link{orderFactors}},
-  \code{\link{print.faMain}}, \code{\link{promaxQ}}
+Other Factor Analysis Routines: 
+\code{\link{BiFAD}()},
+\code{\link{Box26}},
+\code{\link{GenerateBoxData}()},
+\code{\link{Ledermann}()},
+\code{\link{SLi}()},
+\code{\link{SchmidLeiman}()},
+\code{\link{faAlign}()},
+\code{\link{faEKC}()},
+\code{\link{faMain}()},
+\code{\link{faScores}()},
+\code{\link{faSort}()},
+\code{\link{faStandardize}()},
+\code{\link{faX}()},
+\code{\link{fals}()},
+\code{\link{fapa}()},
+\code{\link{fareg}()},
+\code{\link{orderFactors}()},
+\code{\link{print.faMain}()},
+\code{\link{promaxQ}()}
 }
 \author{
 \itemize{

@@ -5,8 +5,15 @@
 \title{Covariance Matrix and Standard Errors for Standardized Regression
 Coefficients for Fixed Predictors}
 \usage{
-seBetaFixed(X = NULL, y = NULL, cov.x = NULL, cov.xy = NULL,
-  var.y = NULL, var.error = NULL, Nobs = NULL)
+seBetaFixed(
+  X = NULL,
+  y = NULL,
+  cov.x = NULL,
+  cov.xy = NULL,
+  var.y = NULL,
+  var.error = NULL,
+  Nobs = NULL
+)
 }
 \arguments{
 \item{X}{Matrix of predictor scores.}

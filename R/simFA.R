@@ -7,6 +7,7 @@
 ## Purpose:
 ##    Generate Factor Analysis Models and Data Sets for Simulation Studies 
 ## Date:
+##    October 16, 2019 return W
 ##    Jan 21 2019 added specific factor correlations
 ##    Dec 31 IRT parameters
 ##    Dec 20 fixed user Phi for bifactor models

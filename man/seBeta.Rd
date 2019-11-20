@@ -4,9 +4,17 @@
 \alias{seBeta}
 \title{Standard Errors and CIs for Standardized Regression Coefficients}
 \usage{
-seBeta(X = NULL, y = NULL, cov.x = NULL, cov.xy = NULL,
-  var.y = NULL, Nobs = NULL, alpha = 0.05, estimator = "ADF",
-  digits = 3)
+seBeta(
+  X = NULL,
+  y = NULL,
+  cov.x = NULL,
+  cov.xy = NULL,
+  var.y = NULL,
+  Nobs = NULL,
+  alpha = 0.05,
+  estimator = "ADF",
+  digits = 3
+)
 }
 \arguments{
 \item{X}{Matrix of predictor scores.}

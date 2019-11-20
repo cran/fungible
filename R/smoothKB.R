@@ -48,6 +48,8 @@ smoothKB <- function(R, eps = 1E8 * .Machine$double.eps){
      invSqrtDiagRtmp <- diag(1/sqrt(diag(Rtmp)))
      RKB <- invSqrtDiagRtmp %*% Rtmp %*% invSqrtDiagRtmp
      
+     # insure perfect symmetry
+     RKB <- .5 * (RKB + t(RKB))
       
      colnames(RKB) <- rownames(RKB) <- colnames(R)
 

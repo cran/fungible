@@ -4,8 +4,7 @@
 \alias{eap}
 \title{Compute eap trait estimates for FMP and FUP models}
 \usage{
-eap(data, bParams, NQuad = 21, priorVar = 2, mintheta = -4,
-  maxtheta = 4)
+eap(data, bParams, NQuad = 21, priorVar = 2, mintheta = -4, maxtheta = 4)
 }
 \arguments{
 \item{data}{N(subjects)-by-p(items) matrix of 0/1 item response data.}
