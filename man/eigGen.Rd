@@ -40,7 +40,7 @@ maxy <- max(L+1)
 
 plotTitle <- paste("  n Dimensions = ", nDim, 
                    ",  n Major Factors = ", nMaj, 
-				           "\\n \% Variance Major Factors = ", pmaj*100, 
+				           "\n \% Variance Major Factors = ", pmaj*100, 
 						   "\%", sep = "")
 				 
 plot(1:length(L), L, 

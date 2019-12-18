@@ -56,7 +56,7 @@ D <- diag(as.vector(sqrt(1 - L^2)))
 # observed scores
 X <- Z \%*\% t(L) + U \%*\% D
 
-cat("\\nCorrelation of continuous scores\\n")
+cat("\nCorrelation of continuous scores\n")
 print(round(cor(X),3))
 
 # desired difficulties (i.e., means) of 
@@ -72,7 +72,7 @@ for(i in 1:ncol(X)){
   Binary[X[,i] <= thresholds[i],i] <- 1
 }   
 
-cat("\\nCorrelation of Binary scores\\n")
+cat("\nCorrelation of Binary scores\n")
 print(round(cor(Binary), 3))
 
 ## Now use 'bigen' to generate binary data matrix with 
@@ -80,14 +80,14 @@ print(round(cor(Binary), 3))
 
 z <- bigen(data = Binary, n = N)
 
-cat("\\n\\nnames in returned object\\n")
+cat("\n\nnames in returned object\n")
 print(names(z))
 
-cat("\\nCorrelation of Simulated binary scores\\n")
+cat("\nCorrelation of Simulated binary scores\n")
 print(round(cor(z$data), 3))
 
 
-cat("Observed thresholds of simulated data:\\n")
+cat("Observed thresholds of simulated data:\n")
 cat(apply(z$data, 2, mean))
 }
 \author{

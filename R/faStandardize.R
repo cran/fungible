@@ -47,8 +47,8 @@ faStandardize <- function(method,
   ## Check lambda
 
   ## Matrix or data frame?
-  if ( class(lambda) %in% c("matrix", "data.frame", "loadings") == FALSE ) {
-    stop("The class of 'lambda' must be of class matrix, data.frame, or loadings.")
+  if ( any(class(lambda) %in% c("matrix", "array", "data.frame", "loadings")) == FALSE ) {
+    stop("The class of 'lambda' must be of class matrix, array, data.frame, or loadings.")
   } # END if ( class(lambda) %in% c("matrix", "data.frame", "loadings") == FALSE )
 
   #### --------- DEFINE UTILITY FUNCTIONS --------- ####

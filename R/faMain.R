@@ -411,6 +411,19 @@ faMain <-
     ## ~~~~~~~~~~~~~~~~~~ ##
     #### Error checking ####
     ## ~~~~~~~~~~~~~~~~~~ ##
+    
+    if( !is.null(R) ) {
+       # Check if only row or col names given
+       # then remove names
+       rowOrCol <- which.max(c(length(rownames(R)),
+                            length(colnames(R))))
+       Vnames <- dimnames(R)[[rowOrCol]]
+       #Put row and col names back on matrix
+       dimnames(R) <- list(Vnames,Vnames)
+    }# END  if(!is.null(R))   
+    
+    
+    
     FLAGurLoadings <- FALSE
     if(!is.null(urLoadings))  FLAGurLoadings <- TRUE
     
@@ -464,10 +477,10 @@ faMain <-
         warning("There are missing values in the data frame. See details for how missing data is handled in the cor function.")
       } # END if (nrow(X) != nrow(X[complete.cases(X),]))
       
-      ## Class must be matrix or DR to analyze via cor() function
-      if ( class(X) %in% c("matrix", "data.frame", "loadings") == FALSE) {
+      ## Class must be matrix or DF to analyze via cor() function
+      if ( !any( class(X) %in% c("matrix", "data.frame", "loadings") ) ){
         stop("'X' must be of class matrix, data.frame, or loadings.")
-      } # END if ( class(X) %in% c("matrix", "data.frame", "loadings") == FALSE)
+      } # END if ( class(X) %in% c("matrix", "data.frame", "loadings"))
       
     } # END if ( !is.null(X) )
     
@@ -757,11 +770,13 @@ faMain <-
       ## Fator structure (works for either oblique or orthogonal model)
       facStruct <- Lambda %*% PhiMat
       
+      ## Try to invert, if not invertible, gives class 'try-error
       Rinv  <-try(solve(SampCorr), silent = TRUE)
-      if( class(Rinv) == "try-error"){
-       # warning("\n\nEncountered a singular R matrix when computing factor indeterminancy values\n")
+      ## If non-invertible, return NAs instead of returning an error
+      if ( any( class(Rinv) %in% "try-error") ) {
+        # warning("\n\nEncountered a singular R matrix when computing factor indeterminancy values\n")
         return( rep(NA, ncol(Lambda) ) )
-      }
+      } # END if ( any( class(Rinv) %in% "try-error") ) 
       ## Factor indeterminacy solution
       FI <- sqrt( diag( t(facStruct) %*% Rinv %*% facStruct))
       if(max(FI)>1) FI <- rep(NA, length(FI))

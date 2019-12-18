@@ -61,9 +61,9 @@ for(i in 1:N){
   Rsq.r[i] <- (t(r[,i]) \%*\% r[,i])^2 /(t(r[,i]) \%*\% R \%*\% r[,i])	
 }
  
-cat("\\nAverage relative performance of unit weights across elliptical arc:",
+cat("\nAverage relative performance of unit weights across elliptical arc:",
  	    round(mean(Rsq.unit)/Rsq,3) )     
-cat("\\n\\nAverage relative performance of r weights across elliptical arc:",
+cat("\n\nAverage relative performance of r weights across elliptical arc:",
  	    round(mean(Rsq.r)/Rsq,3) ) 
  
 

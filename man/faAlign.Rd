@@ -93,10 +93,10 @@ NSubj <- nrow(HS9)
  colnames(F3.loadings) <- paste0("f", 1:3)
  colnames(F3.phi) <- rownames(F3.phi) <- paste0("f", 1:3)
  
- cat("\\nOblimin rotated factor loadings for 9 Mental Abilities Variables")
+ cat("\nOblimin rotated factor loadings for 9 Mental Abilities Variables")
  print( round(F3.loadings, 2))
  
- cat("\\nFactor correlation matrix")
+ cat("\nFactor correlation matrix")
  print( round( F3.phi, 2))
  
   # Declare variables to hold bootstrap output
@@ -106,7 +106,7 @@ NSubj <- nrow(HS9)
  
   # Analyze bootstrap samples and record results 
   for(i in 1:B){
-    cat("\\nWorking on sample ", i)
+    cat("\nWorking on sample ", i)
     set.seed(i)
     
     # Create bootstrap sanples
@@ -126,8 +126,8 @@ NSubj <- nrow(HS9)
     UniqueMatchVec[i] <- out$UniqueMatch
   }
   
-  cat("\\nNumber of Unique Matches: ", 
-      100*round(mean(UniqueMatchVec),2),"\%\\n")
+  cat("\nNumber of Unique Matches: ", 
+      100*round(mean(UniqueMatchVec),2),"\%\n")
 
   
   #  Make a 3D array from list of matrices
@@ -138,9 +138,9 @@ NSubj <- nrow(HS9)
   F05 <- apply( arr , 1:2 , quantile, .025 )
   Fse <- apply( arr , 1:2, sd  )
   
-  cat("\\nUpper Bound 95\% CI\\n")
+  cat("\nUpper Bound 95\% CI\n")
   print( round(F95,3))
-  cat("\\n\\nLower Bound 95\% CI\\n")
+  cat("\n\nLower Bound 95\% CI\n")
   print( round(F05,3))
   
   # plot distribution of bootstrap estimates
@@ -150,7 +150,7 @@ NSubj <- nrow(HS9)
        xlab = "F[5,1]")
   
   print(round (F3.loadings, 2))
-  cat("\\nStandard Errors")
+  cat("\nStandard Errors")
   print( round( Fse, 2))
 
 }
@@ -173,6 +173,7 @@ Other Factor Analysis Routines:
 \code{\link{SLi}()},
 \code{\link{SchmidLeiman}()},
 \code{\link{faEKC}()},
+\code{\link{faMB}()},
 \code{\link{faMain}()},
 \code{\link{faScores}()},
 \code{\link{faSort}()},

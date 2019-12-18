@@ -136,10 +136,16 @@ faX <- function(R,
   
   ## Check R
   
+
+  #strip names in case only row or col names given
+  #isSymmetric will give error unless both dims have names
+  R <- unname(R, force = TRUE)
+  
   ## Symmetrical?
   if ( !isSymmetric(R) ) {
     stop("'R' is not a symmetric correlation matrix.")
-  } # END if ( !isSymmetric(R) ) {
+  } # END if ( !isSymmetric(R) ) 
+  
   
   
   ## Positive definite

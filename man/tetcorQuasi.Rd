@@ -36,16 +36,16 @@ for(i in 1:2){
 }   
 
 ## calculate Pearson correlation
-cat("\\nPearson r: ", round(cor(X)[1,2], 2))
+cat("\nPearson r: ", round(cor(X)[1,2], 2))
 
 ## calculate Pearson Phi correlation
-cat("\\nPhi r: ", round(cor(binaryData)[1,2], 2))
+cat("\nPhi r: ", round(cor(binaryData)[1,2], 2))
 
 ## calculate tetrachoric correlation
-cat("\\nTetrachoric r: ", round(tetcor(binaryData)$r[1,2], 2))
+cat("\nTetrachoric r: ", round(tetcor(binaryData)$r[1,2], 2))
 
 ## calculate Quasi-tetrachoric correlation
-cat("\\nQuasi-tetrachoric r: ", round(tetcorQuasi(binaryData), 2))
+cat("\nQuasi-tetrachoric r: ", round(tetcorQuasi(binaryData), 2))
 
 }
 \references{

@@ -70,7 +70,7 @@ set.seed(Seed)
 ## Generate a vector of classical item difficulties
 p <- runif(Nvar)
 
-cat("\\nClassical Item Difficulties:\\n")
+cat("\nClassical Item Difficulties:\n")
 
 print(rbind(1:Nvar,round(p,2)) )
 
@@ -143,7 +143,7 @@ if( any(colSums(X) == 0) ){
        lty=1, 
        main = 
        "Eigenvalues of Rpop, Tet R, and Sim Tet R:
-       \\nSimulated vs Observed npd Tetrachoric R Matrices",
+       \nSimulated vs Observed npd Tetrachoric R Matrices",
        ylim = c(-1, ytop),
        xlab = "Dimensions", 
        ylab = "Eigenvalues",
@@ -161,8 +161,8 @@ if( any(colSums(X) == 0) ){
   
   abline(h = 0, col = "grey", lty = 2, lwd = 4)
  
-  cat("\\nRMSD(Rpop, Rtet) = ", round(rmsd(Rpop, Rtet), 3))
-  cat("\\nRMSD(Rpop, RLp) = ",  round(rmsd(Rpop, RLp),  3))
+  cat("\nRMSD(Rpop, Rtet) = ", round(rmsd(Rpop, Rtet), 3))
+  cat("\nRMSD(Rpop, RLp) = ",  round(rmsd(Rpop, RLp),  3))
 
 }
 \author{

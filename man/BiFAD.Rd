@@ -126,7 +126,7 @@ The following output are returned in addition to the estimated Direct Schmid-Lei
 This function estimates the (rank-deficient) Direct Schmid-Leiman (DSL) bifactor solution as well as the (full-rank) Direct Bifactor (DBF) solution.
 }
 \examples{
-cat("\\nExample 1:\\nEmpirical Target Matrix:\\n")
+cat("\nExample 1:\nEmpirical Target Matrix:\n")
 # Mansolf and Reise Table 2 Example
 Btrue <- matrix(c(.48, .40,  0,   0,   0,
                   .51, .35,  0,   0,   0,
@@ -155,13 +155,13 @@ out.ex1 <- BiFAD(R          = Rex1,
                  rotate     = "oblimin",
                  salient    = .25)
 
-cat("\\nRank Deficient Bifactor Solution:\\n")
+cat("\nRank Deficient Bifactor Solution:\n")
 print( round(out.ex1$BstarSL, 2) )
 
-cat("\\nFull Rank Bifactor Solution:\\n")
+cat("\nFull Rank Bifactor Solution:\n")
 print( round(out.ex1$BstarFR, 2) )
 
-cat("\\nExample 2:\\nUser Defined Target Matrix:\\n")
+cat("\nExample 2:\nUser Defined Target Matrix:\n")
 
 Bpattern <- matrix(c( 1,  1,  0,   0,   0,
                       1,  1,  0,   0,   0,
@@ -187,10 +187,10 @@ out.ex2 <- BiFAD(R          = Rex1,
                  rotate     = "oblimin",
                  salient    = .25)
 
-cat("\\nRank Deficient Bifactor Solution:\\n")
+cat("\nRank Deficient Bifactor Solution:\n")
 print( round(out.ex2$BstarSL, 2) )
 
-cat("\\nFull Rank Bifactor Solution:\\n")
+cat("\nFull Rank Bifactor Solution:\n")
 print( round(out.ex2$BstarFR, 2) )
 
 }
@@ -210,6 +210,7 @@ Other Factor Analysis Routines:
 \code{\link{SchmidLeiman}()},
 \code{\link{faAlign}()},
 \code{\link{faEKC}()},
+\code{\link{faMB}()},
 \code{\link{faMain}()},
 \code{\link{faScores}()},
 \code{\link{faSort}()},

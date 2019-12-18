@@ -75,7 +75,7 @@ Params<-matrix(c(1.41, -0.79, .01, .98, #1
  data <- gen4PMData(NSubj=2000, abcdParams = Params, D = 1.702,  
                     seed = 123, thetaMN = 0, thetaVar = 1)$data
  
- cat("\\nClassical item difficulties for simulated data")                   
+ cat("\nClassical item difficulties for simulated data")                   
  print( round( apply(data,2,mean),2) )
 
 }

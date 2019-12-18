@@ -54,7 +54,7 @@ diag(R.ex1) <- 1
 ## create a 5 x 1 vector of standardized regression coefficients, 
 ## Beta.ex1 
 Beta.ex1 <- c(-.4, -.2, 0, .2, .4)
-cat("\\nModel Rsq = ",  t(Beta.ex1) \%*\% R.ex1 \%*\% Beta.ex1)
+cat("\nModel Rsq = ",  t(Beta.ex1) \%*\% R.ex1 \%*\% Beta.ex1)
 
 ## Generate fungible correlation matrices, Rstar, with smallest
 ## eigenvalues > 0.
@@ -71,14 +71,14 @@ while(i <= 5){
 }
 
 ## Check Results
-cat("\\n *** Check Results ***")
+cat("\n *** Check Results ***")
 for(i in 1:5){
-  cat("\\n\\n\\n+++++++++++++++++++++++++++++++++++++++++++++++++")
-  cat("\\nRstar", i,"\\n")
+  cat("\n\n\n+++++++++++++++++++++++++++++++++++++++++++++++++")
+  cat("\nRstar", i,"\n")
   print(round(Rstar.list[[i]], 2),)
-  cat("\\neigenvalues of Rstar", i,"\\n")
+  cat("\neigenvalues of Rstar", i,"\n")
   print(eigen(Rstar.list[[i]])$values)
-  cat("\\nBeta' Rstar",i, "Beta = ",  
+  cat("\nBeta' Rstar",i, "Beta = ",  
       t(Beta.ex1) \%*\% Rstar.list[[i]] \%*\% Beta.ex1)
 }  
 
@@ -102,43 +102,43 @@ Beta <- rep(.1, 5)
 out <- fungibleR(R, Beta, Lp = 0.12345678, eps = 1e-10, Print.Warnings = TRUE)
 
 ## print R
-cat("\\nR: a user-specified seed matrix")
+cat("\nR: a user-specified seed matrix")
 print(round(out$R,3)) 
 
 ## Rstar
-cat("\\nRstar: A random fungible correlation matrix for R")
+cat("\nRstar: A random fungible correlation matrix for R")
 print(round(out$Rstar,3)) 
 
-cat("\\nCoefficient of determination when using R\\n")
+cat("\nCoefficient of determination when using R\n")
 print(  t(Beta) \%*\% R \%*\% Beta )
 
-cat("\\nCoefficient of determination when using Rstar\\n")
+cat("\nCoefficient of determination when using Rstar\n")
 print( t(Beta) \%*\% out$Rstar \%*\% Beta)
 
 ## Eigenvalues of  R
-cat("\\nEigenvalues of R\\n")
+cat("\nEigenvalues of R\n")
 print(round(eigen(out$R)$values, 9)) 
 
 ## Eigenvalues of  Rstar
-cat("\\nEigenvalues of Rstar\\n")
+cat("\nEigenvalues of Rstar\n")
 print(round(eigen(out$Rstar)$values, 9)) 
 
 ## What is the Frobenius norm (Euclidean distance) between
 ## R and Rstar
-cat("\\nFrobenious norm ||R - Rstar||\\n")
+cat("\nFrobenious norm ||R - Rstar||\n")
 print( out$FrobNorm)
 
 ## RstarLp is a random fungible correlation matrix with 
 ## a fixed smallest eigenvalue of 0.12345678
-cat("\\nRstarLp: a random fungible correlation matrix with a user-defined
-smallest eigenvalue\\n")
+cat("\nRstarLp: a random fungible correlation matrix with a user-defined
+smallest eigenvalue\n")
 print(round(out$RstarLp, 3)) 
 
 ## Eigenvalues of RstarLp
-cat("\\nEigenvalues of RstarLp")
+cat("\nEigenvalues of RstarLp")
 print(eigen(out$RstarLp)$values, digits = 9) 
 
-cat("\\nCoefficient of determination when using RstarLp\\n")
+cat("\nCoefficient of determination when using RstarLp\n")
 print( t(Beta) \%*\% out$RstarLp \%*\% Beta)
 
 ## Check function convergence
@@ -207,7 +207,7 @@ while(i < Nmatrices){
   { 
     i<- i + 1
   ## print progress  
-    cat("\\nGenerating matrix ", i, " Current minimum ||R - RstarLp|| = ",BestFrob)
+    cat("\nGenerating matrix ", i, " Current minimum ||R - RstarLp|| = ",BestFrob)
     tmp <- FrobLp.vec[i] <- out$FrobNormLp #Frobenious Norm ||R - RstarLp||
     RstarLp.list[[i]]<-out$RstarLp
     if( tmp < BestFrob )

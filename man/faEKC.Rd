@@ -45,6 +45,7 @@ Other Factor Analysis Routines:
 \code{\link{SLi}()},
 \code{\link{SchmidLeiman}()},
 \code{\link{faAlign}()},
+\code{\link{faMB}()},
 \code{\link{faMain}()},
 \code{\link{faScores}()},
 \code{\link{faSort}()},

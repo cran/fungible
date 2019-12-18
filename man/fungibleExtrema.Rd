@@ -45,9 +45,9 @@ R.X <- matrix(c(1.00,  .69,  .49,  .39,
                  
                  
 b <- c(.39, .22, .02, .43)
-rxy <- R.X %*% b
+rxy <- R.X \%*\% b
 
-OLSRSQ <- t(b) %*% R.X %*% b
+OLSRSQ <- t(b) \%*\% R.X \%*\% b
 
 ## theta <- .02
 ## r.yhata.yhatb <- sqrt( 1 - (theta)/OLSRSQ)
@@ -60,7 +60,7 @@ output <- fungibleExtrema(R.X, rxy, r.yhata.yhatb, Nstarts = 500,
 ## Scale to replicate Koopman
 a <- output$a
 a.old <- a
-aRa <- t(a) %*% R.X %*% a
+aRa <- t(a) \%*\% R.X \%*\% a
 
 ## Scale a such that a' R a = .68659
 ## vc = variance of composite

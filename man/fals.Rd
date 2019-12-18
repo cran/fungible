@@ -50,6 +50,7 @@ Other Factor Analysis Routines:
 \code{\link{SchmidLeiman}()},
 \code{\link{faAlign}()},
 \code{\link{faEKC}()},
+\code{\link{faMB}()},
 \code{\link{faMain}()},
 \code{\link{faScores}()},
 \code{\link{faSort}()},

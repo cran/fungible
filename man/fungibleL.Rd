@@ -86,10 +86,10 @@ fungible.LLM <- fungibleL(X = predictors, y = low, method = "LLM",
 print(summary(BWght.out))
 print(fungible.LLM$call)
 print(fungible.LLM$ftable)
-cat("\\nMLE log likelihod       = ", fungible.LLM$lnLML,
-    "\\nfungible log likelihood = ", fungible.LLM$lnLf)
-cat("\\nPseudo Rsq              = ", round(fungible.LLM$pseudoRsq, 3))
-cat("\\nfungible Pseudo Rsq     = ", round(fungible.LLM$fungibleRsq, 3))
+cat("\nMLE log likelihod       = ", fungible.LLM$lnLML,
+    "\nfungible log likelihood = ", fungible.LLM$lnLf)
+cat("\nPseudo Rsq              = ", round(fungible.LLM$pseudoRsq, 3))
+cat("\nfungible Pseudo Rsq     = ", round(fungible.LLM$fungibleRsq, 3))
 
 
 fungible.EM <- fungibleL(X = predictors, y = low, method = "EM" , 
@@ -98,7 +98,7 @@ fungible.EM <- fungibleL(X = predictors, y = low, method = "EM" ,
 print(fungible.EM$call)
 print(fungible.EM$ftable)
 
-cat("\\nrLaLb = ", round(fungible.EM$rLaLb, 3))
+cat("\nrLaLb = ", round(fungible.EM$rLaLb, 3))
 
 }
 \references{

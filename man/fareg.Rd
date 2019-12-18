@@ -77,8 +77,8 @@ rmsdReg <- rmsd(HW$popLoadings, Freg,
                IncludeDiag = FALSE, 
                Symmetric = FALSE)
 
-cat("\\nrmsd HW =  ", round(rmsdHW,3),
-    "\\nrmsd reg = ", round(rmsdReg,3))
+cat("\nrmsd HW =  ", round(rmsdHW,3),
+    "\nrmsd reg = ", round(rmsdReg,3))
 
 
 
@@ -97,6 +97,7 @@ Other Factor Analysis Routines:
 \code{\link{SchmidLeiman}()},
 \code{\link{faAlign}()},
 \code{\link{faEKC}()},
+\code{\link{faMB}()},
 \code{\link{faMain}()},
 \code{\link{faScores}()},
 \code{\link{faSort}()},

@@ -41,9 +41,9 @@ Smooth a NPD correlation matrix to PD using the Bentler and Yuan method.
 data(BadRBY)
 
 out<-smoothBY(R = BadRBY, const = .98)
-cat("\\nSmoothed Correlation Matrix\\n")
+cat("\nSmoothed Correlation Matrix\n")
 print( round(out$RBY,8) )
-cat("\\nEigenvalues of smoothed matrix\\n")
+cat("\nEigenvalues of smoothed matrix\n")
 print( eigen(out$RBY)$val  )
 
 }

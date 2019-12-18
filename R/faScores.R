@@ -191,6 +191,10 @@
     if(Method=="Bartlett"){
       Uinv2<-diag(1/diag(R - fload %*% Phi %*% t(fload)))
       #Gorsuch p. 264
+      
+      if(tail(eigen(t(fload) %*% Uinv2 %*%fload)$values, n=1) < 1E-8){
+        stop("\n\n\n****FATAL ERROR****\nMatrix Computationally Singular\nUnable to compute Bartlett factor score estimates")
+      }
       W <- Uinv2 %*% fload %*% solve(t(fload) %*% Uinv2 %*%fload)
       fscores <- Z %*% W
     }
@@ -204,6 +208,12 @@
          L <- fload %*% PhiSqrt 
          RinvSqrt <- matrixPower(M = R, power = -.5)
          tLRinvL <- t(L) %*% solve(R) %*% L
+         
+         if(tail(eigen(tLRinvL)$values, n=1) < 1E-8){
+           stop("\n\n\n****FATAL ERROR****\nMatrix Computationally Singular\nUnable to compute ten Berge factor score estimates")
+         }
+         
+         
          MinvSqrt <- matrixPower( tLRinvL, power = -.5)
          C <-  RinvSqrt %*% L %*% MinvSqrt
          W <- RinvSqrt %*% C %*% PhiSqrt
@@ -216,6 +226,11 @@
       #Gorsuch p. 265
       Uinv2<-diag(1/diag(R - fload %*% Phi %*% t(fload)))
       M <- (t(fload) %*% Uinv2 %*% R %*% Uinv2 %*% fload)
+      
+      if(tail(eigen(M)$values, n=1) < 1E-8){
+        stop("\n\n\n****FATAL ERROR****\nMatrix Computationally Singular\nUnable to compute Anderson Rubin  factor score estimates")
+      }
+      
       MinvSqrt <-  matrixPower(M = M, power = -.5)
       W <- Uinv2 %*% fload %*% MinvSqrt
       fscores <- Z %*% W
@@ -226,7 +241,14 @@
     if(Method=="Harman"){
       # Harman
       #Grice 2001b Eq 9
-      W <- solve(fload %*% t(fload)) %*% fload
+      floadtfload <- fload %*% t(fload)
+      
+       if(tail(eigen(floadtfload)$values, n=1) < 1E-8){
+          W <- MASS::ginv(floadtfload) %*% fload
+       }else{
+         W <- solve(floadtfload) %*% fload
+       }   
+
       fscores <- Z %*% W
     }
        

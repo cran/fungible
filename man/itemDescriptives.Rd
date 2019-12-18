@@ -44,7 +44,7 @@ Compute basic descriptives for binary item analysis
 	diag(D) <- tmp
 	X <- Z \%*\% t(L) + U\%*\%D
 
-	cat("\\nCorrelation of continuous scores\\n")
+	cat("\nCorrelation of continuous scores\n")
 	print(round(cor(X),3))
 
 	thresholds <- c(.2,.3,.4,.5,.6)
@@ -54,7 +54,7 @@ Compute basic descriptives for binary item analysis
 	  Binary[X[,i]<=thresholds[i],i]<-1
 	}   
 
-	cat("\\nCorrelation of Binary scores\\n")
+	cat("\nCorrelation of Binary scores\n")
 	print(round(cor(Binary),3))
 
 	## Now use 'bigen' to generate binary data matrix with 
@@ -62,14 +62,14 @@ Compute basic descriptives for binary item analysis
 
 	z <- bigen(data = Binary, n = 5000)
 
-	cat("\\n\\nnames in returned object\\n")
+	cat("\n\nnames in returned object\n")
 	print(names(z))
 
-	cat("\\nCorrelation of Simulated binary scores\\n")
+	cat("\nCorrelation of Simulated binary scores\n")
 	print(round( cor(z$data), 3))
 
 
-	cat("Observed thresholds of simulated data:\\n")
+	cat("Observed thresholds of simulated data:\n")
 	cat( apply(z$data, 2, mean) )
 	
 	itemDescriptives(z$data)
