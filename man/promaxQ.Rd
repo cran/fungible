@@ -235,6 +235,7 @@ Other Factor Analysis Routines:
 \code{\link{SchmidLeiman}()},
 \code{\link{faAlign}()},
 \code{\link{faEKC}()},
+\code{\link{faIB}()},
 \code{\link{faMB}()},
 \code{\link{faMain}()},
 \code{\link{faScores}()},
@@ -245,7 +246,9 @@ Other Factor Analysis Routines:
 \code{\link{fapa}()},
 \code{\link{fareg}()},
 \code{\link{orderFactors}()},
+\code{\link{print.faMB}()},
 \code{\link{print.faMain}()},
+\code{\link{summary.faMB}()},
 \code{\link{summary.faMain}()}
 }
 \author{
