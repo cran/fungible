@@ -3,7 +3,9 @@
 \name{BadRLG}
 \alias{BadRLG}
 \title{Improper R matrix reported by Lurie and Goldberg}
-\format{A 3 by 3 non-positive definite correlation matrix.}
+\format{
+A 3 by 3 non-positive definite correlation matrix.
+}
 \source{
 Lurie, P. M. & Goldberg, M. S. (1998). An approximate method for
 sampling correlated random variables from partially-specified distributions.

@@ -4,7 +4,9 @@
 \name{Malmi79}
 \alias{Malmi79}
 \title{Multi-Trait Multi-Method correlation matrix reported by Malmi, Underwood, and Carroll (1979).}
-\format{A 12 by 12 correlation matrix with dimension names}
+\format{
+A 12 by 12 correlation matrix with dimension names
+}
 \source{
 Malmi, R. A., Underwood, 3. J. & Carroll, J. B. The interrelationships among
 some associative learning tasks. \emph{Bulletin of the Psychrmomic Society, 13}(3), 121-123.

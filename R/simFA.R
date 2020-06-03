@@ -7,7 +7,7 @@
 ## Purpose:
 ##    Generate Factor Analysis Models and Data Sets for Simulation Studies 
 ## Date:
-##    October 16, 2019 return W
+##    March 6, 2020 return W
 ##    Jan 21 2019 added specific factor correlations
 ##    Dec 31 IRT parameters
 ##    Dec 20 fixed user Phi for bifactor models
@@ -137,7 +137,6 @@
 #'            \item \code{UserPhi} (matrix) A positive semidefinite (PSD) matrix 
 #'              of user-defined factor correlations;defaults to \code{UserPhi = NULL}.}
 #'              
-#'              
 #' @param ModelError (list) 
 #'      \itemize{ 
 #'         \item \code{ModelError} (logical) If
@@ -157,6 +156,20 @@
 #'             defaults to \code{ModelErrorVar = .10}.  
 #'         \item \code{epsTKL} (scalar [0,1]) Controls the size of the factor 
 #'            loadings in successive minor factors; defaults to \code{epsTKL = .20}.  
+#'         \item \code{Wattempts} (scalar > 0)  Maximum number of tries when 
+#'           attempting to generate a suitable W matrix.  Default = 10000. 
+#'       \item \code{WmaxLoading} (scalar > 0) Maximimum absolute loading in
+#'             any column of W (matrix of model approximation error factor loadings). 
+#'             Default \code{ WmaxLoading = .30}.   
+#'        \item \code{NWmaxLoading} (scalar >= 0)  Maximum number of absolute 
+#'            loadings >= \code{WmaxLoading} in any column 
+#'            of W (matrix of model approximation error factor loadings). 
+#'            Default \code{NWmaxLoading = 2}. Under the defaults, no column of
+#'            W will have 3 or more loadings > |.30|. 
+#'        \item\code{PrintW} (Boolean)  If \code{PrintW = TRUE} then simFA will print the
+#'            attempt history when searching for a suitable W matrix
+#'            given the constraints defined in \code{WmaxLoading} and \code{NWmaxLoading}.
+#             Default \code{PrintW = FALSE}.     
 #'         \item \code{RSpecific} (matrix) Optional correlation
 #'             matrix for specific factors; defaults to \code{RSpecific = NULL}. }
 #'             
@@ -282,7 +295,32 @@
 #'                 model approximation error.
 #'          \item \code{Rpop} The model-implied population correlation matrix.  
 #'          \item \code{RpopME} The model-implied population
-#'                 correlation matrix with model error.  
+#'                 correlation matrix with model error. 
+#'          \item \code{W} The factor loadings for the minor factors 
+#'                 (when \code{ModelError = TRUE}). Default = NULL.  
+#'          \item \code{ModelErrorFitStats} A list of model fit indices (for the underlying equations,
+#'              see: Benlter, 1990; Hu & Bentler, 1999;  Marsh, Hau, & Grayson, 2005; Steiger, 2016): 
+#'               \itemize{
+#'               \item \code{SRMR_theta}  Standardized Root Mean Square Residual 
+#'               based on the model that is implied  by the error free major factors only (underlying Rpop),
+#'               \item \code{SRMR_thetahat}  Standardized Root Mean Square Residual 
+#'                   based on an exploratory factor analysis of the population correlation matrix, RpopME,
+#'               \item \code{CRMR_theta}  Correlation Root Mean Square Residual 
+#'                   based on the model that is implied  by the error free major factors only (underlying Rpop),
+#'               \item \code{CRMR_thetahat} Correlation Root Mean Square Residual  based on an exploratory 
+#'                  factor analysis of the population correlation matrix, RpopME,
+#'              \item \code{RMSEA_theta}  Root Mean Square Error of Approximation (Steiger, 2016)
+#'                   based on the model that is implied  by the error free major factors only (underlying Rpop),
+#'               \item \code{RMSEA_thetahat}  Root Mean Square Error of Approximation (Steiger, 2016)  based on an exploratory 
+#'                  factor analysis of the population correlation matrix, RpopME,
+#'              \item \code{CFI_theta}  Comparative Fit Indiex (Bentler, 1990)
+#'                   based on the model that is implied  by the error free major factors only (underlying Rpop),
+#'               \item \code{CFI_thetahat} Comparative Fit Indiex (Bentler, 1990)  based on an exploratory 
+#'                  factor analysis of the population correlation matrix, RpopME.
+#'               \item \code{Fm}  MLE fit function for population target model.  
+#'               \item \code{Fb}  MLE fit function for population baseline model. 
+#'               \item \code{DFm} Degrees of freedom for population target model. 
+#'               }
 #'          \item \code{CovMatrices} A list
 #'                 containing: 
 #'                 \itemize{ 
@@ -314,21 +352,38 @@
 #'                                  scores.  } 
 #'                 \item\code{Monte} A list containing output from the Monte Carlo
 #'                      simulations if generated.  
-#'                 \item\code{IRT}Factor loadings expressed in the
+#'                 \item\code{IRT} Factor loadings expressed in the
 #'                     normal ogive IRT metric. If \code{Thresholds} were given 
 #'                     then IRT difficulty values will also be returned.  
-#'                 \item\code{Seed}The initial seed for the
+#'                 \item\code{Seed} The initial seed for the
 #'                      random number generator.  
-#'                 \item\code{call}A copy of the function call.
-#'                 \item\code{cn}A list of all active and nonactive function arguments.}
+#'                 \item\code{call} A copy of the function call.
+#'                 \item\code{cn} A list of all active and nonactive function arguments.}
 #'                 
 #'                 
 #' @author Niels G. Waller
 #' 
 #' @references
+#' Bentler, P. M. (1990). Comparative fit indexes in structural models. 
+#' Psychological Bulletin, 107(2), 238--246. 
+#' 
+#' Hu, L.-T. & Bentler, P. M. (1999). Cutoff criteria for fit indexes in 
+#' covariance structure analysis: Conventional criteria versus new alternatives. 
+#' Structural Equation Modeling: A Multidisciplinary Journal, 6(1), 1--55. 
+#' http://www.tandfonline.com/doi/abs/10.1080/10705519909540118
+#' 
+#' Marsh, H. W., Hau, K.-T., & Grayson, D. (2005). Goodness of fit in 
+#' structural equation models. In A. Maydeu-Olivares & J. J. McArdle (Eds.), 
+#' Multivariate applications book series. Contemporary psychometrics: 
+#' A festschrift for Roderick P. McDonald (p. 275--340). Lawrence Erlbaum 
+#' Associates Publishers. 
 #' 
 #' Schmid, J. and Leiman, J. M.  (1957).  The development of hierarchical
 #' factor solutions.  Psychometrika, 22(1), 53--61.
+#' 
+#' Steiger, J. H. (2016). Notes on the Steiger–Lind (1980) handout. 
+#' Structural Equation Modeling: A Multidisciplinary Journal, 23:6, 
+#' 777-781, DOI: 10.1080/10705511.2016.1217487 
 #' 
 #' Tucker, L. R., Koopman, R. F., and Linn, R. L.  (1969).  Evaluation of
 #' factor analytic research procedures by means of simulated correlation
@@ -351,6 +406,21 @@
 #'                                 F1FactorDist = "runif"),
 #'                 Seed = 1)
 #'    print( round( out$loadings, 2 ) ) 
+#'    
+#'    # Ex 3.  Model Fit Statistics for Population Data with
+#'    # Model Approximation Error. Three Factor model.
+#'        out <- simFA(Loadings = list(FacLoadDist = "fixed",
+#'                                     FacLoadRange = .5),
+#'                     ModelError = list(ModelError = TRUE,
+#'                                       NMinorFac = 150,
+#'                                       ModelErrorType = "V",
+#'                                       ModelErrorVar = .1,
+#'                                       Wattempts = 10000,
+#'                                       epsTKL = .2),
+#'                     Seed = 1)
+#'
+#'        print( out$loadings )
+#'        print( out$ModelErrorFitStats[seq(2,8,2)] )
 #'    
 #' @importFrom stats cov2cor lm rchisq resid rnorm runif
 #' @export simFA
@@ -506,6 +576,19 @@ simFA <- function(Model = list(),
    #                       factor loadings in sucessive
    #                       minor factors.
    #                       Default( epsTKL = .20 ).
+   # Wattempts    scalar   Maximum number of attempts when generating
+   #                       a suitable W matrix.  Default = 10000.
+   #
+   # WmaxLoading  scalar   Maximum absolute value for salient loadings in 
+   #                       any column of W
+   #
+   # NWmaxLoading scalar    Maximum number of salient loadings in any column of W
+   #
+   # PrintW                 Boolean  If PrintW = True then simFA will print the
+   #                        attempt history when searching for a suitable W matrix
+   #                        given the constraints in WmaxLoading and NWmaxLoading.
+   #                        Default PrintW = FALSE.
+   #
    # RSpecific    Optional correlation matrix for specific factors
    #                       Default = NULL.
    
@@ -515,8 +598,12 @@ simFA <- function(Model = list(),
                     ModelErrorType = "U",
                     ModelErrorVar = .10,
                     epsTKL = .20,
+                    Wattempts = 10000,
+                    WmaxLoading = .30,
+                    NWmaxLoading = 2,
+                    PrintW = FALSE,
                     RSpecific = NULL) 
-   cnME_Len = 5
+   cnME_Len = 9
    ME_Arg_Names = sort(names(cnME))
    cnME[(namME <- names(ModelError))] <- ModelError
  
@@ -541,7 +628,7 @@ simFA <- function(Model = list(),
    # Hierarchical logical: If TRUE then a model
    #                      consistent with a hierarchical Schmid Leiman
    #                      bifactor model will be generated.
-   #                      Default( Hierarchical = FALSE ). 
+   #                      Default( Hierarchical = TRUE ). 
    # F1FactorRange vector of length 1 or 2: Controls the sizes of the 
    #                      general factor loadings in nonhierarchical 
    #                      bifactor models.
@@ -1069,10 +1156,10 @@ simFA <- function(Model = list(),
                       PhiSeed){
     # generate random positive numbers that sum to cnMD$NFac
     
-    ## CG Create descending vector of values
+    ## Create descending vector of values
     eigs <- sort(abs(rnorm(NFac))^EigenValPower, decreasing=TRUE)
     
-    ## CG Convert above values to be eigenvalues (i.e., sum to cnMD$NFac)
+    ## Convert above values to be eigenvalues (i.e., sum to cnMD$NFac)
     eigs <- eigs * NFac/sum(eigs)
     
     # generate R matrix with eigenvalues in eigs via Givens rotations
@@ -1114,6 +1201,8 @@ simFA <- function(Model = list(),
    if (cnLD$FacLoadDist == "runif") {
       FncGenLoadings <- function(){
         cnMD$NItemPerFacIndex <<- cnMD$NItemPerFacIndex + 1
+        # May 26, 2020 added Seed
+        set.seed(Seed)
                 runif(n   = cnMD$NItemPerFac[cnMD$NItemPerFacIndex],
                       min = min(cnLD$FacLoadRange),
                       max = max(cnLD$FacLoadRange))
@@ -1124,6 +1213,8 @@ simFA <- function(Model = list(),
    if (cnLD$FacLoadDist == "rnorm") {
      FncGenLoadings <- function(){
        cnMD$NItemPerFacIndex <<- cnMD$NItemPerFacIndex + 1
+       # May 26, 2020 added Seed
+       set.seed(Seed)
                 rnorm(n    = cnMD$NItemPerFac[cnMD$NItemPerFacIndex],
                       mean = cnLD$FacLoadRange[1],
                       sd   = cnLD$FacLoadRange[2])
@@ -1661,8 +1752,18 @@ simFA <- function(Model = list(),
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#  
 #       ---- SEC 9: Add Model Error ----
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#      
-   # if no model error requested then return regular h2 values
+   # if no model error requested then return regular h2 values and NA MAEfit
     h2PopME <- h2
+    MAEfit <-   list(SRMR_theta = NA,
+                      SRMR_thetahat = NA, 
+                      CRMR_theta = NA,
+                      CRMR_thetahat = NA,
+                      RMSEA_theta = NA, 
+                      RMSEA_thetahat = NA,
+                      CFI_theta = NA,
+                      CFI_thetahat = NA)
+     
+   W <- NULL  
    ## Tucker Koopman Linn approach
    if(cnME$ModelError == TRUE){
       # Create matrix of minor factors
@@ -1670,40 +1771,197 @@ simFA <- function(Model = list(),
       # 50 minor factors.
       # Briggs and MacCallum chose 150 minor factors
         NMinorFactors <- cnME$NMinorFac
-        W <- matrix(0, NVar, NMinorFactors)
+     
+        #----____fitIndices ---- 
+        # Compute model fit indices with Population data
+        fitIndices <- function(Rpop, RpopME){
+        
+          ## Rpop: Population R matrix based on 
+          ## Major factors only
+          p <- ncol(Rpop)
+          
+          #tp = number of independent variances and covariances
+          tp <- p*(p+1)/2
+          
+          ## RpopME: Population R matrix based on 
+          ## All factors (including those in W
+          ## representing model approximation error 
+          
+          
+          NMajFactors <- ncol(Fl)
+          
+          ## Hierarchical bifactor model is rank deficient
+          if (cnBF$Bifactor == TRUE &  cnBF$Hierarchical == TRUE){
+             NMajFactors = NMajFactors - 1
+          } 
+ 
+          
+          ## Conduct MLE factor analysis of RpopME
+          fout <- factanal(covmat = RpopME,
+                           factors = NMajFactors, 
+                           rotation="none",    
+                           n.obs = 1000,
+                           control = list(nstart = 100))
+          
+          ##----__CRMR ----
+          ## CRMR:  correlation root mean square residual
+          ## this compares RpopME with Rpop (only major factors)
+          CRMR_theta <- sqrt( sum( ( (RpopME - Rpop)[upper.tri(Rpop, diag=FALSE)]^2))/(tp - p) ) 
+          
+          
+          ##----__SRMR ----
+          ## this compares RpopME with Rpop (only major factors)
+          SRMR_theta <-  sqrt( (sum( ( (RpopME - Rpop)[upper.tri(Rpop, diag=TRUE)]^2) )/tp) )
+          
+          ## Compute CRMRthetahat from MLE EFA
+          #  Sigma_k is the  estimated model implied Population R matrix
+          #  this is Sigma_k in Marsh et al. 2005 (McDonald Feshrift)
+          Fhat <- fout$loadings
+          Sigma_k <- Fhat %*% t(Fhat)
+          diag(Sigma_k) <- 1
+          
+          CRMR_thetahat <- sqrt( sum( ( (RpopME - Sigma_k)[upper.tri(Rpop, diag = FALSE)]^2))/(tp - p) ) 
+          
+          SRMR_thetahat <- sqrt( (sum( ( (RpopME - Sigma_k)[upper.tri(Rpop, diag = TRUE)]^2) )/tp) )
+          
+          ## Define matrix Trace function
+          Tr <- function(X) sum(diag(X))
+          
+          ##Compute RMSEA1
+          num_theta    <- log(det(Rpop)) - log(det(RpopME)) + 
+            Tr( RpopME %*% solve(Rpop)) - p
+          
+          num_thetahat <- log(det(Sigma_k)) - log(det(RpopME)) + 
+                              Tr( RpopME %*% solve(Sigma_k)) - p
+          
+          ## degrees of freedom for EFA on R matrix
+          k <- ncol(Fhat)
+          DF <- (p * (p-1)/2) - (p * k) + (k * (k-1)/2)
+          den <- DF
+          
+          RMSEA_theta    <- sqrt(num_theta/den)
+          RMSEA_thetahat <- sqrt(num_thetahat/den)
+          
+          ## Population Comparative Fit Index (Bentler 1990)
+          ## F_T = Fit func for target model
+          ## F_B = F baseline
+          # This assumes that we are working with correlation
+          # matrices in the population
+          
+          ##thetahat
+          F_T_thetahat <- log(det(Sigma_k)) - log(det(RpopME)) + 
+                 Tr( RpopME %*% solve(Sigma_k)) - p
+          
+          ## det(I) = 1, log(1) = 0, so
+          # For derivation, see Lai, K. & Green, S. B. (2016). The problem 
+          # with having two watches: Assessment of fit when RMSEA and 
+          # CFI disagree. Multivariate behavioral research, 51(2-3), 220--239. 
+          F_B_thetahat <- - log(det(RpopME)) 
+          
+          
+          ##theta
+          F_T_theta <- log(det(Rpop)) - log(det(RpopME)) + 
+                        Tr( RpopME %*% solve(Rpop)) - p
+          
+          ## det(I) = 1, log(1) = 0, so
+          # For derivation, see Lai, K. & Green, S. B. (2016). The problem 
+          # with having two watches: Assessment of fit when RMSEA and 
+          # CFI disagree. Multivariate behavioral research, 51(2-3), 220--239. 
+
+          F_B_theta <-  - log(det(RpopME))
+          
+        
+          
+          CFI_theta    <- 1 - F_T_theta/F_B_theta
+          CFI_thetahat <- 1 - F_T_thetahat/F_B_thetahat
+         
+          
+          list(SRMR_theta = SRMR_theta,
+               SRMR_thetahat = SRMR_thetahat, 
+               CRMR_theta = CRMR_theta,
+               CRMR_thetahat = CRMR_thetahat,
+               RMSEA_theta = RMSEA_theta, 
+               RMSEA_thetahat = RMSEA_thetahat,
+               CFI_theta = CFI_theta,
+               CFI_thetahat = CFI_thetahat,
+               Fm = F_T_thetahat,
+               Fb = F_B_thetahat,
+               DFm = DF)
+        }#END fitIndices
+        
+      
+      keepW <- FALSE   #initialize keepW  
+      
+      ##----____FncKeepW----
+      ## Check if any factor of W has 3 or more ladings
+      ## >= |.30|
+      FncKeepW <- function(W){
+          ## number of |loadings| ge WmaxLoading for each minor factor
+          NGEWmaxLoading <- max( apply(abs(W) >= cnME$WmaxLoading, 2, sum) )
+          if(NGEWmaxLoading <= cnME$NWmaxLoading) keepW <- TRUE
+          keepW
+        }#END FncKeepW
      
         # s is a scaling constant
         s <- 1 - cnME$epsTKL
-     
-       for (i in 0:(NMinorFactors - 1)) {
-           W[, i+1] <- rnorm(NVar, 
-                         mean = 0, 
-                         sd   = s^i)  #TKL EQ 13, p. 431
-       }# END for (i in 0:(NMinorFactors - 1)) {
-     
-       # constrain variance of minor factors to 
-       # ModelError
-       CovMajor <- Fl %*% Phi %*% t(Fl)
-     
-       u <- 1 - diag( CovMajor )
-     
-       wsq <- diag(W %*% t(W))
+        
+       Wattempt = 0
        
-  
-       # _____**Check these next two lines**---- 
-       ModelErrorVar <- rep(cnME$ModelErrorVar, NVar)
+       ## Try to create suitable W matrix
+       WFailed = FALSE
+       while(keepW == FALSE){
+            Wattempt <- Wattempt + 1
+                if(Wattempt > cnME$Wattempts) {
+                   W = matrix(0, NVar, NMinorFactors)
+                   warning("\n\nSERIOUS ERROR: FAILED TO FIND A SUITABLE W MATRIX AFTER ", cnME$Wattempts, " ATTEMPTS (REDUCE ERROR VARIANCE OR INCREASE Wattempts)\n\n")
+                   WFailed = TRUE
+                   break
+                }   
+               W <- matrix(0, NVar, NMinorFactors)
+         
+               ##Create W matrix with "no major factors"
+               ## i.e., no factors with 3 or more loadings greater
+               ## than |.30|
+               
+               
+               for (i in 0:(NMinorFactors - 1)) {
+                   W[, i+1] <- rnorm(NVar, 
+                               mean = 0, 
+                               sd   = s^i)  #TKL EQ 13, p. 431
+               }# END for (i in 0:(NMinorFactors - 1)) {
+     
+           # constrain variance of minor factors to 
+           # ModelError
+           CovMajor <- Fl %*% Phi %*% t(Fl)
+           u <- 1 - diag( CovMajor )
+           wsq <- diag(W %*% t(W))
        
+           
+           ModelErrorVar <- rep(cnME$ModelErrorVar, NVar)
        
-       # Should ModelErrorVar apply to total or unique variances 
-       # "U" (the default) applies to a proprtion of the uniqueness 
-       #                   variances (See Briggs and MacCallum 2003 page 32)
-       # "V" applies to total variances
-       if(cnME$ModelErrorType == "U" ){
-         ModelErrorVar <- ModelErrorVar * u
-       }   
+           # Should ModelErrorVar apply to total or unique variances 
+           # "U" (the default) applies to a proprtion of the uniqueness 
+           #                   variances (See Briggs and MacCallum 2003 page 32)
+           # "V" applies to total variances
+            if(cnME$ModelErrorType == "U" ){
+               ModelErrorVar <- ModelErrorVar * u
+            }   
                                         
-       W <- diag(sqrt(ModelErrorVar/wsq)) %*% W
+         W <- diag(sqrt(ModelErrorVar/wsq)) %*% W
+         
+         #----____Test suitablity of W----
+         keepW <- FncKeepW(W)
+         
+         if(cnME$PrintW){
+            cat("\nW generation attempt: ", Wattempt)
+         }   
+         
+       }## END while(keepW == FALSE) #*#*#*#*#
        
+       if(Wattempt <= cnME$Wattempts)
+         if(cnME$PrintW){
+             cat("\nA suitable W was generated on attempt: ", Wattempt,"\n")
+         }   
      
        # cnMD$Model Error Covariance Matrix for minor factors
        CovMinor <- (W %*% t(W))
@@ -1722,6 +1980,23 @@ simFA <- function(Model = list(),
  
        diag(RpopME) <- 1
        ## END: ADD Model ERROR
+       
+       if(WFailed == TRUE){
+        MAEfit <-   list(SRMR_theta = NA,
+                         SRMR_thetahat = NA, 
+                         CRMR_theta = NA,
+                         CRMR_thetahat = NA,
+                         RMSEA_theta = NA, 
+                         RMSEA_thetahat = NA,
+                         CFI_theta = NA,
+                         CFI_thetahat = NA,
+                         Fm = NA,
+                         Fb = NA,
+                         DFm = NA)
+       }else{
+           MAEfit <- fitIndices(Rpop, RpopME) 
+       }
+       
    }#END if(cnME$ModelError == TRUE)
   
   
@@ -1764,12 +2039,12 @@ simFA <- function(Model = list(),
          
            MCData[[i]]   <- corSample(Rpop,   
                                       n = cnMC$SampleSize,
-                                      seed = i)
+                                      seed = i + Seed)
          # model error
          if(cnME$ModelError == TRUE){
             MCDataME[[i]] <- corSample(RpopME, 
                                        n = cnMC$SampleSize,
-                                       seed = i)
+                                       seed = i + Seed)
          }#End if(cnME$ModelError == TRUE)
        }#END for(i in 1:cnMC$NSamples)
      }#END if(cnMC$NSamples > 0 && cnMC$Raw == FALSE)
@@ -2112,6 +2387,9 @@ simFA <- function(Model = list(),
       L <- diag(sqrt(zapsmall(VLV$values[1:cnMD$NFac])))
       urloadings <- V %*% L
    }# END  if(nrow(Fl) > ncol(Fl)) 
+  
+  ## Return objects related to Model Approximation Error
+  ModelErrorFitStats <-  MAEfit
    
   ## ---- _____Return Values ----
   list(loadings    = Fl,              # Factor loadings
@@ -2121,6 +2399,8 @@ simFA <- function(Model = list(),
        h2PopME     = h2PopME,
        Rpop        = Rpop,            # no Model error
        RpopME      = RpopME,          # with Model error
+       W           = W,               # Loadings for Minor Factors
+       ModelErrorFitStats  = ModelErrorFitStats,
        CovMatrices = CovMats,    
        Bifactor    = Bifactor,
        Scores      = Scores,          # Output related to Factor Scores (ObservedScores)

@@ -9,56 +9,23 @@
 #' number of solutions). See Details below for an elaboration on the global 
 #' minimum. This function can also return bootstrap standard errors of the factor solution.
 #'
-#' @param X (Matrix) A raw data matrix (or data frame).
-#' @param R (Matrix) A correlation matrix.
-#' @param n (Numeric) Sample size associated with the correlation matrix. Defaults to n = NULL.
+#' @param X (Matrix) A raw data matrix (or data frame) structured in a subject 
+#' (row) by variable (column) format. Defaults to \code{X = NULL}.
+#' @param R (Matrix) A correlation matrix. Defaults to \code{R = NULL}.
+#' @param n (Numeric) Sample size associated with either the raw data (X) or 
+#' the correlation matrix (R). Defaults to \code{n = NULL}.
 #' @param NVarX (Integer) Given batteries X and Y, \code{NVarX} denotes the number of variables in battery X. 
-#' @param numFactors (Numeric) The number of factors to extract for subsequent rotation.
+#' @param numFactors (Numeric) The number of factors to extract for subsequent 
+#' rotation. Defaults to \code{numFactors = NULL}.
 #' @param itemSort (Logical) if \code{itemSort = TRUE} the factor loadings will be sorted within batteries.
 #' @param rotate (Character) Designate which rotation algorithm to apply. The 
-#' following are available rotation options: "oblimin", "quartimin", "targetT", 
-#' "targetQ", "oblimax", "entropy", "quartimax", "varimax", "simplimax", 
+#' following are available rotation options: "oblimin", "quartimin", 
+#' "oblimax", "entropy", "quartimax", "varimax", "simplimax", 
 #' "bentlerT", "bentlerQ", "tandemI", "tandemII", "geominT", "geominQ", "cfT", 
 #' "cfQ", "infomaxT", "infomaxQ", "mccammon", "bifactorT", "bifactorQ", and 
 #' "none". Defaults to rotate = "oblimin". See \pkg{GPArotation} package for more 
 #' details. Note that rotations ending in "T" and "Q" represent orthogonal and 
 #' oblique rotations, respectively.
-#' @param rotateControl (List) A list of control values to pass to the factor rotation algorithms.
-#' \itemize{
-#'   \item \strong{numberStarts}: (Numeric) The number of random (orthogonal) 
-#'   starting configurations for the chosen rotation method (e.g., oblimin). The first
-#'   rotation will always commence from the unrotated factors orientation.
-#'   Defaults to numberStarts = 10. 
-#'   \item \strong{gamma}: (Numeric) This is a tuning parameter (between 0 
-#'   and 1, inclusive) for an oblimin rotation.  See the \pkg{GPArotation} 
-#'   library's oblimin documentation for more details. Defaults to gamma = 0 
-#'   (i.e., a quartimin rotation).
-#'   \item \strong{delta}: (Numeric) This is a tuning parameter for the geomin
-#'    rotation. It adds a small number (default = .01) to the squared factor 
-#'    loadings before computing the geometric means in the discrepancy function.
-#'   \item \strong{kappa}: (Numeric) The main parameterization of the 
-#'   Crawford-Ferguson (CF) rotations (i.e., "cfT" and "cfQ" for orthogonal and 
-#'   oblique CF rotation, respectively). Defaults to kappa = 0. 
-#'   \item \strong{k}: (Numeric) A specific parameter of the simplimax rotation. 
-#'   Defaults to k = the number of observed variables.
-#'   \item \strong{standardize}: (Character) The standardization routine used 
-#'   on the unrotated factor structure. The three options are "none", "Kaiser", 
-#'   and "CM". Defaults to standardize = "none". 
-#'   \itemize{
-#'     \item \strong{"none"}: No standardization is applied to the unrotated 
-#'     factor structure. 
-#'     \item \strong{"Kaiser"}: Use a factor structure matrix that has been 
-#'     normed by Kaiser's method (i.e., normalize all rows to have a unit length).
-#'     \item \strong{"CM"}: Use a factor structure matrix that has been normed
-#'      by the Cureton-Mulaik method.
-#'   }
-#'   \item \strong{epsilon}: (Numeric) The rotational convergence criterion to 
-#'   use. Defaults to epsilon = 1e-5.
-#'   \item \strong{power}: (Numeric) Raise factor loadings the the n-th power 
-#'   in the \code{\link{promaxQ}} rotation. Defaults to power = 4.
-#'   \item \strong{maxItr}: (Numeric) The maximum number of iterations for the 
-#'   rotation algorithm. Defaults to maxItr = 15000.
-#' }
 #' @param Seed (Integer) Starting seed for the random number generator.
 #' @inheritParams faMain
 #' 

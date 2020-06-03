@@ -4,7 +4,9 @@
 \name{Jackson67}
 \alias{Jackson67}
 \title{Multi-Trait Multi-Method correlation matrix reported by Jackson and Singer (1967)}
-\format{A 20 by 20 correlation matrix with dimension names}
+\format{
+A 20 by 20 correlation matrix with dimension names
+}
 \source{
 Jackson, D. N., & Singer, J. E. (1967). Judgments, items, and 
 personality. \emph{Journal of Experimental Research in Personality, 2}(1), 70-79.

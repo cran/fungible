@@ -4,7 +4,8 @@
 \name{ThurstoneBox26}
 \alias{ThurstoneBox26}
 \title{Factor Pattern Matrix for Thurstone's 26  box attributes.}
-\format{The original factor pattern (3 graphically rotated centroid factors) from Thurstone's 26 hypothetical box data as 
+\format{
+The original factor pattern (3 graphically rotated centroid factors) from Thurstone's 26 hypothetical box data as 
 reported by Thurstone (1947, p. 371). The so-called Thurstone invariant box problem 
 contains measurements on the following 26 functions of length (x), width (y), and height (z). 
   \strong{Box26} variables:
@@ -35,7 +36,8 @@ contains measurements on the following 26 functions of length (x), width (y), an
   \item sqrt(y^2 + z^2)
   \item xyz
   \item sqrt(x^2 + y^2 + z^2)
-  }}
+  }
+}
 \usage{
 data(ThurstoneBox26)
 }

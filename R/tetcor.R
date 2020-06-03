@@ -19,6 +19,15 @@
 #' correlations. If \code{stderror} = TRUE then \code{tetcor} returns a list
 #' the first component of which is a matrix of tetrachoric correlations and the
 #' second component is a matrix of standard errors (see Hamdan, 1970).
+#' 
+#' @return 
+#'  \item{r}{The tetrachoric correlation matrix}.
+#'  \item{se}{A matrix of standard errors.}
+#'  \item{convergence}{(logical) The convergence status of the algorithm. A value of 
+#'    TRUE denotes that the algorithm converged. A value of FALSE denotes that the 
+#'    algorithm did not converge and the returned correlations 
+#'    are Pearson product moments.}
+#'  \item{Warnings}{A list of warnings.}
 #' @author Niels Waller
 #' @references Brown, M. B. & Benedetti, J. K. (1977). On the mean and variance
 #' of the tetrachoric correlation coefficient. \emph{Psychometrika, 42},
@@ -332,6 +341,8 @@ tetcor<-function (X, y = NULL, BiasCorrect = TRUE, stderror = FALSE,
  iterations <- 0
  
 #-----Newton Raphson Loop to improve initial estimate
+ 
+ converged <- TRUE
 
  while( eps > .00001){
 #----integrate over bivariate normal surface to estimate (d/N)
@@ -366,6 +377,7 @@ tetcor<-function (X, y = NULL, BiasCorrect = TRUE, stderror = FALSE,
   
     rhat <- rnew
     if(iterations > max.iter){
+      converged <- FALSE
        warning.k < -warning.k + 1
        warn.msg <- paste("WARNING: Correlation ", iter.row, ", ", iter.col, 
                       " failed to converge!", sep="")
@@ -422,6 +434,8 @@ tetcor<-function (X, y = NULL, BiasCorrect = TRUE, stderror = FALSE,
 ## Return results
  if( stderror == FALSE ) {
       list(r = r, 
+           se = NA,
+           convergence = converged,
            Warnings = warning.msg)
     }
 
@@ -432,7 +446,8 @@ tetcor<-function (X, y = NULL, BiasCorrect = TRUE, stderror = FALSE,
        ## NA.
        se[seFlagMatrix==99] <-NA
        list(r = r, 
-            se = se, 
+            se = se,
+            convergence = converged,
             Warnings = warning.msg)
   } 
 

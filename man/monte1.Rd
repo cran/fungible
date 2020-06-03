@@ -53,6 +53,11 @@ print(apply(nontaxon.dat$data, 2, kurt), digits = 3)
 Fleishman, A. I (1978). A method for simulating non-normal
 distributions. \emph{Psychometrika, 43}, 521-532.
 
+Olvera Astivia, O. L. & Zumbo, B. D. (2018). On the solution 
+multiplicity of the Fleishman method and its impact in 
+simulation studies. \emph{British Journal of Mathematical and Statistical Psychology, 71}
+(3), 437-458. 
+
 Vale, D. C., & Maurelli, V. A. (1983). Simulating multivariate nonnormal
 distributions. \emph{Psychometrika, 48}, 465-471.
 }

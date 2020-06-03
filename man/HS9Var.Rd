@@ -4,7 +4,8 @@
 \name{HS9Var}
 \alias{HS9Var}
 \title{9 Variables from the Holzinger and Swineford (1939) Dataset}
-\format{A data frame with 301 observations on the following 15 variables.
+\format{
+A data frame with 301 observations on the following 15 variables.
 \describe{ \item{id}{subject identifier} \item{sex}{gender}
 \item{ageyr}{age, year part} \item{agemo}{age, month part}
 \item{school}{school name (Pasteur or Grant-White)} \item{grade}{grade}
@@ -12,7 +13,8 @@
 \item{x4}{Paragraph comprehension} \item{x5}{Sentence completion}
 \item{x6}{Word meaning} \item{x7}{Speeded addition} \item{x8}{Speeded
 counting of dots} \item{x9}{Speeded discrimination straight and curved
-capitals} }}
+capitals} }
+}
 \source{
 These data were retrieved from the lavaan package. The complete data
 for all 26 tests are available in the MBESS package.

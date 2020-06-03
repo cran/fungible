@@ -4,13 +4,15 @@
 \name{Box20}
 \alias{Box20}
 \title{Length, width, and height measurements for Thurstone's 20 boxes}
-\format{A data set of measurements for Thurstone's 20 hypothetical boxes. 
+\format{
+A data set of measurements for Thurstone's 20 hypothetical boxes. 
 The data set includes three variables:
 \itemize{
    \item \strong{x} Box length
    \item \strong{y} Box width
    \item \strong{z} Box height
- }}
+ }
+}
 \usage{
 data(Box20)
 }

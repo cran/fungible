@@ -88,6 +88,7 @@
 #'      \item \code{NumberLocalSolutions} (Integer) The number of local solution sets.     
 #'      \item \code{LocalSolutions} (List) A list of local solutions (factor loadings, factor correlations, etc). 
 #'      \item\code{rotate} Designates which rotation method was applied.
+#'      \item\code{itemOrder} The item order of the (possibly) sorted factor loadings.
 #'    }
 #'     
 #' @references   Cattell, R. (1978). The scientific use of factor analysis in behavioral and life sciences. 
@@ -736,7 +737,8 @@ summary.faMain <- function(object,
                  RMSD = RMSD,
                  RMSAD = RMSAD,
                  NumberLocalSolutions = NumberLocalSolutions,
-                 LocalSolutions = LocalSolutionsList))
+                 LocalSolutions = LocalSolutionsList,
+                 itemOrder = itemOrder))
   
   
 } ## END summary.faMain 

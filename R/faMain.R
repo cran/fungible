@@ -1116,7 +1116,11 @@ faMain <-
         
         ## Create correlation matrix from the bootstrap sample
         # Rsamp <- cor(X[bsSample, ], ...)
-        Rsamp <- cor(X[bsSample, ])
+        # if missing data present in the original sample, use
+        # missing data method passed to faMain fnc 
+        
+        Rsamp <- cor(X[bsSample, ], ...)
+
         
         ## Extract unrotated factors using resampled data matrix
         bsLambda <- faX(R          = Rsamp,

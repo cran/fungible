@@ -4,7 +4,9 @@
 \name{Thurstone41}
 \alias{Thurstone41}
 \title{Multi-Trait Multi-Method correlation matrix reported by Thurstone and Thurstone (1941).}
-\format{A 9 by 9 correlation matrix with dimension names}
+\format{
+A 9 by 9 correlation matrix with dimension names
+}
 \source{
 Thurstone, L. L. and Thurstone, T. G. (1941). Factorial studies of 
 intelligence. \emph{Psychometric Monographs, 2}. Chicago: University Chicago Press.

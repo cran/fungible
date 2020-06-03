@@ -4,7 +4,8 @@
 \name{AmzBoxes}
 \alias{AmzBoxes}
 \title{Length, width, and height measurements for 98 Amazon shipping boxes}
-\format{A data set of measurements for 98 Amazon shipping boxes. 
+\format{
+A data set of measurements for 98 Amazon shipping boxes. 
 These data were downloaded from the  BoxDimensions website: (\url{https://www.boxdimensions.com/}).
 The data set includes five variables:
 \itemize{
@@ -13,7 +14,8 @@ The data set includes five variables:
    \item Width (inches) 
    \item Height (inches)
    \item Volume (inches)
- }}
+ }
+}
 \usage{
 data(AmzBoxes)
 }

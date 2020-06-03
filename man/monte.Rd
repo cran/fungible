@@ -408,13 +408,18 @@ print(
 Fleishman, A. I (1978). A method for simulating non-normal
 distributions. \emph{Psychometrika, 43}, 521-532.
 
+Olvera Astivia, O. L. & Zumbo, B. D. (2018). On the solution 
+multiplicity of the Fleishman method and its impact in 
+simulation studies. \emph{British Journal of Mathematical and Statistical Psychology, 71}
+(3), 437-458. 
+
 Vale, D. C., & Maurelli, V. A. (1983). Simulating multivariate nonnormal
 distributions. \emph{Psychometrika, 48}, 465-471.
 
 Waller, N. G., Underhill, J. M., & Kaiser, H. A. (1999).  A method for
 generating simulated plasmodes and artificial test clusters with
 user-defined shape, size, and orientation. \emph{Multivariate Behavioral
-Research, 34}, 123--142.
+Research, 34}, 123-142.
 }
 \author{
 Niels Waller

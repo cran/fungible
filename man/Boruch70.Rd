@@ -4,7 +4,9 @@
 \name{Boruch70}
 \alias{Boruch70}
 \title{Multi-Trait Multi-Method correlation matrix reported by Boruch, Larkin, Wolins, and MacKinney (1970)}
-\format{A 14 by 14 correlation matrix with dimension names}
+\format{
+A 14 by 14 correlation matrix with dimension names
+}
 \source{
 Boruch, R. F., Larkin, J. D., Wolins, L., and MacKinney, A. C. (1970). 
 Alternative methods of analysis: Multitrait multimethod data. \emph{Educational 

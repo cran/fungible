@@ -13,7 +13,7 @@ smoothAPA(R, delta = 1e-06, fixR = NULL, Wghts = NULL, maxTries = 1000)
 RAPA. (Default = 1e-06).}
 
 \item{fixR}{User-supplied integer list that instructs the program to
-constrain elements in RAPA to equal corresponding elements in RAPA. For
+constrain elements in RAPA to equal corresponding elements in R. For
 example if fixR = c(1,2) then smoothed matrix, RAPA[1:2,1:2] = R[1:2,1:2].
 Default (fixR = NULL).}
 

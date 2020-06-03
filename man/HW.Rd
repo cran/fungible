@@ -4,11 +4,13 @@
 \name{HW}
 \alias{HW}
 \title{Six data sets that  yield a Heywood case}
-\format{Each data set is a  matrix with 150 rows and 12 variables:
+\format{
+Each data set is a  matrix with 150 rows and 12 variables:
 \describe{ Each data set (HW1, HW2, ... HW6) represents a hypothetical sample
 of 150 subjects from a population 3-factor model.  
 The population factor loadings are given in \code{HW$popLoadings}.
-}}
+}
+}
 \usage{
 data(HW)
 }

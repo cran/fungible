@@ -36,6 +36,10 @@ EKCout  <- faEKC(R = RAmzBox20,
 
 
 }
+\references{
+Braeken, J. & Van Assen, M. A.  (2017).  An empirical Kaiser criterion. 
+\emph{Psychological Methods, 22}(3), 450-466.
+}
 \seealso{
 Other Factor Analysis Routines: 
 \code{\link{BiFAD}()},

@@ -20,21 +20,24 @@ faIB(
 )
 }
 \arguments{
-\item{X}{(Matrix) A raw data matrix (or data frame).}
+\item{X}{(Matrix) A raw data matrix (or data frame) structured in a subject 
+(row) by variable (column) format. Defaults to \code{X = NULL}.}
 
-\item{R}{(Matrix) A correlation matrix.}
+\item{R}{(Matrix) A correlation matrix. Defaults to \code{R = NULL}.}
 
-\item{n}{(Numeric) Sample size associated with the correlation matrix. Defaults to n = NULL.}
+\item{n}{(Numeric) Sample size associated with either the raw data (X) or 
+the correlation matrix (R). Defaults to \code{n = NULL}.}
 
 \item{NVarX}{(Integer) Given batteries X and Y, \code{NVarX} denotes the number of variables in battery X.}
 
-\item{numFactors}{(Numeric) The number of factors to extract for subsequent rotation.}
+\item{numFactors}{(Numeric) The number of factors to extract for subsequent 
+rotation. Defaults to \code{numFactors = NULL}.}
 
 \item{itemSort}{(Logical) if \code{itemSort = TRUE} the factor loadings will be sorted within batteries.}
 
 \item{rotate}{(Character) Designate which rotation algorithm to apply. The 
-following are available rotation options: "oblimin", "quartimin", "targetT", 
-"targetQ", "oblimax", "entropy", "quartimax", "varimax", "simplimax", 
+following are available rotation options: "oblimin", "quartimin", 
+"oblimax", "entropy", "quartimax", "varimax", "simplimax", 
 "bentlerT", "bentlerQ", "tandemI", "tandemII", "geominT", "geominQ", "cfT", 
 "cfQ", "infomaxT", "infomaxQ", "mccammon", "bifactorT", "bifactorQ", and 
 "none". Defaults to rotate = "oblimin". See \pkg{GPArotation} package for more 

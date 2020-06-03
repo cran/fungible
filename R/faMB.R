@@ -19,9 +19,17 @@
 #' analyzing three batteries including seven, four, and five variables 
 #' (respectively) would be specified as \code{NVB = c(7, 4, 5)}.
 #' @param numFactors (Numeric) The number of factors to extract for subsequent 
-#' rotation.
+#' rotation. Defaults to \code{numFactors = NULL}.
 #' @param epsilon (Numeric) The convergence threshold for the Gauss-Seidel iterator
 #' when analyzing three or more batteries. Defaults to \code{epsilon = 1e-06}.
+#' @param rotate (Character) Designate which rotation algorithm to apply. The 
+#' following are available rotation options: "oblimin", "quartimin", 
+#' "oblimax", "entropy", "quartimax", "varimax", "simplimax", 
+#' "bentlerT", "bentlerQ", "tandemI", "tandemII", "geominT", "geominQ", "cfT", 
+#' "cfQ", "infomaxT", "infomaxQ", "mccammon", "bifactorT", "bifactorQ", and 
+#' "none". Defaults to rotate = "oblimin". See \pkg{GPArotation} package for more 
+#' details. Note that rotations ending in "T" and "Q" represent orthogonal and 
+#' oblique rotations, respectively.
 #' @param PrintLevel (Numeric) When a value greater than zero is specified, 
 #' \code{PrintLevel} prints the maximum change in communality estimates 
 #' for each iteration of the Gauss-Seidel function. Note that Gauss-Seidel 

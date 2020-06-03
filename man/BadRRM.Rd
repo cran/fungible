@@ -3,7 +3,9 @@
 \name{BadRRM}
 \alias{BadRRM}
 \title{Improper R matrix reported by Rousseeuw and Molenberghs}
-\format{A 3 by 3 non-positive definite correlation matrix.}
+\format{
+A 3 by 3 non-positive definite correlation matrix.
+}
 \source{
 Rousseeuw, P. J. & Molenberghs, G. (1993). Transformation of non
 positive semidefinite correlation matrices. Communications in

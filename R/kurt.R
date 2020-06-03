@@ -8,7 +8,8 @@
 #' Calculate Univariate Kurtosis for a Vector or Matrix
 #' 
 #' Calculate univariate kurtosis for a vector or matrix (algorithm G2 in Joanes
-#' & Gill, 1998).
+#' & Gill, 1998). Note that, as defined in this function, the expected kurtosis of 
+#' a normally distributed variable is 0 (i.e., not 3). 
 #' 
 #' 
 #' @param x Either a vector or matrix of numeric values.

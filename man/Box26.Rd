@@ -4,7 +4,8 @@
 \name{Box26}
 \alias{Box26}
 \title{R matrix for Thurstone's 26 hypothetical box attributes.}
-\format{Correlation matrix for Thurstone's 26 hypothetical box attributes. 
+\format{
+Correlation matrix for Thurstone's 26 hypothetical box attributes. 
 The so-called Thurstone invariant box problem contains measurements on the 
 following 26 functions of length, width, and height. 
   \strong{Box26} variables:
@@ -40,7 +41,8 @@ following 26 functions of length, width, and height.
    \item \strong{x} Box length
    \item \strong{y} Box width
    \item \strong{z} Box height
- }}
+ }
+}
 \usage{
 data(Box26)
 }

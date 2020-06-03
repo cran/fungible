@@ -3,7 +3,9 @@
 \name{BadRKtB}
 \alias{BadRKtB}
 \title{Improper R matrix reported by Knol and ten Berge}
-\format{A 6 by 6 non-positive definite correlation matrix.}
+\format{
+A 6 by 6 non-positive definite correlation matrix.
+}
 \source{
 Knol, D. L. and Ten Berge, J. M. F.  (1989).  Least-squares
 approximation of an improper correlation matrix by a proper one.

@@ -38,6 +38,14 @@ If stderror = FALSE, \code{tetcor} returns a matrix of tetrachoric
 correlations. If \code{stderror} = TRUE then \code{tetcor} returns a list
 the first component of which is a matrix of tetrachoric correlations and the
 second component is a matrix of standard errors (see Hamdan, 1970).
+
+\item{r}{The tetrachoric correlation matrix}.
+ \item{se}{A matrix of standard errors.}
+ \item{convergence}{(logical) The convergence status of the algorithm. A value of 
+   TRUE denotes that the algorithm converged. A value of FALSE denotes that the 
+   algorithm did not converge and the returned correlations 
+   are Pearson product moments.}
+ \item{Warnings}{A list of warnings.}
 }
 \description{
 Compute ML tetrachoric correlations with optional bias correction and

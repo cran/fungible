@@ -34,14 +34,14 @@ analyzing three batteries including seven, four, and five variables
 (respectively) would be specified as \code{NVB = c(7, 4, 5)}.}
 
 \item{numFactors}{(Numeric) The number of factors to extract for subsequent 
-rotation.}
+rotation. Defaults to \code{numFactors = NULL}.}
 
 \item{epsilon}{(Numeric) The convergence threshold for the Gauss-Seidel iterator
 when analyzing three or more batteries. Defaults to \code{epsilon = 1e-06}.}
 
 \item{rotate}{(Character) Designate which rotation algorithm to apply. The 
-following are available rotation options: "oblimin", "quartimin", "targetT", 
-"targetQ", "oblimax", "entropy", "quartimax", "varimax", "simplimax", 
+following are available rotation options: "oblimin", "quartimin", 
+"oblimax", "entropy", "quartimax", "varimax", "simplimax", 
 "bentlerT", "bentlerQ", "tandemI", "tandemII", "geominT", "geominQ", "cfT", 
 "cfQ", "infomaxT", "infomaxQ", "mccammon", "bifactorT", "bifactorQ", and 
 "none". Defaults to rotate = "oblimin". See \pkg{GPArotation} package for more 

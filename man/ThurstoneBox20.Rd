@@ -4,7 +4,8 @@
 \name{ThurstoneBox20}
 \alias{ThurstoneBox20}
 \title{Factor Pattern and Factor Correlations for Thurstone's 20 hypothetical box attributes.}
-\format{This is a list containing the \code{Loadings} (original factor pattern) and \code{Phi}
+\format{
+This is a list containing the \code{Loadings} (original factor pattern) and \code{Phi}
 matrix (factor correlation matrix) from Thurstone's 20 Box problem (Thurstone, 1940, p. 227). 
 The original 20-variable Box problem  contains measurements on the following score
  functions of box length (x), width (y), and height (z). 
@@ -30,7 +31,8 @@ The original 20-variable Box problem  contains measurements on the following sco
      \item   exp(x)
      \item   exp(y)
      \item   exp(z)
-   }}
+   }
+}
 \usage{
 data(ThurstoneBox20)
 }

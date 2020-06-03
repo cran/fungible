@@ -144,6 +144,19 @@ simFA(
        defaults to \code{ModelErrorVar = .10}.  
    \item \code{epsTKL} (scalar [0,1]) Controls the size of the factor 
       loadings in successive minor factors; defaults to \code{epsTKL = .20}.  
+   \item \code{Wattempts} (scalar > 0)  Maximum number of tries when 
+     attempting to generate a suitable W matrix.  Default = 10000. 
+ \item \code{WmaxLoading} (scalar > 0) Maximimum absolute loading in
+       any column of W (matrix of model approximation error factor loadings). 
+       Default \code{ WmaxLoading = .30}.   
+  \item \code{NWmaxLoading} (scalar >= 0)  Maximum number of absolute 
+      loadings >= \code{WmaxLoading} in any column 
+      of W (matrix of model approximation error factor loadings). 
+      Default \code{NWmaxLoading = 2}. Under the defaults, no column of
+      W will have 3 or more loadings > |.30|. 
+  \item\code{PrintW} (Boolean)  If \code{PrintW = TRUE} then simFA will print the
+      attempt history when searching for a suitable W matrix
+      given the constraints defined in \code{WmaxLoading} and \code{NWmaxLoading}.
    \item \code{RSpecific} (matrix) Optional correlation
        matrix for specific factors; defaults to \code{RSpecific = NULL}. }}
 
@@ -263,7 +276,32 @@ user, the program will generate a random seed.}
                 model approximation error.
          \item \code{Rpop} The model-implied population correlation matrix.  
          \item \code{RpopME} The model-implied population
-                correlation matrix with model error.  
+                correlation matrix with model error. 
+         \item \code{W} The factor loadings for the minor factors 
+                (when \code{ModelError = TRUE}). Default = NULL.  
+         \item \code{ModelErrorFitStats} A list of model fit indices (for the underlying equations,
+             see: Benlter, 1990; Hu & Bentler, 1999;  Marsh, Hau, & Grayson, 2005; Steiger, 2016): 
+              \itemize{
+              \item \code{SRMR_theta}  Standardized Root Mean Square Residual 
+              based on the model that is implied  by the error free major factors only (underlying Rpop),
+              \item \code{SRMR_thetahat}  Standardized Root Mean Square Residual 
+                  based on an exploratory factor analysis of the population correlation matrix, RpopME,
+              \item \code{CRMR_theta}  Correlation Root Mean Square Residual 
+                  based on the model that is implied  by the error free major factors only (underlying Rpop),
+              \item \code{CRMR_thetahat} Correlation Root Mean Square Residual  based on an exploratory 
+                 factor analysis of the population correlation matrix, RpopME,
+             \item \code{RMSEA_theta}  Root Mean Square Error of Approximation (Steiger, 2016)
+                  based on the model that is implied  by the error free major factors only (underlying Rpop),
+              \item \code{RMSEA_thetahat}  Root Mean Square Error of Approximation (Steiger, 2016)  based on an exploratory 
+                 factor analysis of the population correlation matrix, RpopME,
+             \item \code{CFI_theta}  Comparative Fit Indiex (Bentler, 1990)
+                  based on the model that is implied  by the error free major factors only (underlying Rpop),
+              \item \code{CFI_thetahat} Comparative Fit Indiex (Bentler, 1990)  based on an exploratory 
+                 factor analysis of the population correlation matrix, RpopME.
+              \item \code{Fm}  MLE fit function for population target model.  
+              \item \code{Fb}  MLE fit function for population baseline model. 
+              \item \code{DFm} Degrees of freedom for population target model. 
+              }
          \item \code{CovMatrices} A list
                 containing: 
                 \itemize{ 
@@ -295,13 +333,13 @@ user, the program will generate a random seed.}
                                  scores.  } 
                 \item\code{Monte} A list containing output from the Monte Carlo
                      simulations if generated.  
-                \item\code{IRT}Factor loadings expressed in the
+                \item\code{IRT} Factor loadings expressed in the
                     normal ogive IRT metric. If \code{Thresholds} were given 
                     then IRT difficulty values will also be returned.  
-                \item\code{Seed}The initial seed for the
+                \item\code{Seed} The initial seed for the
                      random number generator.  
-                \item\code{call}A copy of the function call.
-                \item\code{cn}A list of all active and nonactive function arguments.}
+                \item\code{call} A copy of the function call.
+                \item\code{cn} A list of all active and nonactive function arguments.}
 }
 \description{
 A function to simulate factor loadings matrices and Monte Carlo data sets
@@ -329,10 +367,43 @@ by calling one or more of the following object names.
                 Seed = 1)
    print( round( out$loadings, 2 ) ) 
    
+   # Ex 3.  Model Fit Statistics for Population Data with
+   # Model Approximation Error. Three Factor model.
+       out <- simFA(Loadings = list(FacLoadDist = "fixed",
+                                    FacLoadRange = .5),
+                    ModelError = list(ModelError = TRUE,
+                                      NMinorFac = 150,
+                                      ModelErrorType = "V",
+                                      ModelErrorVar = .1,
+                                      Wattempts = 10000,
+                                      epsTKL = .2),
+                    Seed = 1)
+
+       print( out$loadings )
+       print( out$ModelErrorFitStats[seq(2,8,2)] )
+   
 }
 \references{
+Bentler, P. M. (1990). Comparative fit indexes in structural models. 
+Psychological Bulletin, 107(2), 238--246. 
+
+Hu, L.-T. & Bentler, P. M. (1999). Cutoff criteria for fit indexes in 
+covariance structure analysis: Conventional criteria versus new alternatives. 
+Structural Equation Modeling: A Multidisciplinary Journal, 6(1), 1--55. 
+http://www.tandfonline.com/doi/abs/10.1080/10705519909540118
+
+Marsh, H. W., Hau, K.-T., & Grayson, D. (2005). Goodness of fit in 
+structural equation models. In A. Maydeu-Olivares & J. J. McArdle (Eds.), 
+Multivariate applications book series. Contemporary psychometrics: 
+A festschrift for Roderick P. McDonald (p. 275--340). Lawrence Erlbaum 
+Associates Publishers. 
+
 Schmid, J. and Leiman, J. M.  (1957).  The development of hierarchical
 factor solutions.  Psychometrika, 22(1), 53--61.
+
+Steiger, J. H. (2016). Notes on the Steiger–Lind (1980) handout. 
+Structural Equation Modeling: A Multidisciplinary Journal, 23:6, 
+777-781, DOI: 10.1080/10705511.2016.1217487 
 
 Tucker, L. R., Koopman, R. F., and Linn, R. L.  (1969).  Evaluation of
 factor analytic research procedures by means of simulated correlation

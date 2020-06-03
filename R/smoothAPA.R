@@ -9,7 +9,7 @@
 #' @param delta Desired value of the smallest eigenvalue of smoothed matrix,
 #' RAPA. (Default = 1e-06).
 #' @param fixR User-supplied integer list that instructs the program to
-#' constrain elements in RAPA to equal corresponding elements in RAPA. For
+#' constrain elements in RAPA to equal corresponding elements in R. For
 #' example if fixR = c(1,2) then smoothed matrix, RAPA[1:2,1:2] = R[1:2,1:2].
 #' Default (fixR = NULL).
 #' @param Wghts A p-length vector of weights for differential variable
