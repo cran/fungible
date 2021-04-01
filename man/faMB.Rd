@@ -296,6 +296,7 @@ Other Factor Analysis Routines:
 \code{\link{faAlign}()},
 \code{\link{faEKC}()},
 \code{\link{faIB}()},
+\code{\link{faLocalMin}()},
 \code{\link{faMain}()},
 \code{\link{faScores}()},
 \code{\link{faSort}()},

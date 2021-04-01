@@ -7,6 +7,7 @@
 ## Purpose:
 ##    Generate Factor Analysis Models and Data Sets for Simulation Studies 
 ## Date:
+##    November 23, 2020 add NPD test for RpopME
 ##    March 6, 2020 return W
 ##    Jan 21 2019 added specific factor correlations
 ##    Dec 31 IRT parameters
@@ -24,11 +25,15 @@
 #' 
 #' A function to simulate factor loadings matrices and Monte Carlo data sets
 #' for common factor models and bifactor models.
+#' For a complete description of \code{simFA}'s 
+#' capabilities, users are encouraged to consult the 
+#' \href{http://users.cla.umn.edu/~nwaller/simFA/simFABook.pdf}{simFaBook}.
 #' 
-#' \code{simFA} was specifically designed to simplify the process of running
-#' Monte Carlo studies of factor analysis models. Thus, \code{simFA} can save
-#' all relevant output for a user-specified model. Saved output can be accessed
-#' by calling one or more of the following object names.
+#' \code{simFA} is a program for exploring factor analysis 
+#' models via simulation studies.  
+#' After calling \code{simFA}  all relevant output can be saved 
+#' for further processing by calling one or more of the following 
+#' object names.
 #' 
 #' @param Model (list) 
 #'      \itemize{ 
@@ -158,8 +163,7 @@
 #'            loadings in successive minor factors; defaults to \code{epsTKL = .20}.  
 #'         \item \code{Wattempts} (scalar > 0)  Maximum number of tries when 
 #'           attempting to generate a suitable W matrix.  Default = 10000. 
-#'       \item \code{WmaxLoading} (scalar > 0) Maximimum absolute loading in
-#'             any column of W (matrix of model approximation error factor loadings). 
+#'       \item \code{WmaxLoading} (scalar > 0) Threshold value for \code{NWmaxLoading}. 
 #'             Default \code{ WmaxLoading = .30}.   
 #'        \item \code{NWmaxLoading} (scalar >= 0)  Maximum number of absolute 
 #'            loadings >= \code{WmaxLoading} in any column 
@@ -1787,7 +1791,6 @@ simFA <- function(Model = list(),
           ## All factors (including those in W
           ## representing model approximation error 
           
-          
           NMajFactors <- ncol(Fl)
           
           ## Hierarchical bifactor model is rank deficient
@@ -1795,6 +1798,11 @@ simFA <- function(Model = list(),
              NMajFactors = NMajFactors - 1
           } 
  
+          if(eigen(RpopME)$values[p] < 0 ){
+             stop("\n\n     **** FATAL ERROR: RpopME not PD ****
+             \nError likely due to inadmissable ModelError arguments") 
+          }
+          
           
           ## Conduct MLE factor analysis of RpopME
           fout <- factanal(covmat = RpopME,

@@ -174,6 +174,7 @@ Other Factor Analysis Routines:
 \code{\link{SchmidLeiman}()},
 \code{\link{faEKC}()},
 \code{\link{faIB}()},
+\code{\link{faLocalMin}()},
 \code{\link{faMB}()},
 \code{\link{faMain}()},
 \code{\link{faScores}()},

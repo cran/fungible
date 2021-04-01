@@ -137,7 +137,7 @@ tetcor<-function (X, y = NULL, BiasCorrect = TRUE, stderror = FALSE,
 #----------------------------------------------------------- #
 
 # initialize warning flag
- warning.msg<-list()
+ warning.msg <- list()
  
  x <- X
 
@@ -378,7 +378,7 @@ tetcor<-function (X, y = NULL, BiasCorrect = TRUE, stderror = FALSE,
     rhat <- rnew
     if(iterations > max.iter){
       converged <- FALSE
-       warning.k < -warning.k + 1
+       warning.k <- warning.k + 1
        warn.msg <- paste("WARNING: Correlation ", iter.row, ", ", iter.col, 
                       " failed to converge!", sep="")
       # cat(warn.msg,"\n")

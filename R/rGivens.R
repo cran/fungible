@@ -139,7 +139,10 @@ while( length(y) > 0 && length(z) > 0){
   normF<-function(M) sqrt(sum(M^2))
   Frob = normF(A - S0)  
  
-  list(R = A, Frob = Frob, S0 = S0, convergence = convergence)
+  list(R = A, 
+       Frob = Frob, 
+       #S0 = S0, 
+       convergence = convergence)
 } # END rGivens
 ##################################################
 

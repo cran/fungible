@@ -1,7 +1,6 @@
 ##########################################################################
 ## eigGen:  generate eigenvalues for R matrices with underlying component structure
 ## Niels Waller
-## updated November 28, 2017 (eig of 1st Minor factor must be < 1)
 ## October 9, 2016
 ##
 ## nDimensions     : total number of dimensions (variables)
@@ -62,12 +61,14 @@ eigGen<-function(nDimensions = 15, nMajorFactors = 5,
   delta <- 0
   eigs <- rep(99, nDimensions)
   
-  while( (delta < threshold)  |  (eigs[nMajorFactors + 1] >= 1) ) {
+  while( (delta < threshold) ) {
     
+    # uniform distribution
     eigMajor <-sort(runif(nMajorFactors,0,1),decreasing = TRUE)
     eigMajor <-eigMajor/sum(eigMajor)
     
-    eigMinor <- sort(runif(nMinorFactors,0,1),decreasing = TRUE)
+    # chisq(1) distribution
+    eigMinor <- sort(rnorm(nMinorFactors, 0, 1)^2, decreasing = TRUE)
     eigMinor <- eigMinor/sum(eigMinor)
     
     eigs <- sort(nDimensions*c(PrcntMajor*eigMajor, (1-PrcntMajor)*eigMinor),decreasing = TRUE)

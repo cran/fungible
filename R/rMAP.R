@@ -63,6 +63,11 @@ rMAP <- function (eigenval, eps = 1e-12, maxits = 5000, Seed = NULL)
   ##             otherwise FALSE
   ###################################################################
   
+  ## February 11, 2021:  To speed up code, substitue the following 
+  ## when executing the quadratic forms (LambdaStar should be 
+  ## a vector not a diagonal matrix)
+  ## S.LambdaStar <- crossprod(t(Q) * sqrt(LambdaStar))
+  
   Nvar <- length(eigenval)
   if (!isTRUE(all.equal(sum(eigenval), Nvar))) 
     stop("Sum of eigenvalues not equal to Number of Variables\n")
@@ -76,9 +81,11 @@ rMAP <- function (eigenval, eps = 1e-12, maxits = 5000, Seed = NULL)
   Q <- qr.Q(qr(M))
   
   ## create a PSD covariance matrix with desired spectrum
-  LambdaStar <- diag(eigenval)
   
-  S.LambdaStar <- Q %*% LambdaStar %*% t(Q)
+   LambdaStar <- diag(eigenval)
+   S.LambdaStar <- Q %*% LambdaStar %*% t(Q)
+   
+  
   # enforce symmetry
   S.LambdaStar <- .5 * (S.LambdaStar + t(S.LambdaStar))
   
@@ -91,7 +98,7 @@ rMAP <- function (eigenval, eps = 1e-12, maxits = 5000, Seed = NULL)
     diag(Su) <- 1
     
     #update eigenvectors
-    QLQ <- eigen(Su)
+    QLQ <- eigen(Su, symmetric = TRUE)
     Q <- QLQ$vectors
     Lambda <- QLQ$values
     
@@ -116,7 +123,7 @@ rMAP <- function (eigenval, eps = 1e-12, maxits = 5000, Seed = NULL)
   convergence <- FALSE
   if(max(abs(R[upper.tri(R)])) <= 1 & iter < maxits) convergence<-TRUE
   
-  evals <- eigen(R)$values
+  evals <- eigen(R, symmetric = TRUE)$values
   list(R=R, evals=evals, convergence=convergence)
 } ## END rMAP
 

@@ -4,7 +4,16 @@
 \alias{fungibleExtrema}
 \title{Locate Extrema of Fungible Regression Weights}
 \usage{
-fungibleExtrema(R.X, rxy, r.yhata.yhatb, Nstarts = 100, MaxMin = "Max")
+fungibleExtrema(
+  R.X,
+  rxy,
+  r.yhata.yhatb,
+  Nstarts = 100,
+  MaxMin = "Max",
+  Seed = NULL,
+  maxGrad = 1e-05,
+  PrintLevel = 1
+)
 }
 \arguments{
 \item{R.X}{p x p Predictor variable correlation matrix.}
@@ -19,6 +28,17 @@ configurations.}
 
 \item{MaxMin}{Character: "Max" = maximize cos(a,b); "Min" = minimize
 cos(a,b).}
+
+\item{Seed}{Starting seed for the random number generator. If Seed = NULL 
+then the program will sample a random integer in the (0, 100,000) interval.
+Default (Seed = NULL).}
+
+\item{maxGrad}{The optimization routine will end when the maximimum of
+the (absolute value of the ) function gradient falls below the value specified in 
+maxGrad. Default (maxGrad = 1E-05).}
+
+\item{PrintLevel}{(integer). If PrintLevel = 1 then the program will print 
+additional output during function convergence. Default (PrintLevel = 1).}
 }
 \value{
 \item{cos.ab}{cosine between OLS and alternate weights.}
@@ -32,30 +52,48 @@ yhatb.} \item{r.y.yhatb}{Correlation between y and yhatb.}
 Locate extrema of fungible regression weights.
 }
 \examples{
-
-\dontrun{
+\dontrun{  
 ## Example 
-## This is Koopmnan's Table 2 Example
+## This is Koopman's Table 2 Example
 
 
 R.X <- matrix(c(1.00,  .69,  .49,  .39,
-                 .69, 1.00,  .38,  .19,
-                 .49,  .38, 1.00,  .27,
-                 .39,  .19,  .27, 1.00),4,4)
-                 
-                 
+                .69, 1.00,  .38,  .19,
+                .49,  .38, 1.00,  .27,
+                .39,  .19,  .27, 1.00),4,4)
+
+
 b <- c(.39, .22, .02, .43)
 rxy <- R.X \%*\% b
 
 OLSRSQ <- t(b) \%*\% R.X \%*\% b
 
-## theta <- .02
-## r.yhata.yhatb <- sqrt( 1 - (theta)/OLSRSQ)
+theta <- .02
+r.yhata.yhatb <- sqrt( 1 - (theta)/OLSRSQ)
 
-r.yhata.yhatb  <- .90
-set.seed(5)
-output <- fungibleExtrema(R.X, rxy, r.yhata.yhatb, Nstarts = 500, 
-                         MaxMin = "Min")
+Converged = FALSE
+SEED = 1234
+MaxTries = 100 
+iter = 1
+
+while( iter <= MaxTries){
+   SEED <- SEED + 1
+  
+   cat("\nCurrent Seed = ", SEED, "\n")
+   output <- fungibleExtrema(R.X, rxy, 
+                             r.yhata.yhatb, 
+                             Nstarts = 5,
+                             MaxMin = "Min", 
+                             Seed = SEED,
+                             maxGrad = 1E-05,
+                             PrintLevel = 1)
+  
+   Converged <- output$converged
+   if(Converged) break
+   iter = iter + 1
+}  
+
+print( output )
 
 ## Scale to replicate Koopman
 a <- output$a
@@ -71,7 +109,6 @@ a <- as.numeric(sqrt(sf)) * a
 cat("\nKoopman Scaling\n")
 print(round(a,2))
 }
-
 }
 \references{
 Koopman, R. F.  (1988).  On the sensitivity of a composite to

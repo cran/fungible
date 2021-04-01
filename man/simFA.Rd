@@ -146,8 +146,7 @@ simFA(
       loadings in successive minor factors; defaults to \code{epsTKL = .20}.  
    \item \code{Wattempts} (scalar > 0)  Maximum number of tries when 
      attempting to generate a suitable W matrix.  Default = 10000. 
- \item \code{WmaxLoading} (scalar > 0) Maximimum absolute loading in
-       any column of W (matrix of model approximation error factor loadings). 
+ \item \code{WmaxLoading} (scalar > 0) Threshold value for \code{NWmaxLoading}. 
        Default \code{ WmaxLoading = .30}.   
   \item \code{NWmaxLoading} (scalar >= 0)  Maximum number of absolute 
       loadings >= \code{WmaxLoading} in any column 
@@ -344,12 +343,16 @@ user, the program will generate a random seed.}
 \description{
 A function to simulate factor loadings matrices and Monte Carlo data sets
 for common factor models and bifactor models.
+For a complete description of \code{simFA}'s 
+capabilities, users are encouraged to consult the 
+\href{http://users.cla.umn.edu/~nwaller/simFA/simFABook.pdf}{simFaBook}.
 }
 \details{
-\code{simFA} was specifically designed to simplify the process of running
-Monte Carlo studies of factor analysis models. Thus, \code{simFA} can save
-all relevant output for a user-specified model. Saved output can be accessed
-by calling one or more of the following object names.
+\code{simFA} is a program for exploring factor analysis 
+models via simulation studies.  
+After calling \code{simFA}  all relevant output can be saved 
+for further processing by calling one or more of the following 
+object names.
 }
 \examples{
 

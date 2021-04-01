@@ -1,3 +1,4 @@
+ # December 31, 2020 updated argument list
 # Version: October 23, 2012
 # August 6, 2018 (updated recycling)
 #                    R Code for fungibleExtrema
@@ -43,13 +44,23 @@
 #' configurations.
 #' @param MaxMin Character: "Max" = maximize cos(a,b); "Min" = minimize
 #' cos(a,b).
+#' @param Seed Starting seed for the random number generator. If Seed = NULL 
+#' then the program will sample a random integer in the (0, 100,000) interval.
+#' Default (Seed = NULL).  
+#' @param maxGrad The optimization routine will end when the maximimum of
+#' the (absolute value of the ) function gradient falls below the value specified in 
+#' maxGrad. Default (maxGrad = 1E-05). 
+#' @param PrintLevel (integer). If PrintLevel = 1 then the program will print 
+#' additional output during function convergence. Default (PrintLevel = 1).
 #' @return \item{cos.ab}{cosine between OLS and alternate weights.}
 #' \item{a}{extrema of fungible weights.} \item{k}{k weights.} \item{z}{z
 #' weights: a normalized random vector.} \item{b}{OLS weights.} \item{u}{p x 1
 #' vector of u weights.} \item{r.yhata.yhatb}{Correlation between yhata and
 #' yhatb.} \item{r.y.yhatb}{Correlation between y and yhatb.}
 #' \item{gradient}{Gradient of converged solution.}
+#' 
 #' @author Niels Waller and Jeff Jones
+#' 
 #' @references Koopman, R. F.  (1988).  On the sensitivity of a composite to
 #' its weights.  \emph{Psychometrika, 53(4)}, 547--552.
 #' 
@@ -58,30 +69,48 @@
 #' @keywords fungible
 #' @export
 #' @examples
-#' 
-#' \dontrun{
+#' \dontrun{  
 #' ## Example 
-#' ## This is Koopmnan's Table 2 Example
+#' ## This is Koopman's Table 2 Example
 #' 
 #' 
 #' R.X <- matrix(c(1.00,  .69,  .49,  .39,
-#'                  .69, 1.00,  .38,  .19,
-#'                  .49,  .38, 1.00,  .27,
-#'                  .39,  .19,  .27, 1.00),4,4)
-#'                  
-#'                  
+#'                 .69, 1.00,  .38,  .19,
+#'                 .49,  .38, 1.00,  .27,
+#'                 .39,  .19,  .27, 1.00),4,4)
+#' 
+#' 
 #' b <- c(.39, .22, .02, .43)
 #' rxy <- R.X %*% b
 #' 
 #' OLSRSQ <- t(b) %*% R.X %*% b
 #' 
-#' ## theta <- .02
-#' ## r.yhata.yhatb <- sqrt( 1 - (theta)/OLSRSQ)
+#' theta <- .02
+#' r.yhata.yhatb <- sqrt( 1 - (theta)/OLSRSQ)
 #' 
-#' r.yhata.yhatb  <- .90
-#' set.seed(5)
-#' output <- fungibleExtrema(R.X, rxy, r.yhata.yhatb, Nstarts = 500, 
-#'                          MaxMin = "Min")
+#' Converged = FALSE
+#' SEED = 1234
+#' MaxTries = 100 
+#' iter = 1
+#' 
+#' while( iter <= MaxTries){
+#'    SEED <- SEED + 1
+#'   
+#'    cat("\nCurrent Seed = ", SEED, "\n")
+#'    output <- fungibleExtrema(R.X, rxy, 
+#'                              r.yhata.yhatb, 
+#'                              Nstarts = 5,
+#'                              MaxMin = "Min", 
+#'                              Seed = SEED,
+#'                              maxGrad = 1E-05,
+#'                              PrintLevel = 1)
+#'   
+#'    Converged <- output$converged
+#'    if(Converged) break
+#'    iter = iter + 1
+#' }  
+#' 
+#' print( output )
 #' 
 #' ## Scale to replicate Koopman
 #' a <- output$a
@@ -97,9 +126,20 @@
 #' cat("\nKoopman Scaling\n")
 #' print(round(a,2))
 #' }
-#' 
-fungibleExtrema <- function(R.X,rxy,r.yhata.yhatb,Nstarts=100,MaxMin="Max"){
+fungibleExtrema <- function(R.X, rxy, r.yhata.yhatb,  
+                            Nstarts=100,  
+                            MaxMin="Max", 
+                            Seed = NULL,
+                            maxGrad = 1E-05,
+                            PrintLevel = 1){
  
+  # Generate random seed if not supplied
+  if(is.null(Seed)) Seed <- sample(1:10000, 1)
+  set.seed(Seed)
+  
+  # Initialize convergenceStatus
+  convergenceStatus = FALSE
+  
   # auxiliary function definitions
   # vector norm
   norm <- function(x) x/as.numeric( sqrt(t(x) %*%x))
@@ -215,6 +255,7 @@ gradf <- function(sv){
      breakflag<-0
      iter <- 0
   
+    set.seed(Seed) 
     while(iter < Nstarts){
       # start values
       sv <- c(rnorm(NX-1)/sqrt(NX-1),1000)
@@ -242,9 +283,22 @@ gradf <- function(sv){
                     scaling.weight <- (t(rxy) %*% a)/(t(a)%*%R.X%*%a)               
                     a <- as.numeric(scaling.weight) * a  
                     
-                    cat(c(iter," Current fnc val",minf,"\n"))
-                    print(max(abs(gradf(out$par))))
-                    if(max(abs(gradf(out$par)))<=1e-5) breakflag <- 1           
+                    max_grad = max(abs(gradf(out$par)))
+                    
+                    # PRINT
+                    if(PrintLevel == 1){
+                       cat(c(iter,"Current fnc val  = ", round(minf,5), "\n",
+                       " Max abs gradient = ",  round(max_grad, 5),"\n"))
+                    }
+                    
+                    # Check convergence status
+                  
+                    if( (max_grad <= maxGrad) && PrintLevel == 1){
+                       convergenceStatus = TRUE
+                       cat("\n ***Sucessful Convergence*** \n\n")
+                       breakflag <- 1  
+                    }  
+                    
                  } # End tmp$minimum < minf
                
        if(breakflag) break
@@ -255,40 +309,50 @@ gradf <- function(sv){
 
       r.y.yhat <- sqrt( (t(b) %*% R.X %*%b) )
       
-      cat("\n\n")
-      if(MaxMin=="MAX") cat("\n\n  Maximizing cos(a,b):\n")
-      if(MaxMin=="MIN") cat("\n\n  Minimizing cos(a,b):\n")        
-      cat("  r(yhat.a,yhat.b) = ",round(r.yhata.yhatb,3),"\n")
-	  #compute vector cosine 
+
+      
+      
+	  # compute vector cosine 
       s<-vcos(a,b) 
-      cat("  cos(a,b) = ",round(s,3),"\n")
-      cat("  RSQb = ",round(r.y.yhat^2,3),"\n")
-      cat("  RSQa = ",round((r.yhata.yhatb * r.y.yhat)^2,3),"\n")
-      cat("  Relative loss = RSQb - RSQa = ",
-             round( r.y.yhat^2-(r.yhata.yhatb * r.y.yhat)^2 ,3),"\n\n")
-         
       ba.mat <- cbind(b,a)
       colnames(ba.mat) <- c("b","a")
-      print(ba.mat)
-      cat("\n\n")
-     
-    
-      cat("Analytic Gradient at Solution\n")
+      
+    # compute final gradient 
       solution.gradient <- gradf(out$par)
-      print(matrix(solution.gradient,NX,1))
-      cat("\n")
+      
+      # PRINT
+      if(PrintLevel == 1 && convergenceStatus == TRUE){
+        
+        cat("\n\n========= Results =============\n\n")
+        if(MaxMin=="MAX") cat("  Maximizing cos(a,b):\n")
+        if(MaxMin=="MIN") cat("  Minimizing cos(a,b):\n")        
+        cat("  r(yhat.a,yhat.b) = ",round(r.yhata.yhatb,3),"\n")
+        
+        cat("  cos(a,b) = ",round(s,3),"\n")
+        cat("  RSQb = ",round(r.y.yhat^2,3),"\n")
+        cat("  RSQa = ",round((r.yhata.yhatb * r.y.yhat)^2,3),"\n")
+        cat("  Relative loss = RSQb - RSQa = ",
+             round( r.y.yhat^2-(r.yhata.yhatb * r.y.yhat)^2 ,3),"\n\n")
          
-
-         
+        print(ba.mat)
+        
+        cat("\n\n")
+        cat("Analytic Gradient at Solution\n")
+        print(matrix(solution.gradient,NX,1))
+        cat("\n")
+      } #END PRINT    
+       
+  # ---- RETURN ----
    list(cos.ab = s,
         a = a ,
         k = k,
-        z=z,
+        z = z,
         b = b,
         u = u,
-        r.yhata.yhatb=r.yhata.yhatb,
-        r.y.yhatb=r.y.yhat,
-        gradient=solution.gradient)
+        r.yhata.yhatb = r.yhata.yhatb,
+        r.y.yhatb = r.y.yhat,
+        gradient = solution.gradient,
+        converged = convergenceStatus)
  } ## End of Fungible Function
 
 

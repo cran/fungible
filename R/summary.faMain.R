@@ -53,7 +53,8 @@
 #'  \item \strong{MaxWithinSetRMSD}: The maximum root mean squared deviation between all within set solutions and 
 #'  the first element in the solution set. When \strong{MaxWithinSetRMSD > 0} then the solution 
 #'  set contains non-identical rotated factor patterns with identical complexity values. 
-#'  \item \strong{Converged}: A Logical (TRUE/FALSE) that  indicates whether all within set rotations converged.
+#'  \item \strong{Converged}: A Logical (TRUE/FALSE) that  indicates whether the first solution 
+#'  in a solution set  has a TRUE convergence status. 
 #'  }
 #'   Note that  the printed factor pattern is not sorted even if \strong{itemSort} 
 #'  is requested in \link{faMain}.
@@ -320,8 +321,10 @@ summary.faMain <- function(object,
   Phi_view <- LocalSolutionsList[[Set]]$Phi
   dimnames(F_view) <- dimnames(fout$loadings)
   dimnames(Phi_view) <- dimnames(fout$Phi)
-  RotationCoverged <- 
+  
+  RotationCoverged <-
     LocalSolutionsList[[Set]]$RotationConverged
+  
   # ---- END Which solution should be viewed?-----
   
   

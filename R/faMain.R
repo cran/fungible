@@ -978,17 +978,19 @@ faMain <-
       ## June 27, 2019: Do not  order factors when Procrustes rotation chosen
       ##
       ## sort loadings and Phi matrix for non Procrstes
-      if( rotate != "targetT" & rotate != "targetQ"){
-        sortedSols <- 
-          orderFactors(Lambda  = selected$loadings,
-                       PhiMat  = selected$Phi,
-                       salient = .01,
-                       reflect = TRUE)
+      if(rotate !="none"){
+         if( rotate != "targetT" & rotate != "targetQ"){
+             sortedSols <- 
+               orderFactors(Lambda  = selected$loadings,
+                            PhiMat  = selected$Phi,
+                            salient = .01,
+                            reflect = TRUE)
         
         ## Overwrite "selected" list
         selected$loadings <- sortedSols$Lambda
         selected$Phi      <- sortedSols$PhiMat
-      }
+      }#END if( rotate != "targetT" 
+    }#END if(rotate !="none")   
       
       
       

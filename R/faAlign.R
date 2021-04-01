@@ -1,7 +1,8 @@
 # Nov 4, 2017
 # Construct single LS matrix
 # This is 1000 times faster for 10 dimensions
-
+# September 16, 2020
+#  fixed for 1 factor models
 
 
 
@@ -247,11 +248,25 @@ faAlign <- function(F1, F2, Phi2 = NULL, MatchMethod = "LS"){
 
 ## Match on Congruence Coefficients   
  if(MatchMethod == "CC"){
-   D.F1 <- diag(1 / sqrt(apply(F1^2, 2, sum)))
-   D.F2 <- diag(1 / sqrt(apply(F2^2, 2, sum)))
+   
+   if(ncol(F1) == 1){
+     D.F1 <- 1 / sqrt(apply(F1^2, 2, sum))
+     D.F2 <- 1 / sqrt(apply(F2^2, 2, sum))
+   }
+   
+   if(ncol(F1) > 1){
+     D.F1 <- diag(1 / sqrt(apply(F1^2, 2, sum)))
+     D.F2 <- diag(1 / sqrt(apply(F2^2, 2, sum)))
+   }
+   
 
    # take absolute value of CC matrix
-   absCosF1F2 <- abs( D.F1 %*% t(F1) %*% F2 %*% D.F2 )
+   if(ncol(F1) == 1){
+     absCosF1F2 <- abs( D.F1 * t(F1) %*% F2 * D.F2 )
+   }
+   if(ncol(F1) > 1){
+     absCosF1F2 <- abs( D.F1 %*% t(F1) %*% F2 %*% D.F2 )
+   } 
    
    
    # Test for unique matches
@@ -269,7 +284,12 @@ faAlign <- function(F1, F2, Phi2 = NULL, MatchMethod = "LS"){
    
    # Find optimal reflections
    Dsgn <- diag(sign(colSums( F1*F2[,Qmatch]) ))
-   F2 <- F2[ , Qmatch] %*%  Dsgn
+   if(ncol(F2) == 1){
+     F2 <- F2[ , Qmatch] *  Dsgn
+   }
+   if(ncol(F2) > 1){
+     F2 <- F2[ , Qmatch] %*%  Dsgn
+   }   
    
   
  }#End CC ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
@@ -280,15 +300,31 @@ faAlign <- function(F1, F2, Phi2 = NULL, MatchMethod = "LS"){
    Phi2 <- Dsgn %*% Phi2[Qmatch, Qmatch] %*% Dsgn
  }
  
- ## Compute Congrence Coefficients and 
+ ## Compute Congruence Coefficients and 
  ## RMSE for final solution
  
  FIT <- function(F1,F2){
-   D.F1 <- diag(1 / sqrt(apply(F1^2, 2, sum)))
-   D.F2 <- diag(1 / sqrt(apply(F2^2, 2, sum)))
    
-   # take absolute value of CC matrix
-   CC <- diag( D.F1 %*% t(F1) %*% F2 %*% D.F2 )
+   if(ncol(F1) == 1){
+     D.F1 <- 1 / sqrt(apply(F1^2, 2, sum))
+     D.F2 <- 1 / sqrt(apply(F2^2, 2, sum))
+   }
+   
+   if(ncol(F1) > 1){
+     D.F1 <- diag(1 / sqrt(apply(F1^2, 2, sum)))
+     D.F2 <- diag(1 / sqrt(apply(F2^2, 2, sum)))
+   }
+   
+   
+   # CC matrix
+   if(ncol(F1) == 1){
+     CC <- diag( D.F1 * t(F1) %*% F2 * D.F2 )
+   }
+   if(ncol(F1) > 1){
+     CC <- diag( D.F1 %*% t(F1) %*% F2 %*% D.F2 )
+   }
+   
+   
    LS <- sqrt(apply( (F1 - F2)^2 , 2, mean) )
    list(CC = CC, LS = LS)
  }
