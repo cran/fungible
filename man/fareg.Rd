@@ -107,6 +107,7 @@ Other Factor Analysis Routines:
 \code{\link{faX}()},
 \code{\link{fals}()},
 \code{\link{fapa}()},
+\code{\link{fsIndeterminacy}()},
 \code{\link{orderFactors}()},
 \code{\link{print.faMB}()},
 \code{\link{print.faMain}()},

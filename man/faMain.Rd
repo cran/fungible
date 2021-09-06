@@ -297,7 +297,7 @@ minimum. This function can also return bootstrap standard errors of the factor s
 \examples{
 ## Example 1
 
-## Generate an orthgonal factor model
+## Generate an orthogonal factor model
 lambda <- matrix(c(.41, .00, .00,
                    .45, .00, .00,
                    .53, .00, .00,
@@ -444,6 +444,7 @@ Other Factor Analysis Routines:
 \code{\link{fals}()},
 \code{\link{fapa}()},
 \code{\link{fareg}()},
+\code{\link{fsIndeterminacy}()},
 \code{\link{orderFactors}()},
 \code{\link{print.faMB}()},
 \code{\link{print.faMain}()},

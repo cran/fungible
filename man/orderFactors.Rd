@@ -69,6 +69,7 @@ Other Factor Analysis Routines:
 \code{\link{fals}()},
 \code{\link{fapa}()},
 \code{\link{fareg}()},
+\code{\link{fsIndeterminacy}()},
 \code{\link{print.faMB}()},
 \code{\link{print.faMain}()},
 \code{\link{promaxQ}()},

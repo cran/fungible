@@ -70,13 +70,13 @@ Defaults to \code{itemSort} = FALSE.}
      \item \code{Set} (Integer) The returned Set number. 
      \item \code{h2} (Matrix) Communalities for the returned factor solution. If \code{Boostrap = TRUE} then
      \code{h2} also returns the bootstrap standard errors and associated confidence bounds from 
-               the boostrap distribution.
-     \item{facIndeterminacy}{Matrix} Factor Indeterminacy values. If \code{Boostrap = TRUE} then
+               the bootstrap distribution.
+     \item{facIndeterminacy} (Vector) Factor Indeterminacy values (correlations between the factors and factor scores). If \code{Boostrap = TRUE} then
         \code{facIndeterminacy} also returns the bootstrap standard errors and associated confidence bounds from 
                the boostrap distribution.          
-     \item \code{SetComplexityValues} (vector) Rotation complexity value for each solution set. 
-     \item \code{HP_counts} (vector) Hyperplane count for each solution set.  
-     \item \code{MaxWithinSetRMSD} (vector) If \code{DiagnosticsLevel = 2} the the program will compute
+     \item \code{SetComplexityValues} (Vector) Rotation complexity value for each solution set. 
+     \item \code{HP_counts} (Vector) Hyperplane count for each solution set.  
+     \item \code{MaxWithinSetRMSD} (Vector) If \code{DiagnosticsLevel = 2} the the program will compute
      within set RMSD values.  These values represent the root mean squared deviations of each 
      within set solution with the first solution in a set. If the \code{MaxWithinSetRMSD = 0} 
      for a set, then all within set solutions are identical. If  \code{MaxWithinSetRMSD > 0} 
@@ -84,7 +84,7 @@ Defaults to \code{itemSort} = FALSE.}
      with different factor loadings produced identical complexity values). 
      \item \code{RMSD} (Numeric) The root mean squared deviation between the 
           observed and model-implied correlation matrix.
-     \item \code{RMSD} (Numeric) The root mean squared absolute deviation between the 
+     \item \code{RMSAD} (Numeric) The root mean squared absolute deviation between the 
           observed and model-implied correlation matrix. 
      \item \code{NumberLocalSolutions} (Integer) The number of local solution sets.     
      \item \code{LocalSolutions} (List) A list of local solutions (factor loadings, factor correlations, etc). 
@@ -265,6 +265,7 @@ Other Factor Analysis Routines:
 \code{\link{fals}()},
 \code{\link{fapa}()},
 \code{\link{fareg}()},
+\code{\link{fsIndeterminacy}()},
 \code{\link{orderFactors}()},
 \code{\link{print.faMB}()},
 \code{\link{print.faMain}()},

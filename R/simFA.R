@@ -804,13 +804,19 @@ simFA <- function(Model = list(),
    
    
    # ----_____Set Seed ---- 
+   ## Justin's suggestion August 4, 2021
    ## Generate random seed if not supplied
-
-   if (is.null(Seed)) { 
-      Seed <- as.integer((as.double(Sys.time()) * 1000 + Sys.getpid()) %% 2^31) 
-   } # END if (is.null(Seed)) { 
+   if (is.null(Seed)) {
+      Seed <- sample(1e7, 1)
+   }
    set.seed(Seed)
    
+   ## original code
+   # if (is.null(Seed)) {
+   #    Seed <- as.integer((as.double(Sys.time()) * 1000 + Sys.getpid()) %% 2^31)
+   # } # END if (is.null(Seed)) {
+   # set.seed(Seed)
+   # 
    
 #----------------END SEC 1 ---------------------#
  

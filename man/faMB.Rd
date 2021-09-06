@@ -305,6 +305,7 @@ Other Factor Analysis Routines:
 \code{\link{fals}()},
 \code{\link{fapa}()},
 \code{\link{fareg}()},
+\code{\link{fsIndeterminacy}()},
 \code{\link{orderFactors}()},
 \code{\link{print.faMB}()},
 \code{\link{print.faMain}()},

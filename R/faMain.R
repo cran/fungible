@@ -292,7 +292,7 @@
 #' @examples
 #' ## Example 1
 #' 
-#' ## Generate an orthgonal factor model
+#' ## Generate an orthogonal factor model
 #' lambda <- matrix(c(.41, .00, .00,
 #'                    .45, .00, .00,
 #'                    .53, .00, .00,
