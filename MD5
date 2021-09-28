@@ -1,4 +1,4 @@
-86a0f93b64c4dd5385ef05fbc748c99b *DESCRIPTION
+4f32be9c8e060649bf2fdda62a0db570 *DESCRIPTION
 2bffcec8355e85abb71ae4696c168268 *NAMESPACE
 d2903f17ba5190dd1c6745ba1b41a4da *R/ACL.R
 53ad1be8b029222f11eb610bfb773a30 *R/AmzBoxes.R
@@ -83,7 +83,7 @@ d40d9ff6408bd936816b9b8b197a103b *R/rmsd.R
 3efaf0479b494aa2917169cc068fd4a4 *R/seBeta.R
 c91338683395e41cf312c17dfc626277 *R/seBetaCor.R
 b4abefbc4aaf0abb2a8c8fb9205968c1 *R/seBetaFixed.R
-a7126734b6aecde98612dde5731405ee *R/simFA.R
+147e01fba25ec9356db4db9dab4db523 *R/simFA.R
 e28ab2c6fc99d62223dac026406603f2 *R/skew.R
 da2d060a04de2c3b36707525316b9b9a *R/smoothAPA.R
 884496970ff87862bf1b4a8468b26a1f *R/smoothBY.R
@@ -115,7 +115,7 @@ b808bf912d2b6f11ec688437c9cf41c0 *data/Jackson67.rda
 8b7353cd4f044398ff3168813fcc61ac *data/Thurstone41.rda
 65e3da71a6fbd82df0d93989a25db39d *data/ThurstoneBox20.rda
 8ea91de0ce9cc918830f8b75dd3028b9 *data/ThurstoneBox26.rda
-a0510eb4a3f92ce4ae87437a888aa002 *inst/CITATION
+7c29046837d34ecb823ae146d46e76e2 *inst/CITATION
 cfb2041ab8c4a15b2a135e2cea3aa756 *man/ACL.Rd
 90220d9da4f5fcbd078310fb6b8cd9e0 *man/AmzBoxes.Rd
 68d4a8022f64dfdbf14c4f5dda5655f4 *man/BadRBY.Rd

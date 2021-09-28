@@ -2202,7 +2202,7 @@ simFA <- function(Model = list(),
      
        #----_____Population Factor Scores ----
         if(cnFS$Population == TRUE){
-          # make specific fac scores orthgonal to common fs
+          # make specific fac scores orthogonal to common fs
           SFS <- resid(lm(SFS ~ CFS))
           
           # No correlated specific factor
@@ -2231,12 +2231,14 @@ simFA <- function(Model = list(),
        # If Alphas == NULL 
        if(is.null(cnFS$VarRel)){ 
           SFS <- matrix(0, cnFS$NFacScores, NVar)
+          h2 <- diag(Fl %*% t(Fl))
           ObservedScores <- CFS %*% t(Fl) + 
-                            EFS %*% diag(sqrt (1 - h2))
+                  EFS %*% diag(sqrt (1 - h2) )
        }    
           
        # If user DID supply indicator reliabilities (Alphas)                       
        if(!is.null(cnFS$VarRel)){
+           h2 <- diag(Fl %*% t(Fl))
            if(  min(cnFS$VarRel - h2) < 0 ){
               badItems <- (1:NVar)[(cnFS$VarRel - h2) < 0 ]
               stop("\n\n *** FATAL ERROR (Reliabilities too small) ***",
@@ -2245,6 +2247,7 @@ simFA <- function(Model = list(),
          
           # No specific factor correlations
            if( is.null(cnME$RSpecific) ){
+              h2 <- diag(Fl %*% t(Fl))
              ObservedScores <- CFS %*% t(Fl) + 
                             SFS %*% diag(sqrt(cnFS$VarRel - h2))  +
                             EFS %*% diag(sqrt( 1 - cnFS$VarRel) ) 
@@ -2252,7 +2255,7 @@ simFA <- function(Model = list(),
          
          # Specific factors allowed to correlate
          if( !is.null(cnME$RSpecific) ){
-           
+            h2 <- diag(Fl %*% t(Fl))
            SFSstndevs <- diag(sqrt(cnFS$VarRel - h2))
            ObservedScores <- CFS %*% t(Fl) + 
              SFS %*% SFSstndevs  +
