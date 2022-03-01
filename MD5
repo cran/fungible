@@ -1,7 +1,7 @@
-4f32be9c8e060649bf2fdda62a0db570 *DESCRIPTION
+19d8b784098dbfe6d11737ea7b78c0e6 *DESCRIPTION
 2bffcec8355e85abb71ae4696c168268 *NAMESPACE
 d2903f17ba5190dd1c6745ba1b41a4da *R/ACL.R
-53ad1be8b029222f11eb610bfb773a30 *R/AmzBoxes.R
+4cf72e5840207f3373bc8a610a29a57c *R/AmzBoxes.R
 004bcaa0eae5a09a6671becd4fa710e1 *R/BiFAD.R
 8ff413ed64dd04bca110743b1873f9f6 *R/Boruch70.R
 2f94bf0ca1a84a2f3177ed356524b5d1 *R/Box20.R
@@ -15,7 +15,7 @@ cdcf58cb4233ca2b99b118d9269cefdf *R/Jackson67.R
 4dda4491a4c50bbbb1d733f24a8da35a *R/Ledermann.R
 5dc0d732dcdd4e8a82b1d1cfc00e99b8 *R/Malmi79.R
 aabbd89acf9b58629bd41ed875b3915b *R/Omega.R
-89e6426522e5ba0a18c75f166d2015d0 *R/RnpdMAP.R
+3a3ce4dd422171ca3b5d63537f3e167d *R/RnpdMAP.R
 b5c464b721b920afa8b414774d847e25 *R/SLi.R
 8f16cc8fcf80b513c92176401665cfb4 *R/SchmidLeiman.R
 84ac2e79e5e68e93dec22fcaa4fcbfe9 *R/Thurstone41.R
@@ -38,7 +38,7 @@ a2f3bfc614c88252e817067b8cd1bbb8 *R/faIB.R
 9066470abcc000f363f9af78d50e0c28 *R/faLocalMin.R
 2641376d81ff30abfc8c6fab01a7f864 *R/faMAP.R
 12db6406181e9b2b7f8dc05158e04fce *R/faMB.R
-1d80fb7a2f5f315650728a31b187ad56 *R/faMain.R
+b5294c6c9087642cfecf7c2e3ca1e251 *R/faMain.R
 cab997a2d74fc3818b1241620a88c38e *R/faScores.R
 5a023361e4c66caad701cb2528f970bd *R/faSort.R
 43fa2797ff49fcb206d5c7f1f1cafed4 *R/faStandardize.R
@@ -83,10 +83,10 @@ d40d9ff6408bd936816b9b8b197a103b *R/rmsd.R
 3efaf0479b494aa2917169cc068fd4a4 *R/seBeta.R
 c91338683395e41cf312c17dfc626277 *R/seBetaCor.R
 b4abefbc4aaf0abb2a8c8fb9205968c1 *R/seBetaFixed.R
-147e01fba25ec9356db4db9dab4db523 *R/simFA.R
+c52c7fb7189078b400ade3511d7d422f *R/simFA.R
 e28ab2c6fc99d62223dac026406603f2 *R/skew.R
 da2d060a04de2c3b36707525316b9b9a *R/smoothAPA.R
-884496970ff87862bf1b4a8468b26a1f *R/smoothBY.R
+440b0778265e5723ad696d6e82b8ed79 *R/smoothBY.R
 71f70e3ede2df248850d7202caee8367 *R/smoothKB.R
 7c6a6df55d1572355659e9a02f0fda9a *R/smoothLG.R
 43e95a833d9e90a8d92feaa1d2c2c982 *R/summary.faMB.R
@@ -99,7 +99,7 @@ a659aa143a150f26ae3a6c2181895308 *R/tetcorQuasi.R
 5688e7b0790db7f31a740ae73b9c4168 *R/vcos.r
 9a9be893e98b72f47b092e3a54be96f2 *R/vnorm.r
 c228d263a33a3bc1831bf5db681c7391 *data/ACL.rda
-17276c2178aa518172961c249b3d1ec3 *data/AmzBoxes.rda
+4fdaa02412746de37f2ca6f3f03e5739 *data/AmzBoxes.rda
 a90712c74cb5de70d2b3c21142138719 *data/BadRBY.rda
 c028676cb6cf5a93da31e717a8f1bcbe *data/BadRJN.rda
 fb709d06dfc109f8febe9229fe6694c3 *data/BadRKtB.rda
@@ -115,9 +115,9 @@ b808bf912d2b6f11ec688437c9cf41c0 *data/Jackson67.rda
 8b7353cd4f044398ff3168813fcc61ac *data/Thurstone41.rda
 65e3da71a6fbd82df0d93989a25db39d *data/ThurstoneBox20.rda
 8ea91de0ce9cc918830f8b75dd3028b9 *data/ThurstoneBox26.rda
-7c29046837d34ecb823ae146d46e76e2 *inst/CITATION
+704527aaaa983afd406a48c5b5aa54a3 *inst/CITATION
 cfb2041ab8c4a15b2a135e2cea3aa756 *man/ACL.Rd
-90220d9da4f5fcbd078310fb6b8cd9e0 *man/AmzBoxes.Rd
+7c4b2b2cfd9dbc19eb760ecad53e997a *man/AmzBoxes.Rd
 68d4a8022f64dfdbf14c4f5dda5655f4 *man/BadRBY.Rd
 e29bfca7e947616f5368d2236137dfdc *man/BadRJN.Rd
 e37af3cfecf9d38b819f7309268b5900 *man/BadRKtB.Rd
@@ -137,7 +137,7 @@ d4b09a96ed5eb2c71c7f3729244fd7a1 *man/BiFAD.Rd
 43369fdc6f0a224d6a9acc0e4ceb992d *man/Ledermann.Rd
 ff6b4f7bb0d21223a8ef7a02c17816d2 *man/Malmi79.Rd
 6b0ac28de102d8d70eb0b1841d1b16da *man/Omega.Rd
-39f021a682d44e45430ffedd1f0feec6 *man/RnpdMAP.Rd
+94c4e7252ef7c231166560c2d7250759 *man/RnpdMAP.Rd
 fe67d5ca9e4de4860a5759b9e6ab7ac2 *man/SLi.Rd
 4d3f3695eaaaeb221506b716951745be *man/SchmidLeiman.Rd
 4549d11c436bba133ce00223b6519315 *man/Thurstone41.Rd
@@ -160,7 +160,7 @@ d204e4725e7dc27f0c425b5344876fc4 *man/faAlign.Rd
 119777cfa3ff7a9c788289d563b8149a *man/faLocalMin.Rd
 79cfa25c0601f29cec02597e40a11c18 *man/faMAP.Rd
 22464d88f12a3e073e06acc8b0371517 *man/faMB.Rd
-1b51a3866b3f89309ef5ca5270719eca *man/faMain.Rd
+628e60784324f04ffe3aa497ba8a6ec4 *man/faMain.Rd
 60d820ef26e056af906cd3f0917d3923 *man/faScores.Rd
 2ff0be5424449e01dc71f81065465f5c *man/faSort.Rd
 bf77c102cdf36dd92d0d6b0baea58399 *man/faStandardize.Rd
@@ -202,7 +202,7 @@ d4cc132d06295e28b446898850b3af6e *man/rcone.Rd
 7a39622e473ad5a19b7aefdd6c02cae0 *man/seBeta.Rd
 d8f1348cfcc06e69ead5abdccaa54d3d *man/seBetaCor.Rd
 0467cc92a5fc99e51aac0b6dc0b3e149 *man/seBetaFixed.Rd
-4aa7bc295c7a74b18759263e4d6443d5 *man/simFA.Rd
+f82ea68f084b07c5f2b105e3acd0fe2b *man/simFA.Rd
 f13037049584b6d95d4cf933b065cc8a *man/skew.Rd
 6450b71ee10d6984b3c1e99d739da053 *man/smoothAPA.Rd
 bf5333cecc9c413b63ac835f07ca0e06 *man/smoothBY.Rd

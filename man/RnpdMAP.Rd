@@ -24,7 +24,7 @@ RnpdMAP(
 \item{NNegEigs}{number of eigenvalues < 0 in Rnpd.}
 
 \item{NSmoothPosEigs}{number of eigenvalues > 0 to smooth: the smallest
-NSmoothPosEigs > 0be smoothed toward 0.}
+NSmoothPosEigs > 0  will be smoothed toward 0.}
 
 \item{NSubjects}{sample size (required when NSamples > 0) parameter used to
 generate sample correlation matrices. Default = NULL.}
@@ -34,7 +34,7 @@ program will attempt to find Rnpd such that ||Rpop - Rnpd||_2 is minimized.}
 
 \item{MaxIts}{maximum number of projection iterations.}
 
-\item{PRINT}{(logical) If TURE the program will print the iteration history
+\item{PRINT}{(logical) If TRUE the program will print the iteration history
 for Lp. Default = NULL.}
 
 \item{Seed}{Optional seed for random number generation.}
@@ -62,7 +62,7 @@ library(MASS)
 
 Nvar = 20
 Nfac = 4
-NSubj = 600
+NSubj = 2000
 Seed = 123    
 
 set.seed(Seed)
@@ -101,8 +101,10 @@ RMSD <- function(A, B){
   X <- mvrnorm(n = NSubj, mu = rep(0, Nvar), 
                Sigma = Rpop, empirical = TRUE)
                
-if( any(colSums(X) == 0) ){
-  stop("One or more variables have zero variance. Generate a new data set.")               
+while( any(colSums(X) == 0) ){
+  warning("One or more variables have zero variance. Generating a new data set.") 
+   X <- mvrnorm(n = NSubj, mu = rep(0, Nvar), 
+               Sigma = Rpop, empirical = TRUE)              
  }
  
 ## Cut X at thresholds given in b to produce binary data U

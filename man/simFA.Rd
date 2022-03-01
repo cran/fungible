@@ -344,8 +344,8 @@ user, the program will generate a random seed.}
 A function to simulate factor loadings matrices and Monte Carlo data sets
 for common factor models and bifactor models.
 For a complete description of \code{simFA}'s 
-capabilities, users are encouraged to consult the 
-\href{http://users.cla.umn.edu/~nwaller/simFA/simFABook.pdf}{simFaBook}.
+capabilities, users are encouraged to consult the \code{simFABook} at
+http://users.cla.umn.edu/~nwaller/simFA/simFABook.pdf.
 }
 \details{
 \code{simFA} is a program for exploring factor analysis 
@@ -393,7 +393,6 @@ Psychological Bulletin, 107(2), 238--246.
 Hu, L.-T. & Bentler, P. M. (1999). Cutoff criteria for fit indexes in 
 covariance structure analysis: Conventional criteria versus new alternatives. 
 Structural Equation Modeling: A Multidisciplinary Journal, 6(1), 1--55. 
-http://www.tandfonline.com/doi/abs/10.1080/10705519909540118
 
 Marsh, H. W., Hau, K.-T., & Grayson, D. (2005). Goodness of fit in 
 structural equation models. In A. Maydeu-Olivares & J. J. McArdle (Eds.), 
@@ -406,7 +405,7 @@ factor solutions.  Psychometrika, 22(1), 53--61.
 
 Steiger, J. H. (2016). Notes on the Steiger–Lind (1980) handout. 
 Structural Equation Modeling: A Multidisciplinary Journal, 23:6, 
-777-781, DOI: 10.1080/10705511.2016.1217487 
+777-781. 
 
 Tucker, L. R., Koopman, R. F., and Linn, R. L.  (1969).  Evaluation of
 factor analytic research procedures by means of simulated correlation

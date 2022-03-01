@@ -9,13 +9,13 @@
 #' @param Lp desired minimum eigenvalue in the NPD matrices.
 #' @param NNegEigs number of eigenvalues < 0 in Rnpd.
 #' @param NSmoothPosEigs number of eigenvalues > 0 to smooth: the smallest
-#' NSmoothPosEigs > 0be smoothed toward 0.
+#' NSmoothPosEigs > 0  will be smoothed toward 0.
 #' @param NSubjects sample size (required when NSamples > 0) parameter used to
 #' generate sample correlation matrices. Default = NULL.
 #' @param NSamples generate NSamples sample R matrices. If NSamples = 0 the
 #' program will attempt to find Rnpd such that ||Rpop - Rnpd||_2 is minimized.
 #' @param MaxIts maximum number of projection iterations.
-#' @param PRINT (logical) If TURE the program will print the iteration history
+#' @param PRINT (logical) If TRUE the program will print the iteration history
 #' for Lp. Default = NULL.
 #' @param Seed Optional seed for random number generation.
 #' @return \item{Rpop}{population (PD) correlation matrix.} \item{R}{sample
@@ -38,7 +38,7 @@
 #' 
 #' Nvar = 20
 #' Nfac = 4
-#' NSubj = 600
+#' NSubj = 2000
 #' Seed = 123    
 #' 
 #' set.seed(Seed)
@@ -77,8 +77,10 @@
 #'   X <- mvrnorm(n = NSubj, mu = rep(0, Nvar), 
 #'                Sigma = Rpop, empirical = TRUE)
 #'                
-#' if( any(colSums(X) == 0) ){
-#'   stop("One or more variables have zero variance. Generate a new data set.")               
+#' while( any(colSums(X) == 0) ){
+#'   warning("One or more variables have zero variance. Generating a new data set.") 
+#'    X <- mvrnorm(n = NSubj, mu = rep(0, Nvar), 
+#'                Sigma = Rpop, empirical = TRUE)              
 #'  }
 #'  
 #' ## Cut X at thresholds given in b to produce binary data U
@@ -263,11 +265,11 @@ RnpdMAP <- function (Rpop,
     } # End else
    
     # reconstruct symmetric Cov matrix
-    A <- V %*% diag(L)%*% t(V)
+    A <- V %*% diag(L) %*% t(V)
     (A + t(A))/2
   } #End  proj.S.Lp
   
-## Project onto symetric matrix set with unit diagonals in bounding cube 
+## Project onto symmetric matrix set with unit diagonals in bounding cube 
   proj.U <- function(A){
     diag(A) <- 1
     

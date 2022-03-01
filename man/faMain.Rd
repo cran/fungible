@@ -297,7 +297,7 @@ minimum. This function can also return bootstrap standard errors of the factor s
 \examples{
 ## Example 1
 
-## Generate an orthogonal factor model
+## Generate an oblique factor model
 lambda <- matrix(c(.41, .00, .00,
                    .45, .00, .00,
                    .53, .00, .00,

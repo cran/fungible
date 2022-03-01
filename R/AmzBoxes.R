@@ -7,7 +7,7 @@
 #' @usage data(AmzBoxes)
 #' 
 #' @format A data set of measurements for 98 Amazon shipping boxes. 
-#' These data were downloaded from the  BoxDimensions website: (\url{https://www.boxdimensions.com/}).
+#' These data were downloaded from the  BoxDimensions website: (https://www.boxdimensions.com/).
 #' The data set includes five variables:
 #' \itemize{
 #'    \item Amazon Box Size

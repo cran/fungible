@@ -126,7 +126,7 @@ smoothBY <- function(R, const = .98, eps = .001){
     # cat("\n\n")
     # print(out$status)
     
-      if (class(out) == "try-error" ) {
+      if (inherits(class(out), "try-error" )) {
         warning("Rcsdp (try-error) convergence failure: ", out$status)
         return(list(RBY = NULL, 
                     constant = const, 
@@ -136,7 +136,7 @@ smoothBY <- function(R, const = .98, eps = .001){
                     eps = eps))
       }
       
-      if(class(out) !="try-error"){
+      if(!inherits(class(out), "try-error")) {
         if( out$status!= 0){
           warning("Rcsdp Convergence failure: ", out$status)
           return(list(RBY = NULL,
