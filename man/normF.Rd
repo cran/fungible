@@ -10,7 +10,7 @@ normF(X)
 \item{X}{A matrix.}
 }
 \value{
-\item{}{The Frobenius norm of X.}
+The Frobenius norm of X.
 }
 \description{
 A function to compute the Frobenius norm of a matrix

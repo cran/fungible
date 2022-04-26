@@ -6,8 +6,8 @@
 #' Convert radian measure to degrees.
 #' 
 #' 
-#' @param radian Radian measure of an angle
-#' @return \item{}{Degree measure of an angle}
+#' @param radian Radian measure of an angle.
+#' @return Degree measure of an angle.
 #' @keywords Statistics
 #' @export
 #' @examples

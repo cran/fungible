@@ -9,14 +9,20 @@
 #' perfectly.
 #' @param Lambda (Matrix) A p x m matrix of factor loadings.
 #' @param Phi (Matrix) An m x m factor correlation matrix.
-#' @param N (Numeric) The desired sample size. 
+#' @param N (Integer) The desired sample size. 
+#' @param X (Matrix) an optional N x p matrix of observed scores. Note that the observed scores
+#' are expected to fit the factor model (as they will if they are generated 
+#' from simFA and Population = TRUE is specified). Default (\code{X = NULL}).
 #' @param SeedX (Integer) Starting seed for generating the matrix of observed scores, X.
 #' @param SeedBasis (Integer) Starting seed for generating a basis for all scores. 
 #' @param SeedW  (Integer) Starting seed for generating a weight matrix that is 
 #' used to construct those parts of the factor scores that lie outside of span(X).
 #' @param SeedT (Integer) Starting seed for generating a rotation matrix that 
 #' creates a new set of factor scores from an existing set of scores such that 
-#' the new set also perfectly fits the factor model.  
+#' the new set also perfectly fits the factor model. 
+#' @param DoFCorrection (Logical) Degrees of freedom correction.  If DoFCorrection = TRUE
+#' then var(x) = 1/(N-1) * t(x) %*% x; else var(x) = 1/N * t(x) %*% x. 
+#' Default (\code{DoFCorrection = TRUE}). 
 #' @param Print (Character) If \code{Print = "none"} no summary information
 #' will be printed.  If \code{Print = "short"} then basic output for evaluating
 #' the factor scores will be printed. If \code{Print = "long"} extended output
@@ -33,7 +39,9 @@
 #'  \item \strong{"Fi"}:  A possible set of common and unique factor scores.
 #'  \item \strong{"Fj"}: The set of factor scores that are minimally correlated with Fi. 
 #'  \item \strong{"Fk"}: Another set of common and unique factor scores. 
+#'  Note that in a 1-factor model, Fk = Fi.
 #'  \item \strong{"Fl"}: The set of factor scores that are minimally correlated with Fk. 
+#'  Note that in a 1-factor model, Fj = Fl. 
 #'  \item \strong{"Ei"}: Residual scores for Fi.
 #'  \item \strong{"Ej"}: Residual scores for Fj.
 #'  \item \strong{"Ek"}: Residual scores for Fk.
@@ -131,6 +139,7 @@
 #'
 #' out2  <- fsIndeterminacy(Lambda , 
 #'                         Phi = NULL, 
+#'                         X = NULL,
 #'                         SeedX = 1,     # Seed for X 
 #'                         SeedBasis = 2, #  Seed for Basis
 #'                         SeedW = 3,     #  Seed for Weight matrix
@@ -158,10 +167,12 @@
 fsIndeterminacy <- function(Lambda = NULL, 
                             Phi = NULL, 
                             N = NULL,
+                            X = NULL,
                             SeedX = NULL,
                             SeedBasis = NULL,
                             SeedW = NULL,
                             SeedT = 1,
+                            DoFCorrection = TRUE,
                             Print = "short",
                             Digits = 3,
                             Example = FALSE){
@@ -177,6 +188,16 @@ fsIndeterminacy <- function(Lambda = NULL,
  # Print:  (character)  Print = {"none", "short", "long"}
  # Digits: Number of significant digits to print in model output.
  # Example (logical) if Example = TRUE print example from paper
+  
+  
+  # if X is supplied we assume that it has been standardized
+  # with sample sdevs s.t. DF = N - 1
+  XSupplied = FALSE
+  if(!is.null(X)) XSupplied = TRUE
+  
+  if(!is.null(SeedX) && !is.null(SeedBasis)){
+    if(SeedX == SeedBasis) stop("\nFATAL ERROR: SeedX and SeedBasis must be differet numbers\n")
+  }
    
   ## generate random seeds if not supplied
   if(is.null(SeedX)) SeedX<- as.integer((as.double(Sys.time())*1000+Sys.getpid()) %% 2^31) 
@@ -186,6 +207,7 @@ fsIndeterminacy <- function(Lambda = NULL,
   
   if( is.null(Lambda) & isFALSE(Example) ) stop("\n\nFATAL ERROR: Lambda is a required argument")
   if(is.null(N) & isFALSE(Example)) stop("\n\nN must be specified\n") 
+  
   
   # --- Example == TRUE ----
   if(Example){
@@ -207,8 +229,6 @@ fsIndeterminacy <- function(Lambda = NULL,
    p <- nrow(Lambda)
    # Create Phi if not supplied
    if(is.null(Phi)) Phi <- diag(m)
-   
-   
    
    # Check if N is large enough
    if(N < (m + p + 1)) stop("\n\n N must be > ", m + p + 1, "\n")
@@ -240,14 +260,22 @@ fsIndeterminacy <- function(Lambda = NULL,
    I_N <- diag(N)
    J <- matrix(1, nrow = N, ncol = 1)
    P.J <- 1/N * J %*% t(J)
-   set.seed(SeedX)
-   S1 <- matrix(rnorm(N * p), N, p)
-   # S2 = matrix of random deviation scores
-   S2 = (I_N - P.J) %*% S1
-   K1 <- chol(1/N * t(S2) %*% S2)
-   K2 <- chol(R.X)
-   X <-  S2 %*% solve(K1) %*% K2
-
+  
+   if(is.null(X)){
+      set.seed(SeedX)
+      S1 <- matrix(rnorm(N * p), N, p)
+      # S2 = matrix of random deviation scores
+      S2 = (I_N - P.J) %*% S1
+      K1 <- chol(1/N * t(S2) %*% S2)
+      K2 <- chol(R.X)
+      X <-  S2 %*% solve(K1) %*% K2
+   } # END if(is.null(X))
+   
+   # # &&&&&&&&
+   # if(XSupplied == FALSE & DoFCorrection == TRUE){
+   #    X = sqrt((N - 1)/(N)) * X
+   # } #END dof correction    
+   # 
 
    # Calculate Fhat: the LS factor score estimates 
     Fhat <- X %*% R.X.inv %*% L %*% C  
@@ -272,6 +300,7 @@ fsIndeterminacy <- function(Lambda = NULL,
    # Create V
     V <- cbind(X, Z, J)  
     
+    
     # ----Label Matrices ----
     #Add column names to basis: V
     colnames(V) <- c(paste0("x",1:p), paste0("z",1:(N-p-1)),"J")
@@ -281,6 +310,7 @@ fsIndeterminacy <- function(Lambda = NULL,
     colnames(Phi) <- rownames(Phi) <- paste0("f",1:m)
     colnames(X) <- paste0("x", 1:p)
     rownames(X) <- paste0("Subj", 1:N)
+    
     
     
    # Generate F 
@@ -298,10 +328,16 @@ fsIndeterminacy <- function(Lambda = NULL,
    
    Zr <- Z %*% W
    
+   
+   # X created by program
    # orthogonalize and standardize Zr. Zi is an orthogonal basis
    # for a random m-dimensional subspace of Z
    Zi <- sqrt(N) * svd(Zr)$u
-  
+   
+   # X supplied by user
+   # if standardized X is supplied then we assume that
+   # t(x) %*% x = N - 1. This is true for simFA
+   if( XSupplied ) Zi <- sqrt(N - 1) * svd(Zr)$u
    
    # Using the Zi basis, create p+m vectors with
    # desired (NPD) Cov matrix: C - CovFhat
@@ -323,6 +359,7 @@ fsIndeterminacy <- function(Lambda = NULL,
    set.seed(SeedT)     
    M <- matrix(rnorm(m * m), nrow = m, ncol = m)
    Tmat <- qr.Q(qr(M))
+   
     
    if(Example){
       # rotate basis by 45 deg
@@ -333,11 +370,19 @@ fsIndeterminacy <- function(Lambda = NULL,
    # By including T in the construction equation we combine 
    # the (a) construction and (b) transformation approach
    # to generating factor scores.
+   
   
    # Calculate Fi and Fj [without T]
-   # Ei = that part of F that is in the col space of Z
-   P <-  as.matrix(Q[,1:m, drop=FALSE] %*% diag(sqrt(D[1:m,drop=FALSE]))) 
+   # Ei = that part of F that is in the column space of Z
    
+   if(m == 1){  # Nfac = 1
+     P <-  as.matrix(Q[,1:m, drop=FALSE] * sqrt(D[1]) )
+   }
+   if(m >= 2){  # NFac > 1 
+   P <-  as.matrix(Q[,1:m, drop=FALSE] %*% diag(sqrt(D[1:m,drop=FALSE]))) 
+   }
+  
+     
    # ---- Construct B ----
    B <- P %*% solve( t(P) %*% P) %*% Tmat %*% t(P)
 
@@ -345,8 +390,9 @@ fsIndeterminacy <- function(Lambda = NULL,
    V_Fhat <- svd(Fhat)$v[,1:p]
    Bstar <- (V_Fhat %*% t(V_Fhat)  + B)
    
+  
    # Bstar only works for orthogonal factor models
-   if( sum(C - diag(p+m)) > 1E-8){
+   if( round( sum(C - diag(p+m)), 8) > 0 ){
       Bstar = NULL
    }
    
@@ -363,6 +409,23 @@ fsIndeterminacy <- function(Lambda = NULL,
    Ek <- Ei %*% B
    El <- -Ek # to compute the least correlated set of FS with Fk
    
+   
+   #---- Degrees of Freedom Correction ----
+   if(XSupplied == FALSE & 
+      DoFCorrection == TRUE){
+     
+     s <- sqrt((N - 1)/( (N )) )
+     X <- s * X
+     Fhat <- s * Fhat
+     Ei   <- s * Ei
+     Ej   <- s * Ej
+     Ek   <- s * Ek
+     El   <- s * El
+     
+   } #END DofCorrection
+
+   
+   
    Fi <- Fhat + Ei
    Fj <- Fhat + Ej
    Fk <- Fhat + Ek
@@ -374,7 +437,7 @@ fsIndeterminacy <- function(Lambda = NULL,
    # Correlation of Fk and Fj where Fk = Fhat + Ek
    Guttman <- 2*rho^2 - 1
    
-  
+
       #----fnc to Print Section Headings 
       sectionHeading <- function(string){
          stringLength <- nchar(string)
@@ -397,13 +460,14 @@ fsIndeterminacy <- function(Lambda = NULL,
          
          sectionHeading("Observed Scores")
          print(round(X,Digits))
-         
+      
+
          sectionHeading("Two Alternative Sets of Common Factor Scores")
          Fcommon <- cbind(Fi[,1:m], Fj[,1:m])
          rownames(Fcommon) <- paste0("Subj",1:N)
          colnames(Fcommon) <- c(paste0("f", 1:m, "i"), paste0("f", 1:m, "j"))
          print(round( Fcommon, Digits ) )
-         
+        
          FcommonT <- cbind(Fk[,1:m], Fl[,1:m])
          rownames(FcommonT) <- paste0("Subj",1:N)
          colnames(FcommonT) <- c(paste0("f", 1:m, "k"), paste0("f", 1:m, "l"))
@@ -450,7 +514,7 @@ fsIndeterminacy <- function(Lambda = NULL,
       rownames(Fcommon) <- paste0("Subj",1:N)
       colnames(Fcommon) <- c(paste0("f", 1:m, "i"), paste0("f", 1:m, "j"))
       print(round( Fcommon, Digits ) )
-         
+      
       sectionHeading("T: Basis Rotation Matrix")
       print(round( Tmat, Digits ))
       
@@ -459,15 +523,17 @@ fsIndeterminacy <- function(Lambda = NULL,
          
       sectionHeading("Transformed Sets of Common Factor Scores")
       FcommonT <- cbind(Fk[,1:m], Fl[,1:m])
+      
       rownames(FcommonT) <- paste0("Subj",1:N)
       colnames(FcommonT) <- c(paste0("f", 1:m, "k"), paste0("f", 1:m,"l"))
       print(round( FcommonT, Digits ) )
       
       sectionHeading("Estimated Common Factor Scores")
-      Fhatcommon <- Fhat[,1:m]
+      Fhatcommon <- Fhat[,1:m, drop=FALSE]
       rownames(Fhatcommon) <- paste0("Subj",1:N)
       colnames(Fhatcommon) <- paste0("f", 1:m, "hat")
       print(round( Fhatcommon, Digits ) )
+
       
       sectionHeading("Corr(Fhat, F) for common factors")
       rvec <- matrix(sqrt(diag(CovFhat[1:m, 1:m, drop = FALSE])),1,m)
@@ -507,7 +573,7 @@ fsIndeterminacy <- function(Lambda = NULL,
         SeedBasis = SeedBasis,
         SeedW = SeedW,
         SeedT = SeedT,
-        Guttman = Guttman, #Guttman measure of indeterminacy
+        Guttman = Guttman, # Guttman measure of indeterminacy
         CovFhat = CovFhat) # Cov matrix of estimated factor scores
    
  } ##END fsIndeterminacy

@@ -1,11 +1,13 @@
-19d8b784098dbfe6d11737ea7b78c0e6 *DESCRIPTION
-2bffcec8355e85abb71ae4696c168268 *NAMESPACE
+3113107f4d79169e5e65c17352f0983b *DESCRIPTION
+f8b5343a9bd0747b95fa41ffec58210e *NAMESPACE
 d2903f17ba5190dd1c6745ba1b41a4da *R/ACL.R
 4cf72e5840207f3373bc8a610a29a57c *R/AmzBoxes.R
 004bcaa0eae5a09a6671becd4fa710e1 *R/BiFAD.R
 8ff413ed64dd04bca110743b1873f9f6 *R/Boruch70.R
 2f94bf0ca1a84a2f3177ed356524b5d1 *R/Box20.R
 6ed0957822797f87be8b80110a8dbf60 *R/Box26.R
+9fdcc6d5999dc2735f8cff6a3f6c849a *R/CompleteRcvx.R
+7807053dc0ebe7f5987d3a62ce4aff16 *R/CompleteRdev.R
 88bdbf170c628c63f7aa5ef6b6479ec1 *R/FMP.R
 d279bf1c91a76af0847c87c224e9c878 *R/FMPMonotonicityCheck.R
 2e9c18f01ff62632399daa2eb29a64e6 *R/FUP.R
@@ -46,7 +48,7 @@ ad8677942cf1155099df6164d3aed596 *R/faX.R
 b0e79f361ed18d59a8a6378447dae111 *R/fals.R
 f57a67764508d0433ad32d79848101c0 *R/fapa.R
 2a819daf1447f7133f01364bc9f3a1f7 *R/fareg.R
-ebc7562b573d758a3b9454efc1a68c87 *R/fsIndeterminacy.R
+7713a46209e90b9249256e597ffcfe23 *R/fsIndeterminacy.R
 daa04badedf3e598a1fbd3205e40d0f4 *R/fungible-package.R
 7aa62c41ba1ab4475fd4f474a8bbec93 *R/fungible.R
 5c0a00b40920af9806080d6b80db4b26 *R/fungibleExtrema.R
@@ -61,7 +63,7 @@ f3f014cbf57eff1d5cd8899fe2b160a0 *R/irf.R
 1b75969c26d8c1872923417fc63b28a0 *R/kurt.R
 947c8ff2c54797f95936af63578e81ad *R/monte.R
 a011ab541dc54a2cb4e955e099f3dc64 *R/monte1.R
-b2f9dac55dcfb2d9afe51978dc8b6d31 *R/normF.R
+607df1518554d2f6e168c41cbe8e2f44 *R/normF.R
 5ff2273ba4e23893ecfdff79832ff9be *R/normalCor.R
 083314e51a28345c0609ec116cf00c1b *R/orderFactors.R
 e77a8007ec365c8a456c03eebcf9b351 *R/plot.monte.R
@@ -70,7 +72,7 @@ cce7c17d190fafdf38dd3f5a92e043c0 *R/print.faMain.R
 5ac20a12f455f8508936c9ee0f3a8fea *R/print.summary.monte.R
 4c56583b65d897a3691104915de950d2 *R/print.summary.monte1.R
 9b44f35bf3c7bdb25b7af90852b7811d *R/promaxQ.R
-13c14b2b6f14e1b2242d3f1bc3861ae0 *R/r2d.r
+106de5dc2dc5f22c7bf2ba49dea7cf27 *R/r2d.r
 3ed62ec1b50081858d3ed9a6ffd2f2a2 *R/rGivens.R
 5f4907a2839f4af62a9e31d8866e875a *R/rMAP.R
 cc896bbd4a62f09e4226a3dedfd7243b *R/rPCA.R
@@ -115,7 +117,7 @@ b808bf912d2b6f11ec688437c9cf41c0 *data/Jackson67.rda
 8b7353cd4f044398ff3168813fcc61ac *data/Thurstone41.rda
 65e3da71a6fbd82df0d93989a25db39d *data/ThurstoneBox20.rda
 8ea91de0ce9cc918830f8b75dd3028b9 *data/ThurstoneBox26.rda
-704527aaaa983afd406a48c5b5aa54a3 *inst/CITATION
+6e302046fe907cf2e7585f26f3f6c98b *inst/CITATION
 cfb2041ab8c4a15b2a135e2cea3aa756 *man/ACL.Rd
 7c4b2b2cfd9dbc19eb760ecad53e997a *man/AmzBoxes.Rd
 68d4a8022f64dfdbf14c4f5dda5655f4 *man/BadRBY.Rd
@@ -127,6 +129,8 @@ d4b09a96ed5eb2c71c7f3729244fd7a1 *man/BiFAD.Rd
 79b4d596ba776b6be950e969a64862d6 *man/Boruch70.Rd
 3b0d735fd239ce442b90d7bb9d64f921 *man/Box20.Rd
 1f522d673e6c805d7a8435b30084f2f0 *man/Box26.Rd
+def93a3b00b224680e8287937846ac57 *man/CompleteRcvx.Rd
+cc4f83b5a87056531b4bcaddff7155b6 *man/CompleteRdev.Rd
 0adc43624689ad5d69576a5d99cd1db1 *man/FMP.Rd
 4b606d9ebf74168a31a8e538a20f86e2 *man/FMPMonotonicityCheck.Rd
 8e162e70267e1ba6a30e279eb2b94758 *man/FUP.Rd
@@ -168,7 +172,7 @@ bf77c102cdf36dd92d0d6b0baea58399 *man/faStandardize.Rd
 1b9993180ae0c3d6a6a16f05d264687d *man/fals.Rd
 ae90a7f6844e6b4c05cb9bc814df4047 *man/fapa.Rd
 65cec2174c559fb58c4781733cb32d88 *man/fareg.Rd
-96623acc96c5bb4c0f8a431a19961500 *man/fsIndeterminacy.Rd
+f79581fffcfeaf1d4b65e27d73e25ac1 *man/fsIndeterminacy.Rd
 6d75ae88ea03a272041d77460bb25cfb *man/fungible.Rd
 d841b08e26c9562775a64bc2699d868c *man/fungibleExtrema.Rd
 97a4ad1bf0141238238b28e93570183f *man/fungibleL.Rd
@@ -182,14 +186,14 @@ d841b08e26c9562775a64bc2699d868c *man/fungibleExtrema.Rd
 110475bae580795eb100cb38cf69c578 *man/kurt.Rd
 0aeaca9ea9cc446ad4bf37a84e8e7c62 *man/monte.Rd
 775b046700859cb1d88bd80b5e4828f5 *man/monte1.Rd
-66472524266e21aa0860a170875d8b4b *man/normF.Rd
+e75d7cbbcc7d7d666ef27b04119cc1cb *man/normF.Rd
 a48c34d36fe6dd17eb82541fa9205fdf *man/normalCor.Rd
 76126703a289addecfc161c1dbe1abb7 *man/orderFactors.Rd
 b0aef78c1ce7d6cf659c744df73d165e *man/plot.monte.Rd
 bbfbdab99507e85be88066b76fdb1034 *man/print.faMB.Rd
 2881b8877fd8fa602c3a0c7201876995 *man/print.faMain.Rd
 cd8a02d7c819fc2caf3a6cea737633d3 *man/promaxQ.Rd
-284d9abe5b8d821edc6afe73640acaad *man/r2d.Rd
+dda786c1511972bd6f96f9b83e69f398 *man/r2d.Rd
 eaef14c6b078d96c2fb61a25641f2df1 *man/rGivens.Rd
 7b4ac741f5c9d420785e816c943049a5 *man/rMAP.Rd
 c4d54898c7eff1660738eb0c20c5a998 *man/rPCA.Rd

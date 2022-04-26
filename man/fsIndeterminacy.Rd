@@ -8,10 +8,12 @@ fsIndeterminacy(
   Lambda = NULL,
   Phi = NULL,
   N = NULL,
+  X = NULL,
   SeedX = NULL,
   SeedBasis = NULL,
   SeedW = NULL,
   SeedT = 1,
+  DoFCorrection = TRUE,
   Print = "short",
   Digits = 3,
   Example = FALSE
@@ -22,7 +24,11 @@ fsIndeterminacy(
 
 \item{Phi}{(Matrix) An m x m factor correlation matrix.}
 
-\item{N}{(Numeric) The desired sample size.}
+\item{N}{(Integer) The desired sample size.}
+
+\item{X}{(Matrix) an optional N x p matrix of observed scores. Note that the observed scores
+are expected to fit the factor model (as they will if they are generated 
+from simFA and Population = TRUE is specified). Default (\code{X = NULL}).}
 
 \item{SeedX}{(Integer) Starting seed for generating the matrix of observed scores, X.}
 
@@ -34,6 +40,10 @@ used to construct those parts of the factor scores that lie outside of span(X).}
 \item{SeedT}{(Integer) Starting seed for generating a rotation matrix that 
 creates a new set of factor scores from an existing set of scores such that 
 the new set also perfectly fits the factor model.}
+
+\item{DoFCorrection}{(Logical) Degrees of freedom correction.  If DoFCorrection = TRUE
+then var(x) = 1/(N-1) * t(x) %*% x; else var(x) = 1/N * t(x) %*% x. 
+Default (\code{DoFCorrection = TRUE}).}
 
 \item{Print}{(Character) If \code{Print = "none"} no summary information
 will be printed.  If \code{Print = "short"} then basic output for evaluating
@@ -54,7 +64,9 @@ execute the orthogonal two factor model  described  in Waller (2021).}
  \item \strong{"Fi"}:  A possible set of common and unique factor scores.
  \item \strong{"Fj"}: The set of factor scores that are minimally correlated with Fi. 
  \item \strong{"Fk"}: Another set of common and unique factor scores. 
+ Note that in a 1-factor model, Fk = Fi.
  \item \strong{"Fl"}: The set of factor scores that are minimally correlated with Fk. 
+ Note that in a 1-factor model, Fj = Fl. 
  \item \strong{"Ei"}: Residual scores for Fi.
  \item \strong{"Ej"}: Residual scores for Fj.
  \item \strong{"Ek"}: Residual scores for Fk.
@@ -145,6 +157,7 @@ out1  <- fsIndeterminacy(Lambda,
 
 out2  <- fsIndeterminacy(Lambda , 
                         Phi = NULL, 
+                        X = NULL,
                         SeedX = 1,     # Seed for X 
                         SeedBasis = 2, #  Seed for Basis
                         SeedW = 3,     #  Seed for Weight matrix

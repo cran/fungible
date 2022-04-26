@@ -3,8 +3,8 @@
 #' A function to compute the Frobenius norm of a matrix
 #' 
 #' 
-#' @param X A matrix.
-#' @return \item{}{The Frobenius norm of X.}
+#' @param X A matrix.  
+#' @return The Frobenius norm of X.  
 #' @author Niels Waller
 #' @keywords statistics
 #' @export

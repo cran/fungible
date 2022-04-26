@@ -7,10 +7,10 @@
 r2d(radian)
 }
 \arguments{
-\item{radian}{Radian measure of an angle}
+\item{radian}{Radian measure of an angle.}
 }
 \value{
-\item{}{Degree measure of an angle}
+Degree measure of an angle.
 }
 \description{
 Convert radian measure to degrees.
