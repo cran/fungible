@@ -93,9 +93,9 @@ faBounds <- function(Lambda, RX, rXY, alphaY = 1){
   # Disattenuate rXY  for Y unreliability
   rXY <- rXY/sqrt(alphaY)
   
-  # cov_F_Y.X = the covariance of F and Y.X (Y.X = the  
-  # part of Y that is orthogonal to X)
-  cov_F_Y.X <- t(Lambda) %*% RXinv %*% rXY
+  # cov_F_YinX = the covariance of F and the 
+  # part of Y that is in the space of X
+  cov_F_YinX <- t(Lambda) %*% RXinv %*% rXY
   
   # sig1 = std dev of Y.X
   sig1 <- (1 - t(rXY) %*% RXinv %*% rXY)^.5
@@ -104,8 +104,8 @@ faBounds <- function(Lambda, RX, rXY, alphaY = 1){
   sig2 <- (1 - t(Lambda) %*% RXinv %*% Lambda)^.5
   
   # Compute bounds taking the unreliability of Y into account
-  LB <- (cov_F_Y.X - sig1 * sig2) * sqrt(alphaY)
-  UB <- (cov_F_Y.X + sig1 * sig2) * sqrt(alphaY)
+  LB <- (cov_F_YinX - sig1 * sig2) * sqrt(alphaY)
+  UB <- (cov_F_YinX + sig1 * sig2) * sqrt(alphaY)
   
   # attenuate rXY to original values
   rXY <- rXY * sqrt(alphaY)

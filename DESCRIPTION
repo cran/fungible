@@ -1,6 +1,6 @@
 Package: fungible
-Version: 2.2.1
-Date: 2022-06-09
+Version: 2.2.2
+Date: 2022-06-10
 Title: Psychometric Functions from the Waller Lab
 Authors@R: c(
     person("Niels", "Waller", role = c("aut", "cre"), email="nwaller@umn.edu" ),
@@ -27,9 +27,9 @@ Encoding: UTF-8
 NeedsCompilation: no
 RoxygenNote: 7.2.0
 Suggests: rmarkdown, knitr
-Packaged: 2022-06-09 19:28:14 UTC; nielswaller
+Packaged: 2022-06-10 21:22:30 UTC; nielswaller
 Author: Niels Waller [aut, cre],
   Jeff Jones [ctb],
   Casey Giordano [ctb]
 Repository: CRAN
-Date/Publication: 2022-06-10 18:30:02 UTC
+Date/Publication: 2022-06-10 22:00:02 UTC
