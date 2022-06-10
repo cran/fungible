@@ -21,7 +21,7 @@
 #' creates a new set of factor scores from an existing set of scores such that 
 #' the new set also perfectly fits the factor model. 
 #' @param DoFCorrection (Logical) Degrees of freedom correction.  If DoFCorrection = TRUE
-#' then var(x) = 1/(N-1) * t(x) %*% x; else var(x) = 1/N * t(x) %*% x. 
+#' then var(x) = 1/(N-1) * t(x) \%*\% x; else var(x) = 1/N * t(x) \%*\% x. 
 #' Default (\code{DoFCorrection = TRUE}). 
 #' @param Print (Character) If \code{Print = "none"} no summary information
 #' will be printed.  If \code{Print = "short"} then basic output for evaluating

@@ -188,7 +188,9 @@
        } ##END Thurstone
     
        #---- ___Bartlett/ML estimates ----
+      
     if(Method=="Bartlett"){
+      # technically, Bartlett method is for orthogonal factors
       Uinv2<-diag(1/diag(R - fload %*% Phi %*% t(fload)))
       #Gorsuch p. 264
       
