@@ -1,5 +1,5 @@
-8e52a1f1c43d4fd932ef990d5d162a14 *DESCRIPTION
-55d56f6f710a02052dda45583248bd61 *NAMESPACE
+c4369a74128ba66515e1846081dcbfab *DESCRIPTION
+38d4d9ad5137bd030088fc4dc39a76f5 *NAMESPACE
 d2903f17ba5190dd1c6745ba1b41a4da *R/ACL.R
 4cf72e5840207f3373bc8a610a29a57c *R/AmzBoxes.R
 004bcaa0eae5a09a6671becd4fa710e1 *R/BiFAD.R
@@ -7,7 +7,7 @@ d2903f17ba5190dd1c6745ba1b41a4da *R/ACL.R
 2f94bf0ca1a84a2f3177ed356524b5d1 *R/Box20.R
 6ed0957822797f87be8b80110a8dbf60 *R/Box26.R
 9fdcc6d5999dc2735f8cff6a3f6c849a *R/CompleteRcvx.R
-7807053dc0ebe7f5987d3a62ce4aff16 *R/CompleteRdev.R
+1fcbab353f3cc122fbfcaeb3fa9f0eaa *R/CompleteRdev.R
 afbe3ec9202357347d28405e3d923f44 *R/CompleteRmap.R
 88bdbf170c628c63f7aa5ef6b6479ec1 *R/FMP.R
 d279bf1c91a76af0847c87c224e9c878 *R/FMPMonotonicityCheck.R
@@ -35,7 +35,7 @@ a754c4c8bd1ae26bca23c2dc0fb1961e *R/eap.R
 63a3bc6550b37ca4582fdd8ef551d285 *R/eigGen.R
 c8fb42a78dd3c8257d4b8cf5c198b260 *R/enhancement.R
 daeef23551cea2bc30c99dae0d0b532c *R/erf.R
-5af6cf92146ea2790a8351b9cba9abab *R/faAlign.R
+0e1bf97bed29005b562d44a0857b600b *R/faAlign.R
 0a2c25fcddbe72fd19e9fde1eb7dc835 *R/faBounds.R
 dd0c6db711e501d8b248930ef739db45 *R/faEKC.R
 a2f3bfc614c88252e817067b8cd1bbb8 *R/faIB.R
@@ -73,7 +73,7 @@ bd682aaebb8da4157336462e4eccdf17 *R/print.faMB.R
 cce7c17d190fafdf38dd3f5a92e043c0 *R/print.faMain.R
 5ac20a12f455f8508936c9ee0f3a8fea *R/print.summary.monte.R
 4c56583b65d897a3691104915de950d2 *R/print.summary.monte1.R
-9b44f35bf3c7bdb25b7af90852b7811d *R/promaxQ.R
+30ba827510a27dbb7260186757da6b3d *R/promaxQ.R
 106de5dc2dc5f22c7bf2ba49dea7cf27 *R/r2d.r
 3ed62ec1b50081858d3ed9a6ffd2f2a2 *R/rGivens.R
 5f4907a2839f4af62a9e31d8866e875a *R/rMAP.R
@@ -87,7 +87,7 @@ d40d9ff6408bd936816b9b8b197a103b *R/rmsd.R
 3efaf0479b494aa2917169cc068fd4a4 *R/seBeta.R
 c91338683395e41cf312c17dfc626277 *R/seBetaCor.R
 b4abefbc4aaf0abb2a8c8fb9205968c1 *R/seBetaFixed.R
-c52c7fb7189078b400ade3511d7d422f *R/simFA.R
+636a8af0604ffd1f9e9d325d73a952cd *R/simFA.R
 e28ab2c6fc99d62223dac026406603f2 *R/skew.R
 da2d060a04de2c3b36707525316b9b9a *R/smoothAPA.R
 440b0778265e5723ad696d6e82b8ed79 *R/smoothBY.R
@@ -119,7 +119,8 @@ b808bf912d2b6f11ec688437c9cf41c0 *data/Jackson67.rda
 8b7353cd4f044398ff3168813fcc61ac *data/Thurstone41.rda
 65e3da71a6fbd82df0d93989a25db39d *data/ThurstoneBox20.rda
 8ea91de0ce9cc918830f8b75dd3028b9 *data/ThurstoneBox26.rda
-9e0037fa87b7cc030d22c95eaf736ba4 *inst/CITATION
+5955bf4707c4f7ae4e4fdc5421c45e9c *inst/CITATION
+960f2f0c13ed780b94de53d62e8529ee *inst/doc/fungible-manual.pdf
 cfb2041ab8c4a15b2a135e2cea3aa756 *man/ACL.Rd
 7c4b2b2cfd9dbc19eb760ecad53e997a *man/AmzBoxes.Rd
 68d4a8022f64dfdbf14c4f5dda5655f4 *man/BadRBY.Rd
@@ -161,7 +162,7 @@ f929c3e1dbad5f0d54b1cd5a5da8610e *man/d2r.Rd
 d5970e49f240adf4984ecfb220f8a8db *man/eigGen.Rd
 88c6c13597eb919ab32b75592469fb4f *man/enhancement.Rd
 bfbdd9a9bf91e0584b8be586da1ed03e *man/erf.Rd
-d204e4725e7dc27f0c425b5344876fc4 *man/faAlign.Rd
+e48eb86acce570a642803e5eec041ac1 *man/faAlign.Rd
 2d5a74f25daa8a06858fa71fc37edefa *man/faBounds.Rd
 91a54d4e789a73eb9aab5dc9558f3762 *man/faEKC.Rd
 8236fdbc6982327b08db252071e91794 *man/faIB.Rd
@@ -210,7 +211,7 @@ d4cc132d06295e28b446898850b3af6e *man/rcone.Rd
 7a39622e473ad5a19b7aefdd6c02cae0 *man/seBeta.Rd
 d8f1348cfcc06e69ead5abdccaa54d3d *man/seBetaCor.Rd
 0467cc92a5fc99e51aac0b6dc0b3e149 *man/seBetaFixed.Rd
-f82ea68f084b07c5f2b105e3acd0fe2b *man/simFA.Rd
+4634d2fa1406dc0ef3dd813922c55d79 *man/simFA.Rd
 f13037049584b6d95d4cf933b065cc8a *man/skew.Rd
 6450b71ee10d6984b3c1e99d739da053 *man/smoothAPA.Rd
 bf5333cecc9c413b63ac835f07ca0e06 *man/smoothBY.Rd

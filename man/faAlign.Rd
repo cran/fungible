@@ -18,14 +18,20 @@ matrix, F1.}
 }
 \value{
 \item{F2}{re-ordered and reflected loadings of F2.}
-\item{Phi2}{reordered and reflected factor correlations.} \item{FactorMap}{a
-2 x k matrix (where k is the number of columns of F1) structured such that
+\item{Phi2}{reordered and reflected factor correlations.} 
+\item{FactorMap}{a 2 x k matrix (where k is the number of columns of F1) structured such that
 row 1: the original column order of F2; row 2: the sorted column order of
-F2.} \item{UniqueMatch}{(logical) indicates whether a unique match was
-found.} \item{MatchMethod}{"LS" (least squares) or "CC" (congruence
-coefficients, i.e., cosines).} \item{CC}{Congruence coefficients for the
-matched factors.} \item{LS}{Root-mean-squared-deviations (least squares
+F2.} 
+\item{UniqueMatch}{(logical) indicates whether a unique match was
+found.} 
+\item{MatchMethod}{"LS" (least squares) or "CC" (congruence
+coefficients, i.e., cosines).} 
+\item{CC}{Congruence coefficients for the
+matched factors.} 
+\item{LS}{Root-mean-squared-deviations (least squares
 criterion) for the matched factors.}
+\item{Dsgn}{The Diagonal Sign Matrix that reflects the matched factors to 
+have positive salient loadings.}
 }
 \description{
 Align factor loading matrices across solutions using the Hungarian algorithm

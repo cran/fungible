@@ -1,3 +1,4 @@
+# Version March 14, 2023
 # Tips:
 # to debug code -- run in R console:    debugonce(simFA)
 # then step through calculations until error occurs
@@ -5,402 +6,490 @@
 ## simFA
 ##
 ## Purpose:
-##    Generate Factor Analysis Models and Data Sets for Simulation Studies 
+##    Generate Factor Analysis Models and Data Sets for Simulation Studies
 ## Date:
+##    Version March 14, 2023 updated help file
+##    March 08, 2023  Added ability to input W matrix
+##    February 24, 2023 Added ability input IRT threshold values
+##    February 21, 2023 updated FS and now allow Model Error in FS
 ##    November 23, 2020 add NPD test for RpopME
 ##    March 6, 2020 return W
 ##    Jan 21 2019 added specific factor correlations
 ##    Dec 31 IRT parameters
 ##    Dec 20 fixed user Phi for bifactor models
-##    November 11 2018 
+##    November 11 2018
 ##    October 16, 2018
 ##    July 9, 2018
-##    Time 11:00
+
 
 # Search '2DO' for sections in need of updates
 
 
 
 #' Generate Factor Analysis Models and Data Sets for Simulation Studies
-#' 
-#' A function to simulate factor loadings matrices and Monte Carlo data sets
-#' for common factor models and bifactor models.
-#' For a complete description of \code{simFA}'s 
-#' capabilities, users are encouraged to consult the \code{simFABook} at
-#' http://users.cla.umn.edu/~nwaller/simFA/simFABook.pdf.
-#' 
-#' \code{simFA} is a program for exploring factor analysis 
-#' models via simulation studies.  
-#' After calling \code{simFA}  all relevant output can be saved 
-#' for further processing by calling one or more of the following 
+#'
+#' A function to simulate factor loadings matrices and Monte Carlo
+#' data sets for common factor models, bifactor models, and IRT
+#' models.
+#'
+#' For a complete description of \code{simFA}'s
+#' capabilities, users are encouraged to consult the \code{simFABook}
+#' at http://users.cla.umn.edu/~nwaller/simFA/simFABook.pdf.
+#'
+#' \code{simFA} is a program for exploring factor analysis
+#' models via simulation studies.
+#' After calling \code{simFA}  all relevant output can be saved
+#' for further processing by calling one or more of the following
 #' object names.
-#' 
-#' @param Model (list) 
-#'      \itemize{ 
-#'              \item \code{NFac} (scalar) Number of common or
-#'                            group factors; defaults to \code{NFac = 3}.  
-#'              \item \code{NItemPerFac}
-#'                   \itemize{ 
-#'                      \item (scalar) All factors have the same number
-#'                         of primary loadings.  
-#'                       \item (vector) A vector of length \code{NFac} specifying the
-#'                             number of primary loadings for each factor; defaults 
-#'                             to \code{NItemPerFac = 3}.  } 
-#'                      \item \code{Model} (character) \code{"orthogonal"} or
-#'                            \code{"oblique"}; defaults to 
-#'                            \code{Model = "orthogonal"}.  }
-#'                               
-#' @param Loadings (list) 
-#'      \itemize{ 
-#'              \item \code{FacPattern} (\code{NULL} or matrix).        
-#'                  \itemize{ 
-#'                           \item \code{FacPattern = M} where \code{M} is 
-#'                                 a user-defined factor pattern matrix.  
-#'                           \item \code{FacPattern = NULL};
-#'                           \code{simFA} will generate a factor pattern based on 
-#'                            the arguments specified  under other keywords 
-#'                           (e.g., \code{Model}, \code{CrossLoadings}, etc.);
-#'                           defaults to \code{FacPattern = NULL}.  } 
-#'               \item \code{FacLoadDist}  (character) Specifies the 
-#'                   sampling distribution for the common factor
-#'                   loadings. Possible values are \code{"runif"}, 
-#'                   \code{"rnorm"}, \code{"sequential"}, and \code{"fixed"}; 
-#'                   defaults to \code{FacLoadDist = "runif"}.  
-#'               \item \code{FacLoadRange} (vector of length \code{NFac}, 
-#'                       2, or 1); defaults to \code{FacLoadRange = c(.3, .7)}.  
-#'                       \itemize{ 
-#'                         \item If \code{FacLoadDist = "runif"} the vector 
-#'                         defines the bounds of the uniform distribution; 
-#'                         \item If \code{FacLoadDist = "rnorm"} the vector defines the
-#'                          mean and standard deviation of the normal distribution from 
-#'                          which loadings are sampled.  
-#'                        \item If \code{FacLoadDist = "sequential"} the vector
-#'                         specifies the lower and upper bound of the loadings sequence.  
-#'                        \item If \code{FacLoadDist = "fixed"} and 
-#'                                 \code{FacLoadRange} is a vector of length 1
-#'                                 then all common loadings will equal the constant 
-#'                                 specified in \code{FacLoadRange}. 
-#'                                 If \code{FacLoadDist = "fixed"} and 
-#'                                 \code{FacLoadRange} is a vector of length 
-#'                                 \code{NFac} then each factor will have fixed loadings
-#'                                 as specified by the associated element in 
-#'                                 \code{FacLoadRange}.  }
-#' 
-#'                \item \code{h2} (vector) An optional vector of communalities 
-#'                     used to constrain the population communalities to user-defined 
-#'                     values; defaults to \code{h2 = NULL}.  }
-#'                        
-#' @param CrossLoadings (list) 
-#'      \itemize{ 
-#'          \item \code{ProbCrossLoad} (scalar) A value in the (0,1) interval 
-#'              that determines the probability that a cross loading will be 
-#'              present in elements of the loadings matrix that do not have
-#'              salient (primary) factor loadings.  
-#'              If set to \code{ProbCrossLoad = 1}, a
-#'              single cross loading will be added to each factor;  defaults to
-#'              \code{ProbCrossLoad = 0}.
-#'          \item \code{CrossLoadRange} (vector of length 2) Controls 
-#'              size of the crossloadings; defaults to 
-#'              \code{CrossLoadRange= c(.20, .25)}.  
-#'          \item \code{CrossLoadPositions} (matrix) Specifies the row and column 
-#'              positions of (optional) cross-loadings; defaults to 
-#'              \code{CrossLoadPositions = NULL}.
-#'          \item \code{CrossLoadValues} (vector) If 
-#'                \code{CrossLoadPositions} is specified then 
-#'                \code{CrossLoadValues} is a vector of user-supplied
-#'                 cross-loadings; defaults to 
-#'                 \code{CrossLoadValues = NULL}.  
-#'          \item \code{CrudFactor} (scalar) Controls the size of tertiary 
-#'             factor loadings. If \code{CrudFactor != 0} then elements of 
-#'             the loadings matrix with neither primary nor secondary 
-#'             (i.e., cross) loadings will be sampled from a
-#'             [-(CrudFactor), (CrudFactor)] uniform distribution; 
-#'             defaults to \code{CrudFactor = 0}.  }
-#'             
-#'             
-#' @param Phi (list) 
-#'      \itemize{
-#'          \item \code{MaxAbsPhi} (scalar) Upper (absolute) bound on factor
-#'              correlations; defaults to \code{MaxAbsPhi = .5}.  
-#'          \item \code{EigenValPower} (scalar) Controls the skewness of the 
-#'             eigenvalues of Phi. Larger values of \code{EigenValPower} result 
-#'             in a Phi spectrum that is more right-skewed (and
-#'             thus closer to a unidimensional model); 
-#'             defaults to \code{EigenValPower = 2}.  
-#'          \item \code{PhiType} (character); defaults to 
-#'             \code{PhiType = "free"}.
-#'             \itemize{ 
-#'                \item If \code{PhiType = "free"} factor correlations 
-#'                   will be randomly generated under the constraints of 
-#'                   \code{MaxAbsPhi} and \code{EigenValPower}.  
+#'
+#' @param Model (list)
+#'    \itemize{
+#'      \item \code{NFac} (scalar) Number of common or group
+#'              factors; defaults to \code{NFac = 3}.
+#'      \item \code{NItemPerFac}
+#'          \itemize{
+#'              \item (scalar) All factors have the same number
+#'                  of primary loadings.
+#'              \item (vector) A vector of length \code{NFac}
+#'                  specifying the number of primary loadings for
+#'                  each factor; defaults to
+#'                  \code{NItemPerFac = 3}.
+#'          }
+#'      \item \code{Model} (character) \code{"orthogonal"} or
+#'          \code{"oblique"}; defaults to \code{Model = "orthogonal"}.
+#'    }
+#'
+#' @param Loadings (list)
+#'    \itemize{
+#'        \item \code{FacPattern} (\code{NULL} or matrix).
+#'            \itemize{
+#'                \item \code{FacPattern = M} where \code{M} is
+#'                    a user-defined factor pattern matrix.
+#'                \item \code{FacPattern = NULL}; \code{simFA}
+#'                    will generate a factor pattern based on
+#'                    the arguments specified  under other keywords
+#'                    (e.g., \code{Model}, \code{CrossLoadings}, etc.);
+#'                    defaults to \code{FacPattern = NULL}.
+#'            }
+#'        \item \code{FacLoadDist}  (character) Specifies the
+#'            sampling distribution for the common factor loadings.
+#'            Possible values are \code{"runif"}, \code{"rnorm"},
+#'            \code{"sequential"}, and \code{"fixed"}; defaults
+#'            to \code{FacLoadDist = "runif"}.
+#'        \item \code{FacLoadRange} (vector of length \code{NFac},
+#'            2, or 1); defaults to \code{FacLoadRange = c(.3, .7)}.
+#'            \itemize{
+#'                \item If \code{FacLoadDist = "runif"} the vector
+#'                    defines the bounds of the uniform distribution;
+#'                \item If \code{FacLoadDist = "rnorm"} the vector
+#'                    defines the mean and standard deviation of
+#'                    the normal distribution from which loadings
+#'                    are sampled.
+#'                \item If \code{FacLoadDist = "sequential"} the
+#'                    vector specifies the lower and upper bound
+#'                    of the loadings sequence.
+#'                \item If \code{FacLoadDist = "fixed"} and
+#'                    \code{FacLoadRange} is a vector of length 1
+#'                    then all common loadings will equal the constant
+#'                    specified in \code{FacLoadRange}. If
+#'                    \code{FacLoadDist = "fixed"} and
+#'                    \code{FacLoadRange} is a vector of length
+#'                    \code{NFac} then each factor will have fixed
+#'                    loadings as specified by the associated
+#'                    element in \code{FacLoadRange}.
+#'            }
+#'        \item \code{h2} (vector) An optional vector of communalities
+#'            used to constrain the population communalities to
+#'            user-defined values; defaults to \code{h2 = NULL}.
+#'    }
+#'
+#' @param CrossLoadings (list)
+#'    \itemize{
+#'        \item \code{ProbCrossLoad} (scalar) A value in the (0,1)
+#'            interval that determines the probability that a cross
+#'            loading will be present in elements of the loadings
+#'            matrix that do not have salient (primary) factor loadings.
+#'            If set to \code{ProbCrossLoad = 1}, a single cross
+#'            loading will be added to each factor;  defaults to
+#'            \code{ProbCrossLoad = 0}.
+#'        \item \code{CrossLoadRange} (vector of length 2) Controls
+#'            size of the cross loadings; defaults to
+#'            \code{CrossLoadRange = c(.20, .25)}.
+#'        \item \code{CrossLoadPositions} (matrix) Specifies the
+#'            row and column positions of (optional) cross loadings;
+#'            defaults to \code{CrossLoadPositions = NULL}.
+#'        \item \code{CrossLoadValues} (vector) If
+#'            \code{CrossLoadPositions} is specified then
+#'            \code{CrossLoadValues} is a vector of user-supplied
+#'            cross-loadings; defaults to \code{CrossLoadValues = NULL}.
+#'        \item \code{CrudFactor} (scalar) Controls the size of
+#'            tertiary factor loadings. If \code{CrudFactor != 0}
+#'            then elements of the loadings matrix with neither
+#'            primary nor secondary (i.e., cross) loadings will
+#'            be sampled from a \[-(CrudFactor), (CrudFactor)\]
+#'            uniform distribution; defaults to \code{CrudFactor = 0}.
+#'    }
+#'
+#'
+#' @param Phi (list)
+#'    \itemize{
+#'        \item \code{MaxAbsPhi} (scalar) Upper (absolute) bound
+#'            on factor correlations; defaults to
+#'            \code{MaxAbsPhi = .5}.
+#'        \item \code{EigenValPower} (scalar) Controls the skewness
+#'            of the eigenvalues of Phi. Larger values of
+#'            \code{EigenValPower} result in a Phi spectrum that
+#'            is more right-skewed (and thus closer to a
+#'            unidimensional model); defaults to
+#'            \code{EigenValPower = 2}.
+#'        \item \code{PhiType} (character); defaults to
+#'            \code{PhiType = "free"}.
+#'            \itemize{
+#'                \item If \code{PhiType = "free"} factor correlations
+#'                    will be randomly generated under the constraints
+#'                    of \code{MaxAbsPhi} and \code{EigenValPower}.
 #'                 \item If \code{PhiType = "fixed"} all factor
-#'                   correlations will equal the value specified in 
-#'                   \code{MaxAbsPhi}. A fatal error will be produced if 
-#'                   \code{Phi} is not positive semidefinite.  
-#'                 \item If \code{PhiType = "user"} the factor correlations are 
-#'                    defined by the matrix specified in \code{UserPhi} (see below).} 
-#'            \item \code{UserPhi} (matrix) A positive semidefinite (PSD) matrix 
-#'              of user-defined factor correlations;defaults to \code{UserPhi = NULL}.}
-#'              
-#' @param ModelError (list) 
-#'      \itemize{ 
-#'         \item \code{ModelError} (logical) If
-#'               \code{ModelError = TRUE} model error will be introduced into 
-#'               the factor pattern via the method described by Tucker, Koopman, 
-#'               and Linn (TKL, 1969); defaults to \code{ModelError = FALSE}.  
-#'         \item \code{NMinorFac} (scalar) Number of minor factors in the TKL model; 
-#'             defaults to \code{NMinorFac = 150}.  
-#'         \item \code{ModelErrorType} (character) If \code{ModelErrorType =
-#'             "U"} then \code{ModelErrorVar} is the proportion of uniqueness 
-#'             variance that is due to model error.  
-#'             If \code{ModelErrorType = "V"} then
-#'             \code{ModelErrorVar} is the proportion of total variance that 
-#'             is due to model error; defaults to \code{ModelErrorType = "U"}.  
-#'         \item \code{ModelErrorVar} (scalar [0,1]) The proportion of 
-#'             uniqueness (U) or total (V) variance that is due to model error; 
-#'             defaults to \code{ModelErrorVar = .10}.  
-#'         \item \code{epsTKL} (scalar [0,1]) Controls the size of the factor 
-#'            loadings in successive minor factors; defaults to \code{epsTKL = .20}.  
-#'         \item \code{Wattempts} (scalar > 0)  Maximum number of tries when 
-#'           attempting to generate a suitable W matrix.  Default = 10000. 
-#'       \item \code{WmaxLoading} (scalar > 0) Threshold value for \code{NWmaxLoading}. 
-#'             Default \code{ WmaxLoading = .30}.   
-#'        \item \code{NWmaxLoading} (scalar >= 0)  Maximum number of absolute 
-#'            loadings >= \code{WmaxLoading} in any column 
-#'            of W (matrix of model approximation error factor loadings). 
-#'            Default \code{NWmaxLoading = 2}. Under the defaults, no column of
-#'            W will have 3 or more loadings > |.30|. 
-#'        \item\code{PrintW} (Boolean)  If \code{PrintW = TRUE} then simFA will print the
-#'            attempt history when searching for a suitable W matrix
-#'            given the constraints defined in \code{WmaxLoading} and \code{NWmaxLoading}.
-#             Default \code{PrintW = FALSE}.     
-#'         \item \code{RSpecific} (matrix) Optional correlation
-#'             matrix for specific factors; defaults to \code{RSpecific = NULL}. }
-#'             
-#'             
-#' @param Bifactor (list) 
-#'      \itemize{ 
-#'         \item Bifactor (logical) If \code{Bifactor = TRUE} parameters for 
-#'             the bifactor model will be generated; defaults to
-#'             \code{Bifactor = FALSE}.  
-#'         \item Hierarchical (logical) If \code{Hierarchical
-#'              = TRUE} then a hierarchical Schmid Leiman (1957) bifactor model 
-#'              will be generated; defaults to \code{Hierarchical = FALSE}.  
-#'         \item 
-#'            \code{F1FactorDist} (character) Specifies the sampling distribution 
-#'               for the general factor loadings.  Possible values are 
-#'            \code{"runif"}, 
-#'            \code{"rnorm"}, 
-#'            \code{"sequential"}, and 
-#'            \code{"fixed"}; defaults to
-#'            \code{F1FactorDist = "sequential"}.  
-#'         \item \code{F1FactorRange} (vector of length 1 or 2) Controls the 
-#'            sizes of the general factor loadings in
-#'            nonhierarchical bifactor models; defaults to 
-#'            \code{F1FactorRange = c(.4, .7)}.  
-#'              \itemize{ 
-#'                  \item If \code{F1FactorDist = "runif"}, the vector of
-#'                      length 2 defines the bounds of the uniform distribution, 
-#'                      c(lower, upper);
-#'                   \item If \code{F1FactorDist = "rnorm"}, the vector defines 
-#'                      the mean and standard deviation of the normal distribution 
-#'                      from which loadings are sampled, c(MN, SD).  
-#'                   \item If \code{F1FactorDist = "sequential"}, the vector
-#'                      specifies the lower and upper bound of the loadings 
-#'                      sequence, c(lower, upper).  }
-#'         }
-#'         
-#'         
-#' @param MonteCarlo (list) 
-#'      \itemize{ 
-#'          \item \code{NSamples} (integer) Defines
-#'             number of Monte Carlo Samples; defaults to \code{NSamples = 0}.  
-#'          \item \code{SampleSize} (integer) Sample size for each Monte 
-#'             Carlo sample; defaults to \code{SampleSize = 250}.  
-#'          \item \code{Raw} (logical) If \code{Raw = TRUE}, simulated data sets 
-#'             will contain raw data.  If \code{Raw = FALSE}, simulated data sets 
-#'             will contain correlation matrices; defaults to
-#'             \code{Raw = FALSE}.  
-#'          \item \code{Thresholds} (list) List elements contain
-#'              thresholds for each item. Thresholds are required when generating 
-#'              Likert variables.  }
-#'              
-#'              
-#' @param FactorScores (list) 
-#'      \itemize{ 
-#'          \item \code{FS} (logical) If \code{FS = TRUE} (true) factor scores 
-#'             will be simulated; defaults to \code{FS = FALSE}.
-#'           \item \code{CFSeed} (integer) Optional starting seed for the common 
-#'              factor scores; defaults to \code{CFSeed = NULL} in which case a 
-#'              random seed is used.  
-#'           \item \code{SFSeed} (integer) Optional starting seed for the 
-#'              specific factor scores; defaults to \code{SFSeed = NULL} in 
-#'              which case a random seed is used.  
-#'           \item \code{EFSeed} (integer) Optional starting seed for the error
-#'               factor scores; defaults to 
-#'                 \code{EFSeed = NULL} in which case a 
-#'                   random seed is used. Note that 
-#'                 \code{CFSeed}, 
-#'                 \code{SFSeed}, and 
-#'                 \code{EFSeed} must be
-#'                 different numbers (a fatal error is produced when two or more 
-#'                 seeds are specified as equal).  
-#'            \item \code{VarRel} (vector) A vector of manifest
-#'                variable reliabilities.  The specific factor variance for 
-#'                variable \emph{i} will equal \eqn{VarRel[i] - h^2[i]} 
-#'                (the manifest variable reliability minus
-#'                 its commonality). By default, \eqn{VarRel = h^2} (resulting 
-#'                 in uniformly zero specific factor variances).  
-#'            \item \code{Population} (logical) If \code{Population = TRUE}, 
-#'               factor scores will fit the correlational
-#'               constraints of the factor model exactly (e.g., the common factors 
-#'               will be orthogonal to the unique factors); defaults to 
-#'               \code{Population = FALSE}.
-#'             \item \code{NFacScores} (scalar) Sample size for the factor scores; 
-#'                 defaults to \code{NFacScores = 250}.  
-#'             \item \code{Thresholds} (list) A list of quantiles used to polychotomize 
-#'                the observed data that will be generated from the factor scores.  }
-#'                
-#'                
-#' @param Missing (list) 
-#'      \itemize{ 
-#'         \item Missing (logical) If \code{Missing = TRUE} all data sets will 
-#'            contain missing values; defaults to \code{Missing = FALSE}.  
-#'         \item \code{Mechanism} (character) Specifies the missing data
-#'             mechanism.  Currently, the program only supports missing completely at
-#'             random (MCAR): \code{Missing = "MCAR"}.  
-#'         \item \code{MSProb} (scalar or vector of length \code{NVar}) Specifies 
-#'            the probability of missingness for each variable; defaults to 
-#'            \code{MSprob = 0}.  }
-#'            
-#'            
-#' @param Control (list) 
-#'      \itemize{ 
-#'         \item \code{Maxh2} (scalar) Rows of the
-#'             loadings matrix will be rescaled to have a maximum communality of
-#'             \code{Maxh2}; defaults to \code{Maxh2 = .98}.  
-#'             \code{itemReflect} (logical) If \code{Reflect = TRUE} loadings on 
-#'             the common factors will be randomly reflected; defaults to 
-#'             \code{Reflect = FALSE}.  }
-#'             
-#'             
-#' @param Seed (integer) Starting seed for the random number generator;
-#'          defaults to \code{Seed = NULL}. When no seed is specified by the 
-#'          user, the program will generate a random seed.
-#'          
-#' @return 
-#'      \itemize{ 
-#'          \item \code{loadings} A common factor or bifactor loadings
-#'              matrix.  
-#'          \item \code{Phi} A factor correlation matrix.  
-#'          \item \code{urloadings} The unrotated loadings matrix.  
-#'          \item \code{h2} A vector of item commonalities.  
-#'          \item\code{h2PopME} A vector item commonalities that may include
-#'                 model approximation error.
-#'          \item \code{Rpop} The model-implied population correlation matrix.  
-#'          \item \code{RpopME} The model-implied population
-#'                 correlation matrix with model error. 
-#'          \item \code{W} The factor loadings for the minor factors 
-#'                 (when \code{ModelError = TRUE}). Default = NULL.  
-#'          \item \code{ModelErrorFitStats} A list of model fit indices (for the underlying equations,
-#'              see: Benlter, 1990; Hu & Bentler, 1999;  Marsh, Hau, & Grayson, 2005; Steiger, 2016): 
-#'               \itemize{
-#'               \item \code{SRMR_theta}  Standardized Root Mean Square Residual 
-#'               based on the model that is implied  by the error free major factors only (underlying Rpop),
-#'               \item \code{SRMR_thetahat}  Standardized Root Mean Square Residual 
-#'                   based on an exploratory factor analysis of the population correlation matrix, RpopME,
-#'               \item \code{CRMR_theta}  Correlation Root Mean Square Residual 
-#'                   based on the model that is implied  by the error free major factors only (underlying Rpop),
-#'               \item \code{CRMR_thetahat} Correlation Root Mean Square Residual  based on an exploratory 
-#'                  factor analysis of the population correlation matrix, RpopME,
-#'              \item \code{RMSEA_theta}  Root Mean Square Error of Approximation (Steiger, 2016)
-#'                   based on the model that is implied  by the error free major factors only (underlying Rpop),
-#'               \item \code{RMSEA_thetahat}  Root Mean Square Error of Approximation (Steiger, 2016)  based on an exploratory 
-#'                  factor analysis of the population correlation matrix, RpopME,
-#'              \item \code{CFI_theta}  Comparative Fit Indiex (Bentler, 1990)
-#'                   based on the model that is implied  by the error free major factors only (underlying Rpop),
-#'               \item \code{CFI_thetahat} Comparative Fit Indiex (Bentler, 1990)  based on an exploratory 
-#'                  factor analysis of the population correlation matrix, RpopME.
-#'               \item \code{Fm}  MLE fit function for population target model.  
-#'               \item \code{Fb}  MLE fit function for population baseline model. 
-#'               \item \code{DFm} Degrees of freedom for population target model. 
-#'               }
-#'          \item \code{CovMatrices} A list
-#'                 containing: 
-#'                 \itemize{ 
-#'                    \item \code{CovMajor} The model implied covariances
-#'                       from the major factors.  
-#'                    \item \code{CovMinor} The model implied covariances
-#'                       from the minor factors.  
-#'                    \item \code{CovUnique} The model implied variances
-#'                       from the uniqueness factors.  } 
-#'                \code{Bifactor} A list containing: 
-#'                  \itemize{
-#'                      \item \code{loadingsHier} Factor loadings of the 1st 
-#'                         order solution of a hierarchical bifactor model.  
-#'                      \item \code{PhiHier} Factor correlations of
-#'                         the 1st order solution of a hierarchical bifactor model.  } 
-#'                  \item \code{Scores} A list containing: 
-#'                   \itemize{ 
-#'                       \item\code{FactorScores} Factor scores for the common 
-#'                            and uniqueness factors.  
-#'                       \item \code{FacInd} Factor
-#'                           indeterminacy indices for the error free population model.  
-#'                       \item \code{FacIndME} Factor score indeterminacy indices for 
-#'                          the population model with model error.  
-#'                       \item \code{ObservedScores} A matrix of model implied
-#'                             \code{ObservedScores}. If 
-#'                             \code{Thresholds} were supplied under Keyword
-#'                             \code{FactorScores}, 
-#'                             \code{ObservedScores} will be transformed into Likert
-#'                                  scores.  } 
-#'                 \item\code{Monte} A list containing output from the Monte Carlo
-#'                      simulations if generated.  
-#'                 \item\code{IRT} Factor loadings expressed in the
-#'                     normal ogive IRT metric. If \code{Thresholds} were given 
-#'                     then IRT difficulty values will also be returned.  
-#'                 \item\code{Seed} The initial seed for the
-#'                      random number generator.  
-#'                 \item\code{call} A copy of the function call.
-#'                 \item\code{cn} A list of all active and nonactive function arguments.}
-#'                 
-#'                 
-#' @author Niels G. Waller
-#' 
+#'                    correlations will equal the value specified
+#'                    in \code{MaxAbsPhi}. A fatal error will be
+#'                    produced if \code{Phi} is not positive
+#'                    semidefinite.
+#'                 \item If \code{PhiType = "user"} the factor
+#'                    correlations are defined by the matrix
+#'                    specified in \code{UserPhi} (see below).
+#'            }
+#'        \item \code{UserPhi} (matrix) A positive semidefinite
+#'            (PSD) matrix of user-defined factor correlations;
+#'            defaults to \code{UserPhi = NULL}.
+#'    }
+#'
+#' @param ModelError (list)
+#'    \itemize{
+#'        \item \code{ModelError} (logical) If \code{ModelError = TRUE}
+#'            model error will be introduced into the factor
+#'            pattern via the method described by Tucker, Koopman,
+#'            and Linn (TKL, 1969); defaults to
+#'            \code{ModelError = FALSE}.
+#'        \item \code{W} (matrix) An optional user-supplied factor
+#'            loading matrix for the \code{NMinorFac} minor common
+#'            factors; defaults to \code{W = NULL}.
+#'        \item \code{NMinorFac} (scalar) Number of minor factors
+#'            in the TKL model; defaults to \code{NMinorFac = 150}.
+#'        \item \code{ModelErrorType} (character) If
+#'            \code{ModelErrorType = "U"} then \code{ModelErrorVar}
+#'            is the proportion of uniqueness variance that is due
+#'            to model error. If \code{ModelErrorType = "V"} then
+#'            \code{ModelErrorVar} is the proportion of total
+#'            variance that is due to model error; defaults to
+#'            \code{ModelErrorType = "U"}.
+#'        \item \code{ModelErrorVar} (scalar \[0,1\]) The proportion
+#'            of uniqueness (U) or total (V) variance that is due
+#'            to model error; defaults to
+#'            \code{ModelErrorVar = .10}.
+#'        \item \code{epsTKL} (scalar \[0,1\]) Controls the size
+#'            of the factor loadings in successive minor factors;
+#'            defaults to \code{epsTKL = .20}.
+#'        \item \code{Wattempts} (scalar > 0)  Maximum number of
+#'            tries when attempting to generate a suitable W
+#'            matrix. Default = 10000.
+#'        \item \code{WmaxLoading} (scalar > 0) Threshold value for
+#'            \code{NWmaxLoading}. Default \code{ WmaxLoading = .30}.
+#'        \item \code{NWmaxLoading} (scalar >= 0)  Maximum number
+#'            of absolute loadings >= \code{WmaxLoading} in any
+#'            column of W (matrix of model approximation error
+#'            factor loadings). Default \code{NWmaxLoading = 2}.
+#'            Under the defaults, no column of W will have 3 or
+#'            more loadings > |.30|.
+#'        \item \code{PrintW} (Boolean) If \code{PrintW = TRUE}
+#'            then simFA will print the attempt history when
+#'            searching for a suitable W matrix given the
+#'            constraints defined in \code{WmaxLoading} and
+#'            \code{NWmaxLoading}. Default \code{PrintW = FALSE}.
+#'        \item \code{RSpecific} (matrix) Optional correlation
+#'            matrix for specific factors;
+#'            defaults to \code{RSpecific = NULL}.
+#'    }
+#'
+#'
+#' @param Bifactor (list)
+#'    \itemize{
+#'        \item Bifactor (logical) If \code{Bifactor = TRUE}
+#'            parameters for the bifactor model will be generated;
+#'            defaults to \code{Bifactor = FALSE}.
+#'        \item Hierarchical (logical) If \code{Hierarchical = TRUE}
+#'            then a hierarchical Schmid Leiman (1957) bifactor
+#'            model will be generated;
+#'            defaults to \code{Hierarchical = FALSE}.
+#'         \item \code{F1FactorDist} (character) Specifies the
+#'            sampling distribution for the general factor loadings.
+#'            Possible values are \code{"runif"}, \code{"rnorm"},
+#'            \code{"sequential"}, and \code{"fixed"}; defaults
+#'            to \code{F1FactorDist = "sequential"}.
+#'         \item \code{F1FactorRange} (vector of length 1 or 2)
+#'            Controls the sizes of the general factor loadings in
+#'            non-hierarchical bifactor models; defaults to
+#'            \code{F1FactorRange = c(.4, .7)}.
+#'            \itemize{
+#'                \item If \code{F1FactorDist = "runif"}, the vector
+#'                    of length 2 defines the bounds of the uniform
+#'                    distribution, c(lower, upper);
+#'                \item If \code{F1FactorDist = "rnorm"}, the
+#'                    vector defines the mean and standard
+#'                    deviation of the normal distribution from
+#'                    which loadings are sampled, c(MN, SD).
+#'                \item If \code{F1FactorDist = "sequential"},
+#'                    the vector specifies the lower and upper
+#'                    bound of the loadings sequence, c(lower, upper).
+#'            }
+#'    }
+#'
+#'
+#' @param MonteCarlo (list)
+#'    \itemize{
+#'        \item \code{NSamples} (integer) Defines number of Monte
+#'            Carlo Samples; defaults to \code{NSamples = 0}.
+#'        \item \code{SampleSize} (integer) Sample size for each
+#'            Monte Carlo sample; defaults to \code{SampleSize = 250}.
+#'        \item \code{Raw} (logical) If \code{Raw = TRUE}, simulated
+#'            data sets will contain raw data. If \code{Raw = FALSE},
+#'            simulated data sets will contain correlation matrices;
+#'            defaults to \code{Raw = FALSE}.
+#'        \item \code{Thresholds} (list) List elements contain
+#'            thresholds for each item. Thresholds are required
+#'            when generating Likert variables.
+#'    }
+#'
+#'
+#' @param FactorScores (list)
+#'    \itemize{
+#'        \item \code{FS} (logical) If \code{FS = TRUE} (true)
+#'            factor scores will be simulated; defaults to
+#'            \code{FS = FALSE}.
+#'        \item \code{CFSeed} (integer) Optional starting seed for
+#'            the common factor scores; defaults to
+#'            \code{CFSeed = NULL} in which case a random seed is
+#'             used.
+#'        \item \code{MCFSeed} (integer) Optional starting seed
+#'            for the minor common factor scores; defaults to
+#'            \code{MCFSeed = NULL}.
+#'        \item \code{SFSeed} (integer) Optional starting seed
+#'            for the specific factor scores; defaults to
+#'            \code{SFSeed = NULL} in which case a random seed is
+#'            used.
+#'        \item \code{EFSeed} (integer) Optional starting seed
+#'            for the error factor scores; defaults to
+#'            \code{EFSeed = NULL} in which case a random seed
+#'            is used. Note that \code{CFSeed}, \code{MCFSeed},
+#'            \code{SFSeed}, and \code{EFSeed} must be different
+#'            numbers (a fatal error is produced when two or more
+#'            seeds are specified as equal).
+#'        \item \code{VarRel} (vector) A vector of manifest variable
+#'            reliabilities. The specific factor variance for
+#'            variable \emph{i} will equal \eqn{VarRel[i] - h^2[i]}
+#'            (the manifest variable reliability minus its
+#'            commonality). By default, \eqn{VarRel = h^2}
+#'            (resulting in uniformly zero specific factor
+#'            variances).
+#'        \item \code{Population} (logical) If \code{Population =
+#'            TRUE}, factor scores will fit the correlational
+#'            constraints of the factor model exactly (e.g., the
+#'            common factors will be orthogonal to the unique
+#'            factors); defaults to \code{Population = FALSE}.
+#'        \item \code{NFacScores} (scalar) Sample size for the
+#'            factor scores; defaults to \code{NFacScores = 250}.
+#'        \item \code{Thresholds} (list) A list of quantiles used
+#'            to polychotomize the observed data that will be
+#'            generated from the factor scores.
+#'    }
+#'
+#'
+#' @param Missing (list)
+#'    \itemize{
+#'        \item Missing (logical) If \code{Missing = TRUE} all
+#'            data sets will contain missing values; defaults to
+#'            \code{Missing = FALSE}.
+#'        \item \code{Mechanism} (character) Specifies the missing
+#'            data mechanism. Currently, the program only supports
+#'            missing completely at random (MCAR):
+#'            \code{Missing = "MCAR"}.
+#'        \item \code{MSProb} (scalar or vector of length
+#'            \code{NVar}) Specifies the probability of
+#'            missingness for each variable; defaults to
+#'            \code{MSprob = 0}.
+#'    }
+#'
+#'
+#' @param Control (list)
+#'    \itemize{
+#'        \item \code{IRT} (logical) If \code{IRT = TRUE} then
+#'            user-supplied thresholds will be interpreted as
+#'            item intercepts; defaults to \code{IRT = FALSE}.
+#'        \item \code{D} (scalar).  If \code{D = 1} then item
+#'            intercepts should be scaled in the logistic metric.
+#'            If \code{D = 1.702} then intercepts should be
+#'            scaled in the probit metric.
+#'        \item \code{Maxh2} (scalar) Rows of the loadings matrix
+#'            will be rescaled to have a maximum communality of
+#'            \code{Maxh2}; defaults to \code{Maxh2 = .98}.
+#'        \item \code{itemReflect} (logical) If \code{Reflect =
+#'            TRUE} loadings on the common factors will be
+#'            randomly reflected; defaults to
+#'            \code{Reflect = FALSE}.
+#'    }
+#'
+#'
+#' @param Seed (integer) Starting seed for the random number
+#'    generator; defaults to \code{Seed = NULL}. When no seed
+#'    is specified by the user, the program will generate a random
+#'    seed.
+#'
+#' @return
+#'    \itemize{
+#'        \item \code{loadings} A common factor or bifactor
+#'            loadings matrix.
+#'        \item \code{Phi} A factor correlation matrix.
+#'        \item \code{urloadings} The unrotated loadings matrix.
+#'        \item \code{h2} A vector of item communalities.
+#'        \item \code{h2PopME} A vector item communalities that
+#'            may include model approximation error.
+#'        \item \code{Rpop} The model-implied population correlation
+#'            matrix.
+#'        \item \code{RpopME} The model-implied population
+#'            correlation matrix with model error.
+#'        \item \code{W} The factor loadings for the minor factors
+#'            (when \code{ModelError = TRUE}). Default = NULL.
+#'        \item \code{Xm} That part of the observed scores that
+#'            is due to the minor common factors.
+#'        \item \code{SFSvars}  Variances of the Specific Factors
+#'            in the metric of the observed scores.
+#'        \item \code{ModelErrorFitStats} A list of model fit
+#'            indices (for the underlying equations, see: Bentler,
+#'            1990; Hu & Bentler, 1999; Marsh, Hau, & Grayson,
+#'            2005; Steiger, 2016):
+#'            \itemize{
+#'                \item \code{SRMR_theta} Standardized Root Mean
+#'                    Square Residual based on the model that is
+#'                    implied  by the error free major factors
+#'                    only (underlying Rpop),
+#'                \item \code{SRMR_thetahat}  Standardized Root
+#'                    Mean Square Residual based on an exploratory
+#'                    factor analysis of the population
+#'                    correlation matrix, RpopME,
+#'                \item \code{CRMR_theta}  Correlation Root Mean
+#'                    Square Residual based on the model that is
+#'                    implied  by the error free major factors
+#'                    only (underlying Rpop),
+#'                \item \code{CRMR_thetahat} Correlation Root Mean
+#'                    Square Residual  based on an exploratory factor
+#'                    analysis of the population correlation matrix,
+#'                    RpopME,
+#'                \item \code{RMSEA_theta} Root Mean Square Error
+#'                    of Approximation (Steiger, 2016) based on the
+#'                    model that is implied  by the error free major
+#'                    factors only (underlying Rpop),
+#'                \item \code{RMSEA_thetahat} Root Mean Square
+#'                    Error of Approximation (Steiger, 2016) based
+#'                    on an exploratory factor analysis of the
+#'                    population correlation matrix, RpopME,
+#'                \item \code{CFI_theta}  Comparative Fit Index
+#'                    (Bentler, 1990) based on the model that is
+#'                    implied  by the error free major factors
+#'                    only (underlying Rpop),
+#'                \item \code{CFI_thetahat} Comparative Fit Index
+#'                    (Bentler, 1990)  based on an exploratory
+#'                    factor analysis of the population
+#'                    correlation matrix, RpopME.
+#'                \item \code{Fm} MLE fit function for population
+#'                    target model.
+#'                \item \code{Fb} MLE fit function for population
+#'                    baseline model.
+#'                \item \code{DFm} Degrees of freedom for
+#'                    population target model.
+#'            }
+#'        \item \code{CovMatrices} A list containing:
+#'            \itemize{
+#'                \item \code{CovMajor} The model implied
+#'                    covariances from the major factors.
+#'                \item \code{CovMinor} The model implied
+#'                    covariances from the minor factors.
+#'                \item \code{CovUnique} The model implied
+#'                    variances from the uniqueness factors.
+#'            }
+#'        \item \code{Bifactor} A list containing:
+#'            \itemize{
+#'                \item \code{loadingsHier} Factor loadings of the
+#'                    1st order solution of a hierarchical
+#'                    bifactor model.
+#'                \item \code{PhiHier} Factor correlations of the
+#'                    1st order solution of a hierarchical bifactor
+#'                    model.
+#'            }
+#'        \item \code{Scores} A list containing:
+#'            \itemize{
+#'                \item \code{FactorScores} Factor scores for the
+#'                    common and uniqueness factors.
+#'                \item \code{FacInd} Factor indeterminacy indices
+#'                    for the error free population model.
+#'                \item \code{FacIndME} Factor score indeterminacy
+#'                    indices for the population model with model
+#'                    error.
+#'                \item \code{ObservedScores} A matrix of model
+#'                    implied \code{ObservedScores}. If
+#'                    \code{Thresholds} were supplied under
+#'                    Keyword \code{FactorScores},
+#'                    \code{ObservedScores} will be transformed
+#'                    into Likert scores.
+#'            }
+#'        \item \code{Monte} A list containing output from the
+#'            Monte Carlo simulations if generated.
+#'        \item \code{IRT} Factor loadings expressed in the normal
+#'            ogive IRT metric. If \code{Thresholds} were given
+#'            then IRT difficulty values will also be returned.
+#'        \item \code{Seed} The initial seed for the random
+#'            number generator.
+#'        \item \code{call} A copy of the function call.
+#'        \item \code{cn} A list of all active and nonactive
+#'            function arguments.
+#'    }
+#'
+#'
+#' @author Niels G. Waller with contributions by Hoang V. Nguyen
+#'
 #' @references
-#' Bentler, P. M. (1990). Comparative fit indexes in structural models. 
-#' Psychological Bulletin, 107(2), 238--246. 
-#' 
-#' Hu, L.-T. & Bentler, P. M. (1999). Cutoff criteria for fit indexes in 
-#' covariance structure analysis: Conventional criteria versus new alternatives. 
-#' Structural Equation Modeling: A Multidisciplinary Journal, 6(1), 1--55. 
-#' 
-#' Marsh, H. W., Hau, K.-T., & Grayson, D. (2005). Goodness of fit in 
-#' structural equation models. In A. Maydeu-Olivares & J. J. McArdle (Eds.), 
-#' Multivariate applications book series. Contemporary psychometrics: 
-#' A festschrift for Roderick P. McDonald (p. 275--340). Lawrence Erlbaum 
-#' Associates Publishers. 
-#' 
-#' Schmid, J. and Leiman, J. M.  (1957).  The development of hierarchical
-#' factor solutions.  Psychometrika, 22(1), 53--61.
-#' 
-#' Steiger, J. H. (2016). Notes on the Steiger–Lind (1980) handout. 
-#' Structural Equation Modeling: A Multidisciplinary Journal, 23:6, 
-#' 777-781. 
-#' 
-#' Tucker, L. R., Koopman, R. F., and Linn, R. L.  (1969).  Evaluation of
-#' factor analytic research procedures by means of simulated correlation
-#' matrices.  Psychometrika, 34(4), 421--459.
-#' 
+#' Bentler, P. M. (1990). Comparative fit indexes in structural
+#' models. Psychological Bulletin, 107(2), 238--246.
+#'
+#' Hu, L.-T. & Bentler, P. M. (1999). Cutoff criteria for fit
+#' indexes in covariance structure analysis: Conventional criteria
+#' versus new alternatives. Structural Equation Modeling:
+#' A Multidisciplinary Journal, 6(1), 1--55.
+#'
+#' Marsh, H. W., Hau, K.-T., & Grayson, D. (2005). Goodness of fit
+#' in structural equation models. In A. Maydeu-Olivares & J. J.
+#' McArdle (Eds.), Multivariate applications book series.
+#' Contemporary psychometrics: A festschrift for Roderick P.
+#' McDonald (p. 275--340). Lawrence Erlbaum Associates Publishers.
+#'
+#' Schmid, J. and Leiman, J. M. (1957). The development of hierarchical
+#' factor solutions. Psychometrika, 22(1), 53--61.
+#'
+#' Steiger, J. H. (2016). Notes on the Steiger–Lind (1980) handout.
+#' Structural Equation Modeling: A Multidisciplinary Journal, 23:6,
+#' 777-781.
+#'
+#' Tucker, L. R., Koopman, R. F., and Linn, R. L. (1969). Evaluation
+#' of factor analytic research procedures by means of simulated
+#' correlation matrices. Psychometrika, 34(4), 421--459.
+#'
 #' @keywords stats
-#' 
+#'
 #' @examples
-#' 
-#' #  Ex 1. Three Factor Simple Structure Model with Crossloadings and 
-#' #  Ideal Nonsalient Loadings
+#'
+#' ## Not run:
+#' #  Ex 1. Three Factor Simple Structure Model with Cross loadings and
+#' #  Ideal Non salient Loadings
 #'    out <-  simFA(Seed = 1)
 #'    print( round( out$loadings, 2 ) )
-#' 
+#'
 #' # Ex 2. Non Hierarchical bifactor model 3 group factors
 #' # with constant loadings on the general factor
 #'    out <- simFA(Bifactor = list(Bifactor = TRUE,
@@ -408,8 +497,8 @@
 #'                                 F1FactorRange = c(.4, .4),
 #'                                 F1FactorDist = "runif"),
 #'                 Seed = 1)
-#'    print( round( out$loadings, 2 ) ) 
-#'    
+#'    print( round( out$loadings, 2 ) )
+#'
 #'    # Ex 3.  Model Fit Statistics for Population Data with
 #'    # Model Approximation Error. Three Factor model.
 #'        out <- simFA(Loadings = list(FacLoadDist = "fixed",
@@ -424,8 +513,10 @@
 #'
 #'        print( out$loadings )
 #'        print( out$ModelErrorFitStats[seq(2,8,2)] )
-#'    
-#' @importFrom stats cov2cor lm rchisq resid rnorm runif
+#'
+#' ## End(**Not run**)
+#'
+#' @importFrom stats cov2cor lm rchisq resid rnorm runif factanal
 #' @export simFA
 #' 
 simFA <- function(Model = list(),
@@ -467,6 +558,7 @@ simFA <- function(Model = list(),
     MD_Arg_Names = sort(names(cnMD))
   
     cnMD[(namMD <- names(Model))] <- Model
+    
 
 
    # ----_____Loadings (LD) Default values ----
@@ -566,6 +658,7 @@ simFA <- function(Model = list(),
    #                       the factor pattern via the method 
    #                       described by Tucker, Koopman, and 
    #                       Linn (TKL). Default( ModelError = FALSE). 
+   # W            matrix:  A user-defined W matrix.  Default = NULL.
    # NMinorFac    scalar:  Number of minor factors in the TKL model. 
    #                       Default( NMinorFac = 150 ).
    # ModelErrorType        character If ModelErrorType = "U" then apply 
@@ -597,6 +690,7 @@ simFA <- function(Model = list(),
    
   
    cnME = list(     ModelError = FALSE,
+                    W = NULL,
                     NMinorFac = 150,
                     ModelErrorType = "U",
                     ModelErrorVar = .10,
@@ -606,7 +700,7 @@ simFA <- function(Model = list(),
                     NWmaxLoading = 2,
                     PrintW = FALSE,
                     RSpecific = NULL) 
-   cnME_Len = 9
+   cnME_Len = 10
    ME_Arg_Names = sort(names(cnME))
    cnME[(namME <- names(ModelError))] <- ModelError
  
@@ -616,7 +710,8 @@ simFA <- function(Model = list(),
         # ADD CODE TO TEST FOR PD R MATRIX  
         stop("\nRSpecific must be NULL or a positive definite correation matrix\n")
       } 
-    }
+   }
+
   
   # 2DO CORRELATED RESIDUALS AND MODEL ERROR NOT CURRENTLY ALLOWED
   if( !is.null(cnME$RSpecific) & isTRUE(cnME$ModelError) ){
@@ -672,10 +767,12 @@ simFA <- function(Model = list(),
    #                      Default( Raw = FALSE ).
    # Thresholds list:    List elements contain thresholds for each item.
    #                      
+  
    cnMC = list(NSamples = 0, 
                SampleSize = 250,
                Raw = FALSE,
-               Thresholds = NULL)
+               Thresholds = NULL) 
+   ## 2DO Consider moving Thresholds to Control or a new IRT section
    cnMC_Len = 4
    MC_Arg_Names = sort(names(cnMC))
    cnMC[(namMC <- names(MonteCarlo))] <- MonteCarlo
@@ -689,11 +786,13 @@ simFA <- function(Model = list(),
    # ----_____FactorScores (FS) Default values ----
    # FS         logical:  If FS = TRUE factor scores will be simulated.
    #                      Default( FS = FALSE ).
-   # CFSeed   Optional seed for the common factors
+   # CFSeed   Optional seed for the major common factors
    #
    # SFSeed   Optional seed for the specific factors
    #
    # EFSeed   Optional seed for the error factors
+   #
+   # MCFSeed  Optional seed for the minor common factors 
    #
    # VarRel  Vector of manifest variable reliabilities
    #         By Default VarRel = H^2 values (communalities)
@@ -707,16 +806,18 @@ simFA <- function(Model = list(),
    #                      Default( NFacScores = 250 ).
    # Thresholds vector:   A list of quantiles used to polychotomize the
    #                      observed data to produce Likert scores.
-   #
+
    cnFS = list(FS = FALSE, 
                CFSeed = NULL,
+               MCFSeed = NULL,
                SFSeed = NULL,
                EFSeed = NULL,
                VarRel = NULL,
                Population = FALSE,
                NFacScores = 250,
                Thresholds = NULL)
-   cnFS_Len = 8
+   # 2DO consider moving Thresholds to Control or new IRT section
+   cnFS_Len = 9
    FS_Arg_Names = sort(names(cnFS))
    cnFS[(namFS <- names(FactorScores))] <- FactorScores
    
@@ -733,26 +834,28 @@ simFA <- function(Model = list(),
    # has been specified
    is.scalar <- function(x) is.atomic(x) && length(x) == 1L
     if( !is.null(cnFS$Thresholds) ){
-    if( is.scalar(cnMD$NItemPerFac) ){
-       if( length(cnFS$Thresholds) != (cnMD$NFac * cnMD$NItemPerFac)){
-         stop ("\n\nFATAL ERROR: You seem to have specified the wrong number of Thresholds")
-       } #END if( length(cnFS$Thresholds)
-    } #END if ( is.scalar(cnMD$NItemPerFac)
+      if( is.scalar(cnMD$NItemPerFac) ){
+         if( length(cnFS$Thresholds) != (cnMD$NFac * cnMD$NItemPerFac)){
+             stop ("\n\nFATAL ERROR: You seem to have specified the wrong number of Thresholds")
+          } #END if( length(cnFS$Thresholds)
+       } #END if ( is.scalar(cnMD$NItemPerFac)
     
-    if( !is.scalar(cnMD$NItemPerFac) ){
-       if( length(cnFS$Thresholds) != sum(cnMD$NItemPerFac) ){
-         stop ("\n\nFATAL ERROR: You seem to have specified the wrong number of Thresholds")
-       }
-    } #END if (!is.scalar(cnMD$NItemPerFac )
-  } #END if( !is.null(cnFS$Thresholds) ) 
+      if( !is.scalar(cnMD$NItemPerFac) ){
+         if( length(cnFS$Thresholds) != sum(cnMD$NItemPerFac) ){
+            stop ("\n\nFATAL ERROR: You seem to have specified the wrong number of Thresholds")
+          }
+       } #END if (!is.scalar(cnMD$NItemPerFac )
+    } #END if( !is.null(cnFS$Thresholds) ) 
   
   
-   # CHECK if FS seeds are unique 
-   if(  !is.null(cnFS$CFSeed) &&  !is.null(cnFS$UFSeed) ){
-      if( cnFS$CFSeed == cnFS$UFSeed ){
-        stop("\n\n *** FATAL ERROR: CFSeed must differ from UFSeed ***\n" )
-      } 
-   }
+   # February 19, 2023
+   # This needs to be updated as I no longer use UFSeed
+   # # CHECK if FS seeds are unique 
+   # if(  !is.null(cnFS$CFSeed) &&  !is.null(cnFS$UFSeed) ){
+   #    if( cnFS$CFSeed == cnFS$UFSeed ){
+   #      stop("\n\n *** FATAL ERROR: CFSeed must differ from UFSeed ***\n" )
+   #    } 
+   # }
 
    
    # ----_____Missing (MS) Default values ----
@@ -769,11 +872,18 @@ simFA <- function(Model = list(),
    
    # ----_____Control (CT) Default values ----
    # Maxh2       scalar:  maximum allowable communality (Default = .98)
-   # Reflect    logical: If TRUE factors will be randomally 
+   # Reflect    logical: If TRUE factors will be randomaly 
    #                     reflected
+   # IRT        Boolean  if TRUE then thresholds are interpreted as IRT
+   #                     difficulty params
+   # Dparam              1.7 for probit metric, 1.0 for logistic metric
+   
    cnCT = list(Maxh2 = .98,
-               Reflect = FALSE)
-   cnCT_Len = 2
+               Reflect = FALSE,
+               IRT = FALSE,
+               Dparam = 1.0)
+   
+   cnCT_Len = 4
    CT_Arg_Names = sort(names(cnCT))
    cnCT[(namCT <- names(Control))] <- Control
   
@@ -1031,7 +1141,8 @@ simFA <- function(Model = list(),
   ##           End SEC 2: Error Checking          ##
   ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ##
   
- 
+  ## IRT 
+  Dparam = cnCT$Dparam
   
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #          ---- SEC 3: Define Internal Functions ----
@@ -1423,6 +1534,7 @@ simFA <- function(Model = list(),
   # ----_____Compute Communalities----
   h2 <- diag(Fl %*% Phi %*% t(Fl))
   
+  # 2DO  This assumes no model error 
   #Check for communalities ge Maxh2 and rescale loadings if necessary
   if (max(h2) >= cnCT$Maxh2) {
     s <- sqrt(cnCT$Maxh2)/sqrt(h2)
@@ -1445,6 +1557,7 @@ simFA <- function(Model = list(),
   # Specific factors allowed to correlate
   if( !is.null(cnME$RSpecific) ){
  
+    # 2DO  what is this?
     # _____**2TEST add R resid #1** ---- 
     SFSstndevs <- diag(sqrt(cnFS$VarRel - h2))
     CovSFS <-   SFSstndevs %*% cnME$RSpecific %*% SFSstndevs
@@ -1655,66 +1768,84 @@ simFA <- function(Model = list(),
   
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#  
-  #       ---- SEC 7: IRT PARAMETERS ----
+  #       ---- SEC 8: IRT PARAMETERS ----
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#  
 
   ## IRT scale
-  ## Parameters are reported in the logistic metric (D is multipled in the
-  ## params)
+  IRTdiscrim = NULL
+  IRTdifficulty = NULL
+  IRTintercept = NULL
+  BinaryData = FALSE
   
-  ## Lookup page numbers in Recakse mult IRT book for 
-  ## all relevant equations
-     IRTdiscrim = NULL
-     IRTdifficulty = NULL
-     IRTintercept = NULL
-     Dparam <- 1.702
+  # Check to make sure that only one vector of thresholds is input
+  if(!is.null(cnMC$Thresholds) && !is.null(cnFS$Thresholds)){
+    stop("\n\n*** FATAL ERROR: Specify either MonteCarlo or FactorScores 
+    Thresholds (but not both) ***\n\n")
+  }
   
-     # _____Report loadings in logistic IRT metric-----
-     IRTdiscrim <- Dparam * diag(1 / sqrt(1 - diag( Fl %*% Phi %*% t(Fl) ) )) %*% Fl
+  
+  ## Compute item discrimination
+  ## Hoang
+  ## The metric of IRTdiscrim can be probit (Dparam = 1.7) or 
+  ## logit (Dparam = 1) metric
+  
+  IRTdiscrim <-diag(1 / sqrt(1 - h2  )) %*% Fl
+  #if user specifies logistic metric then
+  if(Dparam == 1) IRTdiscrim <- IRTdiscrim * 1.702
+  
+  # If Thresholds are supplied by user
+  if (!is.null(cnFS$Thresholds)) {
 
-     
-     
-     ## _____IRT: Binary Item Models ----
-     if( !is.null(cnFS$Thresholds) && length(unlist(cnFS$Thresholds)) == nrow(Fl) ){
-     
-         # 1 dimensional models 
-         if( !is.null(cnFS$Thresholds) && cnMD$NFac == 1 ){
-           IRTintercept <- -Dparam * unlist(cnFS$Thresholds)/sqrt(1 - diag( Fl %*% Phi %*% t(Fl) ) )
-           IRTdifficulty <- IRTintercept/-IRTdiscrim
-         }
     
-     
-         # > 1 dimensional models only
-         if( !is.null(cnFS$Thresholds) && cnMD$NFac > 1 ){
-           # multivariate discrimination
-           # see Reckase (MIRT book) EQ 4.9
-           # Check if this is true with correlated factors
-           MVDISC <- sqrt( apply(IRTdiscrim^2, 1, sum) )
-       
-           IRTintercept <- -Dparam * unlist(cnFS$Thresholds)/sqrt(1 - diag( Fl %*% Phi %*% t(Fl) ) )
-           IRTdifficulty <- -IRTintercept/MVDISC
-         }## END if( !is.null(cnFS$Thresholds) && cnMD$NFac > 1 )
-     } ## END if binary items
+  ## --- _____ Multidimensional IRT models with binary data ----
+  ## one threshold per item in multidimensional model
+  ## Note that this step also works for the UIRT case
+    if( length(unlist(cnFS$Thresholds)) == nrow(Fl) ){
+
+      BinaryData = TRUE
+      
+  ## If thresholds were input as IRT params then take them as intercept params
+  ## The output metric of IRTintercept will be determined by Dparam
+      if (cnCT$IRT == TRUE) {
+        IRTintercept <- unlist(cnFS$Thresholds)
+          
+      } else { ## If thresholds were input as EFA params, convert them to IRT params
+        IRTintercept <- (-unlist(cnFS$Thresholds)) / sqrt(1 - h2)
+        # if(D = 1 put intercept in logistic metric)
+       if(Dparam == 1) IRTintercept = 1.702 * IRTintercept
+      } #END if (cnCT$IRT == TRUE)
+      
+      
+      
+      ## if the model is unidimensional, compute IRTdifficulty params
+      if (cnMD$NFac == 1) 
+        IRTdifficulty <- -IRTintercept / IRTdiscrim
+    } #END if( length(unlist(cnFS$Thresholds)) == nrow(Fl) && cnMD$NFac == 1  
+    
+    
+    ## --- _____ GRM IRT models with Likert data ----
+    ## 2 or more thresholds per item in GRM model
+    if( length(unlist(cnFS$Thresholds)) > nrow(Fl) ){
+      ## If thresholds were input as IRT params, take them as intercept params
+      ## The output metric of IRTintercept will be determined by Dparam
+      if (cnCT$IRT == TRUE) {
+        IRTintercept <- cnFS$Thresholds
+      } else {  ## If thresholds were input as EFA params, convert them to IRT params
+        IRTintercept <- mapply(
+          cnFS$Thresholds, h2, ## For each vector of threshold and its corresponding communality
+          FUN = function(item_j_thresholds, h2j) {
+            -item_j_thresholds / sqrt(1-h2j)
+          },
+          SIMPLIFY = FALSE) ## do not collapse the Thresholds list
+          #END mapply
+        if(Dparam == 1) IRTintercept <- lapply(IRTintercept,  "*", 1.702)
+      }#END else
+    } # END if( length(unlist(cnFS$Thresholds)) > nrow(Fl) )
+  } #END  If Thresholds are supplied by user
   
+ 
      
-     ## _____IRT: Graded Response Model----
-    
-     ## _____IRT: GRM 1-Factor----
-     if( !is.null(cnFS$Thresholds) && length(unlist(cnFS$Thresholds)) > nrow(Fl) ){
-       
-       PsiVec <- sqrt(1 - diag( Fl %*% Phi %*% t(Fl) ) ) #uniqueness std devs
-       # tau = thresholds 
-       tau <- cnFS$Thresholds
-       IRTintercept <- IRTdifficulty <- vector("list", length = nrow(Fl))
-       for( i in 1:nrow(Fl) ){
-         IRTintercept[[i]] <- -Dparam * tau[[i]]/PsiVec[i]
-         IRTdifficulty[[i]] <- IRTintercept[[i]]/-IRTdiscrim[i]
-       }
-    
-     } #END IRT GRADED RESPONSE MODEL (1FAC)-
-     
-     
-     # 
+     # 2DO *****  Check this
      # if(cnBF$Bifactor == FALSE){
      #    min_unique_var <-  min(1 - diag( Fl %*% Phi %*% t(Fl) ) ) 
      #    # in BG models min_unique-var will equal zero
@@ -1724,7 +1855,7 @@ simFA <- function(Model = list(),
      # }# END if(cnBF$Bifactor == FALSE)
  
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#  
-#       ---- SEC 8: Scale communalities to user values ----
+#   ---- SEC 9: Scale communalities to user values ----
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#  
 
    if(!is.null(cnLD$h2)){
@@ -1757,9 +1888,10 @@ simFA <- function(Model = list(),
     
   }#END  if(!is.null(cnLD$h2)){
   
+
   
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#  
-#       ---- SEC 9: Add Model Error ----
+#       ---- SEC 10: Add Model Error ----
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#      
    # if no model error requested then return regular h2 values and NA MAEfit
     h2PopME <- h2
@@ -1771,8 +1903,10 @@ simFA <- function(Model = list(),
                       RMSEA_thetahat = NA,
                       CFI_theta = NA,
                       CFI_thetahat = NA)
+    
+    W <- NULL # initialize W
      
-   W <- NULL  
+    
    ## Tucker Koopman Linn approach
    if(cnME$ModelError == TRUE){
       # Create matrix of minor factors
@@ -1904,9 +2038,18 @@ simFA <- function(Model = list(),
         
       
       keepW <- FALSE   #initialize keepW  
+     
+ 
+      if( !is.null(cnME$W) ){
+          keepW <- TRUE
+          W <- cnME$W
+      }  #END if (!is.null     
+      
+      
+    
       
       ##----____FncKeepW----
-      ## Check if any factor of W has 3 or more ladings
+      ## Check if any factor of W has 3 or more loadings
       ## >= |.30|
       FncKeepW <- function(W){
           ## number of |loadings| ge WmaxLoading for each minor factor
@@ -1946,6 +2089,7 @@ simFA <- function(Model = list(),
            # constrain variance of minor factors to 
            # ModelError
            CovMajor <- Fl %*% Phi %*% t(Fl)
+           # u = uniqueness variances
            u <- 1 - diag( CovMajor )
            wsq <- diag(W %*% t(W))
        
@@ -1985,7 +2129,7 @@ simFA <- function(Model = list(),
        # Create Pop R with cnMD$Model Error
        RpopME <- Fl %*% Phi %*% t(Fl) +  CovMinor
        
-       # These are the true population h2 values
+       # These are the true population h2 values with ME
        h2PopME <- diag(RpopME)  
        
        # Cov matrix for Uniqueness factors
@@ -2011,10 +2155,10 @@ simFA <- function(Model = list(),
        }
        
    }#END if(cnME$ModelError == TRUE)
-  
+
   
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#  
-#       ---- SEC 10: Compute Factor Indeterminancy ----
+#       ---- SEC 11: Compute Factor Indeterminacy ----
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#      
      
      # FacStrc = Factor structure matrix
@@ -2038,44 +2182,48 @@ simFA <- function(Model = list(),
  
 
 
+    
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#  
-#       ---- SEC 11: Generate Monte Carlo Samples ----
+#       ---- SEC 12: Generate Monte Carlo Samples ----
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#      
-     
+  
+    
+    
+   
     # Preliminary code for Monte Carlo data generation
      
      if(cnMC$NSamples > 0 && cnMC$Raw == FALSE){
         MCData <- MCDataME <- vector("list", length = cnMC$NSamples)
-       
+    
         for(i in 1:cnMC$NSamples){
-          
-         
+  
            MCData[[i]]   <- corSample(Rpop,   
                                       n = cnMC$SampleSize,
                                       seed = i + Seed)
          # model error
          if(cnME$ModelError == TRUE){
+
             MCDataME[[i]] <- corSample(RpopME, 
                                        n = cnMC$SampleSize,
                                        seed = i + Seed)
          }#End if(cnME$ModelError == TRUE)
        }#END for(i in 1:cnMC$NSamples)
      }#END if(cnMC$NSamples > 0 && cnMC$Raw == FALSE)
+    
+
        
      if(cnMC$NSamples > 0 && cnMC$Raw == TRUE){
-       
-       
        MCData <- MCDataME <- vector("list", length = cnMC$NSamples)
        
        set.seed(Seed)
-       
+   
        for(i in 1:cnMC$NSamples){
           
             MCData[[i]] <- MASS::mvrnorm(n = cnMC$SampleSize,
                                mu = rep(0, NVar),
                                Sigma = round(Rpop,12),  
                                empirical = FALSE)
-           
+    
             # model error
             if(cnME$ModelError == TRUE){
                MCDataME[[i]] <-   MASS::mvrnorm(n = cnMC$SampleSize, 
@@ -2087,10 +2235,26 @@ simFA <- function(Model = list(),
           } # END  for(i in 1:cnMC$NSamples)
        
        
+ 
        
        #  ----_____Monte Carlo Likert Variables----
        if( !is.null(cnMC$Thresholds) ) { # thresholds supplied
-     
+         
+         ## If IRT == TRUE then convert IRT 
+         ## item-category to FA thresholds
+         ## The input intercept must be in the probit metric
+         if ( cnCT$IRT == TRUE) {
+           cnMC$Thresholds <- mapply(
+             IRTintercept, h2,
+             FUN = function(item_j_intercepts, h2j) {
+               return(-item_j_intercepts * sqrt(1 - h2j))
+             },
+             SIMPLIFY = FALSE
+           )
+           # thresholds must e in probit metric
+           if(Dparam == 1) cnMC$Thresholds <- lapply(cnMC$Thresholds, "/", 1.702)
+         }
+         
           # Initialize MCLikertData (to all zeros)
           MCLikertData <- vector(mode="list", length = cnMC$NSamples )
           MCLikertDataME <- MCLikertData
@@ -2100,7 +2264,7 @@ simFA <- function(Model = list(),
             MCLikertData[[i]] <- MCLikertDataME[[i]] <- ZeroMatrix 
           }#END for(i in 1:cnMC$NSamples)
          
-         
+          
            ## cut data at thresholds 
            for( iReps in 1:cnMC$NSamples){   #loop of MC samples
               for(i in 1:NVar){
@@ -2129,12 +2293,17 @@ simFA <- function(Model = list(),
     
    
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#  
-#       ---- SEC 12: Generate Factor Scores ----
+#       ---- SEC 13: Generate Factor Scores ----
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#      
  
      
      FSscores <- NULL
      ObservedScores <- NULL
+     SFSstndevs <- rep(0, nrow(Fl))
+     # Xm represents that part of the observed scores that is attributable to 
+     # the minor common factors if they exist
+     Xm = NULL
+     
 
      if( cnFS$FS == TRUE){
       
@@ -2149,7 +2318,7 @@ simFA <- function(Model = list(),
        if( !is.null(cnFS$CFSeed) ) set.seed(cnFS$CFSeed)
        
        
-       # ----_____Generate Common Fac Scores ----
+       # ----_____Generate Common Major Factor Scores ----
        
        # For non bifactor models
        if(cnBF$Bifactor == FALSE){
@@ -2158,6 +2327,8 @@ simFA <- function(Model = list(),
                             Sigma =  Phi,
                             empirical = cnFS$Population) 
        } # END if(cnBF$Bifactor == FALSE)
+       
+       
        
        # For bifactor models
        if(cnBF$Bifactor == TRUE){
@@ -2168,19 +2339,49 @@ simFA <- function(Model = list(),
        } # END  if(cnBF$Bifactor == TRUE)
        
        
-       # ----_____Generate Specific Fac Scores ----
+       
+       
+       # February 19, 2023
+       # ----_____Generate Minor Common Factor Scores (MFS) ----
+       if(cnME$ModelError == TRUE){
+         # Researchers can fix the minor common factor seed 
+         # to fix Xm across samples.
+         if( !is.null(cnFS$MCFSeed) ) set.seed(cnFS$MCFSeed)
+         
+         MFS <-     MASS::mvrnorm(n = cnFS$NFacScores,
+                                  mu = rep(0, cnME$NMinorFac),
+                                  Sigma =  diag(cnME$NMinorFac),
+                                  empirical = cnFS$Population)
+         #if generating pop factor scores then major and minor 
+         # common fs should be orthogonal
+         if(cnFS$Population == TRUE){
+           MFS <- resid(lm(MFS ~ CFS) ) 
+           
+           MFS <-  scale( svd(MFS)$u )
+         } # END if(cnFS$Population ==TRUE)
+         
+         # Xm represents that part of the observed scores
+         # that is due to the minor common factors
+         Xm <- MFS %*% t(W)
+         
+       } #END if(cnME$ModelError == TRUE)
+       
+
+       # ----_____Generate Specific Factor Scores ----
        # Reset random number seed
        if( !is.null(cnFS$SFSeed) ) set.seed(cnFS$SFSeed)
        
-       # No correlated specific factors
+       # No correlated Specific Factors
        if( is.null(cnME$RSpecific) ){
             SFS <-     MASS::mvrnorm(n = cnFS$NFacScores,
                                mu = rep(0, NVar),
                                Sigma =  diag(NVar),
                                empirical = cnFS$Population)
        }#END if( is.null(cnME$RSpecific) )
+       
+       
          
-      # Correlated specific factors present
+      # Correlated Specific Factors present
       if( !is.null(cnME$RSpecific) ){
            SFS <-     MASS::mvrnorm(n = cnFS$NFacScores,
                               mu = rep(0, NVar),
@@ -2188,8 +2389,7 @@ simFA <- function(Model = list(),
                               empirical = cnFS$Population)
        } #END if( !is.null(cnME$RSpecific) )
            
-         
-
+       
        # ----_____Generate Error Factor Scores----
        # Reset random number seed
        if( !is.null(cnFS$EFSeed) ) set.seed(cnFS$EFSeed)
@@ -2200,17 +2400,26 @@ simFA <- function(Model = list(),
        
      
        #----_____Population Factor Scores ----
+       
         if(cnFS$Population == TRUE){
           # make specific fac scores orthogonal to common fs
-          SFS <- resid(lm(SFS ~ CFS))
+          #If Model Error is TRUE
+          if(cnME$ModelError == TRUE){
+              SFS <- resid(lm(SFS ~ CFS + Xm))
+          }
           
-          # No correlated specific factor
+          #If Model Error is FALSE
+          if(cnME$ModelError == FALSE){
+            SFS <- resid(lm(SFS ~ CFS))
+          }
+          
+          # No correlated Specific Factor the make scores orthogonal
           if( is.null(cnME$RSpecific) ){
              # specfic fac scores orthogonal to each other
              SFS <- scale( svd(SFS)$u )
           }#END if( is.null(cnME$RSpecific) )
           
-          # Correlated specific factors present
+          # Correlated Specific Factors present
           if( !is.null(cnME$RSpecific) ){
             K <- chol(cnME$RSpecific)
             # specfic fac scores allowed to correlate
@@ -2218,51 +2427,109 @@ simFA <- function(Model = list(),
           }#END if( !is.null(cnME$RSpecific) )
           
          
-          # make error fac scores orthgonal to common and specific fs
-          EFS <- resid(lm(EFS ~ cbind(CFS, SFS) ))
-          # unique scores orthogonal to each other
+          # Make Error Factor scores orthogonal to Common and Specific FS
+          #If Model Error is TRUE
+          if(cnME$ModelError == TRUE){
+              EFS <- resid(lm(EFS ~ cbind(CFS, SFS, Xm) ))
+          }
+          #If Model Error is FALSE
+          if(cnME$ModelError == FALSE){
+            EFS <- resid(lm(EFS ~ cbind(CFS, SFS) ))
+          }
+          # Make Error FS orthogonal 
           EFS <- scale( svd(EFS)$u )
-       }#END  if(cnFS$Population == TRUE)
+       } #END  if(cnFS$Population == TRUE) -#
       
-       
+
        # If user DID NOT supply indicator reliabilities (VarRel)  
        # the specific factor scores are uniformly zero
        # If Alphas == NULL 
        if(is.null(cnFS$VarRel)){ 
           SFS <- matrix(0, cnFS$NFacScores, NVar)
-          h2 <- diag(Fl %*% t(Fl))
-          ObservedScores <- CFS %*% t(Fl) + 
-                  EFS %*% diag(sqrt (1 - h2) )
-       }    
           
+          # If Model Error = TRUE
+          if(cnME$ModelError == TRUE){
+                 h2PopME <- diag(Fl %*% Phi %*% t(Fl)) + apply(W^2, 1, sum)
+          
+          ObservedScores <- CFS %*% t(Fl) + Xm + 
+                       EFS %*% diag(sqrt (1 - h2PopME) )       
+          }# END if(cnME$ModelError == TRUE){
+          
+          # If Model Error = FALSE
+          if(cnME$ModelError == FALSE){
+            h2 <- diag(Fl %*% Phi %*% t(Fl)) 
+          ObservedScores <- CFS %*% t(Fl) + 
+                           EFS %*% diag(sqrt (1 - h2) )
+          }#END  if(cnME$ModelError == FALSE)
+       } #END if(is.null(cnFS$VarRel))
+       
        # If user DID supply indicator reliabilities (Alphas)                       
        if(!is.null(cnFS$VarRel)){
-           h2 <- diag(Fl %*% t(Fl))
-           if(  min(cnFS$VarRel - h2) < 0 ){
-              badItems <- (1:NVar)[(cnFS$VarRel - h2) < 0 ]
+         if(cnME$ModelError == TRUE){
+            h2PopME <- diag(Fl %*% Phi %*% t(Fl)) + apply(W^2, 1, sum)
+         
+            if(  min(cnFS$VarRel - h2PopME) < 0 ){
+              badItems <- (1:NVar)[(cnFS$VarRel - h2PopME) < 0 ]
               stop("\n\n *** FATAL ERROR (Reliabilities too small) ***",
               "\nItems ", paste0(badItems," "), "have reliabilities smaller than their communalities\n\n")
-           } 
+            } #END  if(  min(cnFS$VarRel - h2) < 0 )
+         }#END if(cnME$ModelError == TRUE)
+         
+         if(cnME$ModelError == FALSE){
+           h2 <- diag(Fl %*% Phi %*% t(Fl))
+             if(  min(cnFS$VarRel - h2) < 0 ){
+                badItems <- (1:NVar)[(cnFS$VarRel - h2) < 0 ]
+                stop("\n\n *** FATAL ERROR (Reliabilities too small) ***",
+                  "\nItems ", paste0(badItems," "), "have reliabilities smaller than their communalities\n\n")
+             } #END if(  min(cnFS$VarRel - h2) < 0 )
+          }# if(cnME$ModelError == FALSE)
+         
          
           # No specific factor correlations
            if( is.null(cnME$RSpecific) ){
-              h2 <- diag(Fl %*% t(Fl))
-             ObservedScores <- CFS %*% t(Fl) + 
-                            SFS %*% diag(sqrt(cnFS$VarRel - h2))  +
+              # if Model Error = TRUE
+               if(cnME$ModelError == TRUE){
+                  h2PopME <- diag(Fl %*% Phi %*% t(Fl)) + apply(W^2, 1, sum)
+                  SFSstndevs <- diag(sqrt(cnFS$VarRel - h2PopME))
+                  ObservedScores <- CFS %*% t(Fl) + Xm + 
+                            SFS %*% SFSstndevs  +
                             EFS %*% diag(sqrt( 1 - cnFS$VarRel) ) 
-           }# END if( is.null(cnME$RSpecific) ) 
-         
-         # Specific factors allowed to correlate
+               }# END  if(cnME$ModelError == TRUE)
+             # if Model Error = FALSE
+               if(cnME$ModelError == FALSE){
+                  h2 <- diag(Fl %*% Phi %*% t(Fl))
+                  SFSstndevs <- diag(sqrt(cnFS$VarRel - h2))
+                  ObservedScores <- CFS %*% t(Fl) + 
+                    SFS %*%  SFSstndevs  +
+                    EFS %*% diag(sqrt( 1 - cnFS$VarRel) )
+               }#END if(cnME$ModelError == FALSE)  
+             
+           }# END if( is.null(cnME$RSpecific) )
+             
+
+         # Specific Factors are allowed to correlate
          if( !is.null(cnME$RSpecific) ){
-            h2 <- diag(Fl %*% t(Fl))
-           SFSstndevs <- diag(sqrt(cnFS$VarRel - h2))
-           ObservedScores <- CFS %*% t(Fl) + 
-             SFS %*% SFSstndevs  +
-             EFS %*% diag(sqrt( 1 - cnFS$VarRel) ) 
+             if(cnME$ModelError == TRUE){
+                h2PopME <- diag(Fl %*% Phi %*% t(Fl)) + apply(W^2, 1, sum)
+                SFSstndevs <- diag(sqrt(cnFS$VarRel - h2PopME))
+                ObservedScores <- CFS %*% t(Fl) + Xm + 
+                      SFS %*% SFSstndevs  +
+                      EFS %*% diag(sqrt( 1 - cnFS$VarRel) ) 
+              }#END if(cnME$ModelError == TRUE)
+           
+           if(cnME$ModelError == FALSE){
+             h2 <- diag(Fl %*% Phi %*% t(Fl))
+             SFSstndevs <- diag(sqrt(cnFS$VarRel - h2))
+             ObservedScores <- CFS %*% t(Fl) +  
+               SFS %*% SFSstndevs  +
+               EFS %*% diag(sqrt( 1 - cnFS$VarRel) ) 
+           }#END if(cnME$ModelError == FALSE)
          }# END if( !is.null(cnME$RSpecific) ) 
          
-       }# END if(!is.null(cnFS$Alphas))
+       }# END if(!is.null(cnFS$Alphas))If user DID supply indicator Alphas   
        
+   
+      # ---_____Collect factor scores ----   
        FactorScores = cbind(CFS, SFS, EFS)
       
        
@@ -2271,7 +2538,10 @@ simFA <- function(Model = list(),
        colnames(FactorScores) <- c(  paste0("F", 1:NFac), 
                                  paste0("S", 1:NVar), # specific factor names
                                  paste0("E", 1:NVar)) # error factor names
-       }
+       }#END  if(cnBF$Bifactor == FALSE){
+         
+          
+         
        if(cnBF$Bifactor == TRUE){
          colnames(FactorScores) <- c(  "G",   # general factor
                                        paste0("F", 1:NFac), 
@@ -2279,28 +2549,46 @@ simFA <- function(Model = list(),
                                        paste0("E", 1:NVar)) # error factor names
        }# END if(cnBF$Bifactor == TRUE)
        
-   
-       # Create Likert Items
-       if( !is.null(cnFS$Thresholds) ) { # thresholds supplied
-         # Declare matrix for Likert data
-          LikertData <- matrix(0, nrow = nrow(ObservedScores),
-                                  ncol = NVar) 
+       
+       # ---- ____ Create Discrete Data ----
       
-         ## cut data at thresholds   
+       ## ---- Binary and Graded Response Model ----
+       # Start of GRM function to create Likert data
+       if( !is.null(cnFS$Thresholds))  { 
+         
+         ## If IRT == TRUE, and BinaryData = FALSE then convert IRT 
+         ## item-category to FA thresholds
+
+         if ( cnCT$IRT == TRUE) {
+           cnFS$Thresholds <- mapply(
+             IRTintercept, h2,
+             FUN = function(item_j_intercepts, h2j) {
+               return(-item_j_intercepts * sqrt(1 - h2j))
+             },
+             SIMPLIFY = FALSE
+           )
+           # thresholds must be in probit metric
+           if(Dparam == 1) cnFS$Thresholds <- lapply(cnFS$Thresholds, "/", 1.702)
+         }
+         # Declare matrix for Likert data
+         LikertData <- matrix(0, nrow = nrow(ObservedScores),
+                              ncol = NVar) 
+         
+         ## --- _____Create Discrete Likert data ----   
          for(i in 1:NVar){
            for(j in 1:length(cnFS$Thresholds[[i]])){
-            LikertData[(ObservedScores[, i] >= cnFS$Thresholds[[i]][j]), i] <- j
+             LikertData[(ObservedScores[, i] >= cnFS$Thresholds[[i]][j]), i] <- j
            } 
          }   
-      ObservedScores <- LikertData    
-      } # END if( !is.null(cnFS$Thresholds) )
+         ObservedScores <- LikertData    
+       } # END if( !is.null(cnFS$Thresholds) )
        
     }# END if( cnFS$FS == TRUE)
      
      
    
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#  
-#       ---- SEC 13: Generate Missing Data ----
+#       ---- SEC 14: Generate Missing Data ----
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#      
      
      ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~## 
@@ -2346,7 +2634,7 @@ simFA <- function(Model = list(),
      
      
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#  
-#       ---- SEC 14: Organize Return Values ----
+#       ---- SEC 15: Organize Return Values ----
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#      
      
    cn <- list("Model" = cnMD, 
@@ -2381,11 +2669,12 @@ simFA <- function(Model = list(),
    Monte = list("MCData" = MCData,             # MonteCarlo raw data
                 "MCDataME" = MCDataME)         # MonteCarlo raw data
      
-   # _____Output related to IRT parameters----                
+   # _____Output related to IRT parameters---- 
+   if(BinaryData == TRUE) IRTdifficulty = unlist(IRTdifficulty) 
    IRT = list("discrimination" = IRTdiscrim,
               "difficulty" = IRTdifficulty,
               "intercept"  = IRTintercept,
-              "metric" = "logistic (D is included in a)" )
+              "Dparam" = Dparam )
    
 
  
@@ -2406,23 +2695,30 @@ simFA <- function(Model = list(),
   
   ## Return objects related to Model Approximation Error
   ModelErrorFitStats <-  MAEfit
+  
+  # 2DO check 
+  #h2PopMe = h2 # Commonalities based on major and minor common factors
+  #h2 = diag(Fl %*% Phi %*% t(Fl) )  # Communalities for ideal model (Major factors only)
    
-  ## ---- _____Return Values ----
-  list(loadings    = Fl,              # Factor loadings
-       Phi         = Phi,             # Factor correlations
-       urloadings  = urloadings,      # Unrotated loadings
-       h2          = h2,              # communalities for ideal Model
+  ## ---- SEC 16:  Return Values ----
+  list(loadings    = Fl,                # Factor loadings
+       Phi         = Phi,               # Factor correlations
+       urloadings  = urloadings,        # Unrotated loadings
+       h2          = h2,                # communalities for ideal Model
        h2PopME     = h2PopME,
-       Rpop        = Rpop,            # no Model error
-       RpopME      = RpopME,          # with Model error
-       W           = W,               # Loadings for Minor Factors
+       Rpop        = Rpop,              # no Model error
+       RpopME      = RpopME,            # with Model error
+       W           = W,                 # Loadings for Minor Factors
+       SFSvars  =  diag(SFSstndevs)^2, # Specific factor variances
+       Xm          = Xm,                # that part of the observed scores that is 
+                                        # due to the minor common factors 
        ModelErrorFitStats  = ModelErrorFitStats,
        CovMatrices = CovMats,    
        Bifactor    = Bifactor,
-       Scores      = Scores,          # Output related to Factor Scores (ObservedScores)
+       Scores      = Scores,            # Output related to Factor Scores (ObservedScores)
        Monte       = Monte,
-       IRT         = IRT,             # Multidimentional IRT
+       IRT         = IRT,               # Multidimentional IRT
        Seed        = Seed,
-       call        = cl,              # program call
+       call        = cl,                # program call
        cn          = cn)     
  } #END simFA

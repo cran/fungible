@@ -1,13 +1,12 @@
-citHeader("To cite package 'fungible' in publications use:")
-
-citEntry(entry = "Manual",
+bibentry(
+bibtype = "Manual",
          title = "fungible: Psychometric Functions from the Waller Lab.",
-         author = personList(as.person("Niels G. Waller")),
-         year = "2022",
-         note = "version 2.2.1",
-textVersion = 
- paste("Waller, N. G. (2022).",
-        "fungible: Psychometric Functions from the Waller Lab.
-        R package version 2.2.1")
+         author = "Niels G. Waller",
+		 organization = "University of Minnesota",
+		 address = "Minneapolis, Minnesota",
+         year = "2023",
+         note = "R package 2.3",
+		 url = "https://CRAN.R-project.org/package=fungible"
 )
+
 

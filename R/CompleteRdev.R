@@ -181,6 +181,7 @@ CompleteRdev <- function(Rna,
  # Run Optimization --------
  if(MaxDet){
    #find RFull that maximizes det(RFull)
+   # Remember: DEoptim minimizes a function
           dout <<- DEoptim::DEoptim(fn = MaxDetFunc,
                            lower = rep(-1,num_miss),
                            upper = rep(1,num_miss),

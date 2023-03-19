@@ -3,6 +3,7 @@
 # This is 1000 times faster for 10 dimensions
 # September 16, 2020
 #  fixed for 1 factor models
+# January 25, 2023  Added Dsgn in output
 
 
 
@@ -22,14 +23,20 @@
 #' @param Phi2 optional factor correlation matrix for F2 (default = NULL).
 #' @param MatchMethod "LS" (Least Squares) or "CC" (congruence coefficients).
 #' @return \item{F2}{re-ordered and reflected loadings of F2.}
-#' \item{Phi2}{reordered and reflected factor correlations.} \item{FactorMap}{a
-#' 2 x k matrix (where k is the number of columns of F1) structured such that
+#' \item{Phi2}{reordered and reflected factor correlations.} 
+#' \item{FactorMap}{a 2 x k matrix (where k is the number of columns of F1) structured such that
 #' row 1: the original column order of F2; row 2: the sorted column order of
-#' F2.} \item{UniqueMatch}{(logical) indicates whether a unique match was
-#' found.} \item{MatchMethod}{"LS" (least squares) or "CC" (congruence
-#' coefficients, i.e., cosines).} \item{CC}{Congruence coefficients for the
-#' matched factors.} \item{LS}{Root-mean-squared-deviations (least squares
+#' F2.} 
+#' \item{UniqueMatch}{(logical) indicates whether a unique match was
+#' found.} 
+#' \item{MatchMethod}{"LS" (least squares) or "CC" (congruence
+#' coefficients, i.e., cosines).} 
+#' \item{CC}{Congruence coefficients for the
+#' matched factors.} 
+#' \item{LS}{Root-mean-squared-deviations (least squares
 #' criterion) for the matched factors.}
+#' \item{Dsgn}{The Diagonal Sign Matrix that reflects the matched factors to 
+#' have positive salient loadings.} 
 #' @note The Hungarian algorithm is implemented with the clue (Cluster
 #' Ensembles, Hornik, 2005) package. See Hornik K (2005). A CLUE for CLUster
 #' Ensembles. \emph{Journal of Statistical Software, 14}(12). doi:
@@ -337,7 +344,8 @@ faAlign <- function(F1, F2, Phi2 = NULL, MatchMethod = "LS"){
      UniqueMatch = UniqueMatch,
      MatchMethod = MatchMethod,
      CC = fit$CC,
-     LS = fit$LS)
+     LS = fit$LS,
+     Dsgn = Dsgn)
 } # End MatchFactors
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~##
 

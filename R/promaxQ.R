@@ -188,7 +188,7 @@ promaxQ <- function(R           = NULL,
   ## If faControl is not specified, give it the defaults (used for func output)
   if ( is.null(faControl) ) {
     
-    ## Set the default values of all control agruments
+    ## Set the default values of all control arguments
     cnFA <- list(treatHeywood   = TRUE,
                  nStart         = 10,
                  maxCommunality = .995,
@@ -234,7 +234,7 @@ promaxQ <- function(R           = NULL,
   
   ## Start with a varimax rotation
   VarimaxOutput <-
-    GPArotation::Varimax(L         = lambda,
+    GPArotation::Varimax(lambda,
                          normalize = FALSE,
                          eps       = epsilon,
                          maxit     = maxItr)
