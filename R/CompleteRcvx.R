@@ -53,7 +53,7 @@
 #'
 #'   round(out$R, 3)
 #'}
-#' @import CVXR
+#' @importFrom CVXR Variable Maximize Problem solve
 #' @export
 #'
 CompleteRcvx <- function(Rna, 

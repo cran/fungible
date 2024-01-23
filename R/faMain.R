@@ -146,10 +146,10 @@
 #'   more psychologically interpretable than any of the local solutions (cf. 
 #'   Rozeboom, 1992). As is recommended, our function returns all local 
 #'   solutions so users can make their own judgements.
-#'   \item \strong{Finding clusters of local minima}: We find local-solution sets by sorting the rounded  
+#'   \item \strong{Finding clusters of local minima}: We find local-solution sets by sorting the rounded 
 #'   rotation complexity values (to the number of  digits specified in the \code{epsilon} 
 #'   argument of the \code{rotateControl} list) into sets with equivalent values. For example, 
-#'   by default \code{epsilon = 1e-5.} and thus \code{} will only evaluate the complexity 
+#'   by default \code{epsilon = 1e-5.} will only evaluate the complexity 
 #'   values to five significant digits. Any differences beyond that value will not effect the final sorting. 
 #' }
 #'

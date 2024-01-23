@@ -1,11 +1,11 @@
 bibentry(
 bibtype = "Manual",
-         title = "fungible: Psychometric Functions from the Waller Lab.",
+         title = "fungible: Psychometric Functions from the Waller Lab",
          author = "Niels G. Waller",
 		 organization = "University of Minnesota",
 		 address = "Minneapolis, Minnesota",
-         year = "2023",
-         note = "R package 2.3",
+         year = "2024",
+         note = "R package 2.4.2",
 		 url = "https://CRAN.R-project.org/package=fungible"
 )
 

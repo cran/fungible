@@ -8,7 +8,7 @@
 #' to \code{monte1}.
 #' @param digits Number of significant digits to print in final results.
 #' @param \dots Additional argument affecting the summary produced.
-#' @return Various descriptive statistics will be computed including"
+#' @return Various descriptive statistics will be computed including
 #' \enumerate{
 #'   \item{Expected correlation matrix.}
 #'   \item{Observed correlation matrix.}

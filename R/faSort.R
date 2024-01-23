@@ -14,7 +14,7 @@
 #' the markers list. Note that a variable can be a marker of more than one
 #' factor.
 #' @param reflect (logical) if reflect = TRUE then the factors will be
-#' reflected such that salient loadings are mostly positive.
+#' reflected such that salient loadings are mostly positive. Default \code{Reflect = TRUE}.
 #' @return 
 #'    \item{loadings}{sorted factor loadings matrix.} 
 #'    \item{phi}{reflected factor correlation matrix when phi is given as an argument.}

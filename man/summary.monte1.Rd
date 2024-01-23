@@ -16,7 +16,7 @@ to \code{monte1}.}
 \item{\dots}{Additional argument affecting the summary produced.}
 }
 \value{
-Various descriptive statistics will be computed including"
+Various descriptive statistics will be computed including
 \enumerate{
   \item{Expected correlation matrix.}
   \item{Observed correlation matrix.}

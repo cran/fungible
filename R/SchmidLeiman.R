@@ -47,7 +47,7 @@
 #'   passed to the \code{\link{faMain}} function.
 #'   \item \strong{faControl}: (List) A list of optional parameters passed to 
 #'   the factor extraction (\code{\link{faX}}) function.
-#'   \item{strong{HeywoodFlag}}(Integer) An integer indicating whether one or more 
+#'   \item{\strong{HeywoodFlag}}(Integer) An integer indicating whether one or more 
 #'    Heywood cases were encountered during estimation.
 #'}
 #'

@@ -323,14 +323,14 @@
 #'        \item \code{IRT} (logical) If \code{IRT = TRUE} then
 #'            user-supplied thresholds will be interpreted as
 #'            item intercepts; defaults to \code{IRT = FALSE}.
-#'        \item \code{D} (scalar).  If \code{D = 1} then item
+#'        \item \code{Dparam} (scalar).  If \code{Dparam = 1} then item
 #'            intercepts should be scaled in the logistic metric.
-#'            If \code{D = 1.702} then intercepts should be
+#'            If \code{Dparam = 1.702} then intercepts should be
 #'            scaled in the probit metric.
 #'        \item \code{Maxh2} (scalar) Rows of the loadings matrix
 #'            will be rescaled to have a maximum communality of
 #'            \code{Maxh2}; defaults to \code{Maxh2 = .98}.
-#'        \item \code{itemReflect} (logical) If \code{Reflect =
+#'        \item \code{Reflect} (logical) If \code{Reflect =
 #'            TRUE} loadings on the common factors will be
 #'            randomly reflected; defaults to
 #'            \code{Reflect = FALSE}.

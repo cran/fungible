@@ -182,10 +182,22 @@ CompleteRdev <- function(Rna,
  if(MaxDet){
    #find RFull that maximizes det(RFull)
    # Remember: DEoptim minimizes a function
+   NPOP = 10
+   initPop <-matrix(runif(NPOP*(num_miss^2),  min = -1, max = 1), 
+                    nrow=NPOP*num_miss, ncol=num_miss)
+   
           dout <<- DEoptim::DEoptim(fn = MaxDetFunc,
                            lower = rep(-1,num_miss),
                            upper = rep(1,num_miss),
                            control = list(trace = FALSE,
+                                          VTR = 0,      # Value to be reached
+                                          strategy = 2, # 2=default
+                                          bs = FALSE,   #TRUE kills program
+                                          initialpop = initPop,
+                                          NP =  NPOP * num_miss, 
+                                          CR = .50, #crossover probability
+                                          F = 0.8, # differential weighting factor, Default = 0.8
+                                          storepopfreq = 1,
                                           itermax = MaxIter))
     # assess convergence
           converged = FALSE
@@ -205,14 +217,26 @@ CompleteRdev <- function(Rna,
   else{
    # else find NMatrices feasible solutions
 
+    NPOP = 10
     k = 1
     while( k <= NMatrices){
+      
+      
+      initPop <-matrix(runif(NPOP*(num_miss^2),  min = -1, max = 1), 
+                       nrow=NPOP*num_miss, ncol=num_miss)
 
        dout <- tryCatch(DEoptim::DEoptim(fn = EvoFunc,
                                lower = rep(-1,num_miss),
                                upper = rep(1,num_miss),
                                control = list(trace = FALSE,
-                                              VTR = 0,
+                                              VTR = 0,      # Value to be reached
+                                              strategy = 2, # 2=default
+                                              bs = FALSE,   #TRUE kills program
+                                              initialpop = initPop,
+                                              NP =  NPOP * num_miss, 
+                                              CR = .50, #crossover probability
+                                              F = 0.8, # differential weighting factor, Default = 0.8
+                                              storepopfreq = 1,
                                               itermax = MaxIter)),
                         error = " ") # do nothing on error
      # assess convergence

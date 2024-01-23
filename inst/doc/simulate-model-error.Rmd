@@ -1,0 +1,240 @@
+---
+title: "Simulating Population Correlation Matrices with Model Error"
+output: 
+  rmarkdown::html_document:
+    toc: true
+    toc_depth: 3
+    bibliography: references.bib
+vignette: >
+  %\VignetteIndexEntry{Simulating Population Correlation Matrices with Model Error}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup, include = FALSE}
+library(fungible)
+```
+
+# Model Error
+
+The common factor model is often used in psychological research to model a correlation or covariance matrix in terms of a small number of latent factors. For instance, a $p \times p$ correlation matrix, $\Omega$, can be represented as
+
+$$
+\Omega = \Lambda \Phi \Lambda^\prime + \Psi^2,
+$$
+
+\noindent where $\Lambda$ is a $p \times m$ matrix of factor-pattern coefficients, $\Phi$ is a $m \times m$ matrix of correlations between latent factors, and $\Psi$ is a $p \times p$ diagonal matrix of unique factor-pattern coefficients.
+
+Though this model is often useful, it is implausible that a simple common factor model will perfectly fit a population correlation matrix for any set of real variables. Therefore, population correlation matrices that have a degree of misfit with the model-implied correlation matrix are more representative of empirical data. A few methods have been proposed to generate population correlation matrices with model error (i.e., that do not perfectly fit a particular factor model). Though these methods differ, they all involve finding a symmetric, positive semidefinite population correlation matrix, $\Sigma$, such that
+
+$$
+\Sigma - \Omega = \mathbf{E}
+$$
+\noindent where $\mathbf{E}$ is a non-null error matrix.
+
+The *noisemaker* package includes functions that allow users to generate population correlation matrices with user-specified fit statistics, given a particular factor model. This vignette will demonstrate how to generate $\Sigma$ matrices with user-specified root-mean-square error of approximation (RMSEA) and/or comparative fit index (CFI) values using (a) the Tucker, Koopman, and Linn (1969) method, (b) the Cudeck and Browne (1996) method, and (c) the Wu and Browne (2015) method. In the following sections, I will give examples and further details regarding how to generate population correlation matrices with model error using each of these methods.
+
+## Specifying a Model
+
+For the purposes of this example, we will use a factor model with three latent factors and nine items. We can create this model using the `fungible::simFA()` function.
+
+```{r create-model}
+# Specify the factor model
+Lambda <- matrix(c(.5, .5, .5,  0,  0,  0,  0,  0,  0,
+                    0,  0,  0, .6, .6, .6,  0,  0,  0,
+                    0,  0,  0,  0,  0,  0, .7, .7, .7),
+                 ncol = 3, byrow = FALSE)
+Phi <- matrix(c( 1, .3, .3,
+                .3,  1, .3,
+                .3, .3,  1),
+              ncol = 3, byrow = TRUE)
+
+mod <- fungible::simFA(
+  Model = list(NFac = 3,
+               NItemPerFac = 3,
+               Model = "oblique"),
+  Loadings = list(FacPattern = Lambda),
+  Phi = list(PhiType = "user",
+             UserPhi = Phi),
+  Seed = 42
+)
+```
+
+Let's take a quick look at the factor-pattern and factor correlation matrices:
+
+```{r factor-pattern}
+# factor-pattern matrix
+mod$loadings
+```
+
+```{r factor-correlation}
+# factor correlation matrix
+mod$Phi
+```
+The model-implied correlation matrix corresponding to this model is:
+
+```{r}
+mod$Rpop
+```
+
+## The Tucker, Koopman, and Linn (TKL) Method
+
+In the TKL model error method, the population correlation matrix and the model-implied correlation matrix differ due to the effects of a large number of minor common factors such that $\Sigma = \Lambda \Phi \Lambda^\prime + \Psi^2 + \mathbf{WW}^\prime$. Here, $\mathbf{W}$ denotes a $p \times q$ matrix of factor loadings for $p$ items and $q$ minor common factors. The TKL method uses two user-specified parameters, $\nu_{\textrm{e}}$ and $\epsilon$, to determine the distribution of the minor factor loadings. In `noisemaker()`, these parameters are denoted by `v` and `eps`. The `v` parameter indicates the proportion of the unique variance that was reapportioned to the minor common factors. The `eps` parameter indicates how equally the minor factor variance was distributed among the minor factors; values close to zero indicate that all of the minor common factors accounted for roughly the same amount of variance, whereas values close to one indicate that most of the variance in the minor common factors was accounted for by the first two or three minor factors.
+
+Traditionally, practitioners have selected $\nu_{\textrm{e}}$ and $\epsilon$ values based primarily on intuition. For instance, a practitioner might think that minor common factors account for 10% of the unique variance and therefor set $\nu_{\textrm{e}} = 0.1$. Then, $\epsilon$ is typically set to a value that gives a "reasonable" root-mean-square error of approximation (RMSEA) value. However, this method involves a lot of trial and error and can impractical when a simulation study involves many factor models. Moreover, there are no published guidelines that give an empirical basis for "reasonable" values of $\nu_{\textrm{e}}$ and $\epsilon$. The `noisemaker()` function makes it much easier to use the TKL method. In particular, the function allows users to select a target RMSEA value, a target comparative fit index (CFI) value, or both, and uses an optimization procedure to select values of $\nu_{\textrm{e}}$ and $\epsilon$ such that the solution has RMSEA and/or CFI values that are close to the target values. In the next sections, I will demonstrate how to use the TKL method with the `noisemaker()` function.
+
+### Optimizing for a Target RMSEA Value
+
+In this section, we'll use the model we specified earlier to generate a population correlation matrix with model error using the `noisemaker()` function and the TKL method. First, we'll try to find a $\Sigma$ matrix such that the resulting RMSEA value is close to 0.05.
+
+```{r TKL-rmsea}
+set.seed(42)
+TKL_m1 <- noisemaker(mod, method = "TKL", target_rmsea = 0.05)
+
+TKL_m1
+```
+
+Taking a look at the output, the first element is the population correlation matrix with model error $\Sigma$ that was generated. Next, the output tells us the RMSEA value, which is quite close to the target value of 0.05. The other elements of the output are the CFI value and the values of the two TKL parameters.
+
+### Optimizing for Target RMSEA and CFI Values
+
+In addition to allowing us to optimize the TKL parameters to get a $\Sigma$ matrix with an RMSEA value close to a target value, the `noisemaker()` function also allows us to optimize for target RMSEA and CFI values simultaneously. The only change that is needed is to specify the desired CFI value in the `target_cfi` argument.
+
+```{r TKL-rmsea-and-cfi}
+TKL_m2 <- noisemaker(mod, method = "TKL", 
+                       target_rmsea = 0.05, 
+                       target_cfi = 0.95)
+
+TKL_m2
+```
+
+Notice that both the RMSEA and CFI values are slightly off from the target values. Some combinations of RMSEA and CFI are not possible for a particular model. In that case, the function tries its best to find a solution that gives RMSEA and CFI values that are as close as possible to the target values, weighting both indices equally. If we were more concerned about getting an RMSEA value that is close to the target value, we could weight RMSEA more heavily than CFI:
+
+```{r TKL-rmsea-cfi-weights}
+TKL_m3 <- noisemaker(mod, method = "TKL", 
+                       target_rmsea = 0.05, 
+                       target_cfi = 0.95,
+                     tkl_ctrl = list(weights = c(rmsea = 4, cfi = 1)))
+
+TKL_m3
+```
+
+Note that weights are scaled within the function to sum to one, so the size of the weights relative to one another is what matters. We can see that weighting the RMSEA value more than the CFI value caused the RMSEA value to be closer to the target value and the CFI value to be further from the target value. We could have chosen to weight the CFI value instead:
+
+```{r}
+TKL_m4 <- noisemaker(mod, method = "TKL", 
+                       target_rmsea = 0.05, 
+                       target_cfi = 0.95,
+                     tkl_ctrl = list(weights = c(rmsea = 1, cfi = 4)))
+
+TKL_m4
+```
+
+### Controlling the Size and Number of Minor Factor Loadings
+
+In addition to generating population correlation matrices with particular RMSEA and CFI values, we might also want to ensure that minor factors are clearly distinct from major factors. After all, if minor factors have many moderate or large factor loadings, they can't justifiably be called minor factors anymore and would likely be of theoretical interest.
+
+The `noisemaker()` function allows us to limit the number of factor loadings for each minor factor that exceed a user-specified threshold. For instance, perhaps we consider a factor with more than two factor loadings greater than or equal to .3 (in absolute value) to be of theoretical interest (i.e., not a minor factor). The factor loading threshold can be set using the `WmaxLoading` argument in the `tkl_ctrl` list. The maximum number of loadings greater (in absolute value) than the threshold for any minor factor can be set using the `NWmaxLoading` argument in the `tkl_ctrl` list. For example:
+
+```{r TKL}
+TKL_m5 <-  noisemaker(mod, method = "TKL", 
+                      target_rmsea = 0.05, 
+                      target_cfi = 0.95,
+                      tkl_ctrl = list(WmaxLoading = 0.3,
+                                      NWmaxLoading = 2))
+
+TKL_m5
+```
+
+Nothing in the output is substantially different from the previous examples, but a penalty is added to the objective function to try to enforce solutions such that no minor factor has more than two factor loadings greater than 0.3 in absolute value. These restrictions can make optimization more difficult, particularly when target RMSEA values are relatively high. Moreover, the penalty provides no guarantee that the constraints on the minor factor loadings will be satisfied. In general, the constraints are likely to be violated when only a (relatively large) target RMSEA value is specified and when the input (error-free) population matrix has many factors, many items per factor, and relatively low factor loadings. On the other hand, the default constraints are much less likely to be violated if a reasonably large target CFI value is specified (e.g., CFI $> .90$).
+
+### Setting Boundaries on `v` and `eps`
+
+By default, the `tkl()` function uses a bounded optimization procedure to ensure that the values of `v` and `eps` fall between 0 and 1. Actually, the default lower boundary for `v` is 0.001 so that the optimization procedure produces a solution with at least some model error, but otherwise it is assumed that the user has no *a priori* knowledge of reasonable values of `v` and `eps`. However, `noisemaker()` allows the user to set custom bounds on `v` and `eps` in case they do have prior knowledge of reasonable parameter values. For instance, a user might consider it unlikely that the minor common factors would account for more than 20% of the unique variance. In that case, they could set the upper-bound of `v`:
+
+```{r bounds-on-v-and-eps}
+TKL_m6 <-  noisemaker(mod, method = "TKL", 
+                      target_rmsea = 0.05, 
+                      target_cfi = 0.95,
+                      tkl_ctrl = list(v_bounds = c(0, .2),
+                                      eps_bounds = c(0, 1)))
+
+TKL_m6
+```
+
+# The Cudeck and Browne (CB) Method
+
+In contrast with the TKL method, the CB method is agnostic regarding how model error arises. Whereas the TKL method assumes that model error results from the influence of a large number of minor common factors, the CB method works by finding an error matrix $\mathbf{E}$ such that $\Sigma = \Omega(\gamma) + \mathbf{E}$, where $\Omega(\gamma)$ is a covariance structure model with a parameter vector $\gamma$ such that $\Omega = \Omega(\gamma_0)$ for a particular parameter vector $\gamma_0$. The CB method finds an $\mathbf{E}$ matrix such that three criteria are satisfied:
+
+1. $\mathbf{E}$ is positive definite.
+2. The objective function value $F(\Sigma, \Omega(\gamma)) = \delta$, where $\delta$ is a user-specified value.
+3. The objective function $F(\Sigma, \Omega(\gamma))$ is minimized when $\gamma = \gamma_0$.
+
+The objective function value is directly related to RMSEA by $\textrm{RMSEA} = \sqrt{F_m / df}$, where $F_m$ denotes the objective function value and $df$ denotes the model degrees of freedom. Therefore, the CB method allows the user to generate a $\Sigma$ matrix with a particular RMSEA value, which has made it popular for use in Monte Carlo simulation studies. In the following example, I will demonstrate how to easily generate $\Sigma$ matrices using the CB model error method and the `noisemaker()` function.
+
+## Optimizing for a Target RMSEA value
+
+We will use the same model we specified earlier to demonstrate how to use the CB method and the `noisemaker()` function to generate a $\Sigma$ matrix with a specified RMSEA value.
+
+```{r cb-example}
+CB_m1 <- noisemaker(mod, method = "CB", target_rmsea = 0.05)
+CB_m1
+```
+
+It is important to know that not all target RMSEA values will lead to acceptable solutions. If the target RMSEA value is too large, $\Sigma$ might become indefinite and the `noisemaker()` function will give an error:
+
+```{r cb-error, error = TRUE}
+CB_m1 <- noisemaker(mod, method = "CB", target_rmsea = 0.5)
+```
+
+Another notable aspect of the CB method is that it attempts to find solutions such that if the (major factor) model is applied to the generated population correlation matrix with model error ($\Sigma$) using maximum likelihood, the vector of population parameters, $\gamma$, will minimize the objective function.[^cb-caveat] In practice, the CB method sometimes produces solution matrices that do not satisfy this requirement, particularly when major common factor loadings are relatively weak and the target RMSEA value is large.
+
+[^cb-caveat]: The same is also true when using ordinary least squares if the CB method is altered somewhat; see Cudeck and Browne (1992) for details.
+
+# The Wu and Browne (WB) Method
+
+In contrast to the TKL and CB methods, the WB method works by specifying a *distribution* for the population correlation matrix with model error, $\Sigma$. In particular, in the WB method $\Sigma$ follows the inverse-Wishart distribution
+
+$$
+(\Sigma | \Omega, m) \sim \textrm{IW}_p(m \Omega, m),
+$$
+
+where $m > p - 1$ is a user-specified precision parameter. There is a useful relationship between $m$ and RMSEA such that $1/m = \varepsilon^2 + o_p(\varepsilon^2)$ (where $\varepsilon$ denotes RMSEA). Put another way, $1/m \approx \varepsilon^2$ when $m$ is large and $\varepsilon$ is small. We can take advantage of this by choosing a target RMSEA value and then solving for $m$. For instance, if our target RMSEA value is 0.05, we get $m = 0.05^{-2} = 400$. Unfortunately, this approximation does not work particularly well when the target RMSEA value is large, particularly when the number of items ($p$) is also large.
+
+The `noisemaker()` function uses a somewhat *ad hoc* solution to this problem; Given a particular model, the `get_wb_mod()` function uses the WB method to sample `n` correlation matrices from inverse Wishart distributions using $m$ values corresponding to a reasonable range of target RMSEA values (e.g., 0.02 to 0.1). For each target RMSEA value, the observed RMSEA value is calculated for each simulated correlation matrix and the median observed RMSEA value is calculated. Next, these data are used to fit the regression model
+
+$$
+\hat{\varepsilon}_{T} = b_0 + b_1 \varepsilon_{\textrm{obs}} + b_2 \varepsilon_{\textrm{obs}}^2.
+$$
+The fitted model can then be used by plugging in the target RMSEA value to find an adjusted value that will lead to solutions with RMSEA values close to the desired level.
+
+To demonstrate how this works, let's use the model we specified previously to generate a population correlation matrix using the WB method and the `noisemaker()` function. First, we'll use the `get_wb_mod()` function to get a fitted model.
+
+```{r get-wb-mod}
+wb_mod <- get_wb_mod(
+  mod,           # simFA() model specification
+  n = 50,        # Number of matrices to simulate at each target RMSEA value
+  values = 10,   # Number of target RMSEA values to test
+  lower = 0.01,  # 'lower' and 'upper' are the endpoints of the RMSEA sequence
+  upper = 0.095  
+)
+
+summary(wb_mod)
+```
+
+Now that we have a `wb_mod`, let's use it to simulate a correlation matrix using the WB method.
+
+```{r wb-example}
+noisemaker(mod, method = "WB", target_rmsea = 0.05, wb_mod = wb_mod)
+```
+
+The observed RMSEA value isn't exactly 0.05, but it's relatively close. An important aspect of the WB method is that we're only controlling the distribution from which the correlation matrices are sampled and therefore have less fine-grained control of RMSEA compared to the CB or TKL methods.
+
+Another important note about the WB method is that if you don't provide a `wb_mod` model to the `noisemaker()` function when the "WB" method is specified, a model will be fitted when the function is called. This is convenient when you want to simulate only one correlation matrix, but will be much slower than providing a `wb_mod` if you're planning to simulate many correlation matrices using the same population factor model.

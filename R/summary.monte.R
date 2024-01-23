@@ -14,22 +14,24 @@
 #' (2) indicator skewness, (3) indicator kurtosis.
 #' @param \dots Optional arguments.
 #' @return Various descriptive statistics will be computed within groups
-#' including" \enumerate{ 
-#'   \item{clus.size}{ Number of objects within each group.}
-#'   \item{centroids} { Group centroids.}
-#'   \item{var.matrix}{ Within group variances.}
-#'   \item{Ratio of within group variances (currently printed but not saved.}
-#'   \item{cor.list}{ Expected within group correlations.}
-#'   \item{obs.cor}{ Observed within group correlations.}
-#'   \item{skew.list}{ Expected within group indicator skewness values.}
-#'   \item{obs.skew}{ Observed within group indicator skewness values.}
-#'   \item{kurt.list}{ Expected within group indicator kurtosis values.}
-#'   \item{obs.kurt}{ Observed within group indicator kurtosis values.}
-#'   \item{validities}{ Observed indicator validities.}
-#'   \item{Total.cor}{ Total sample correlation matrix.}
-#'   \item{Total.skew}{ Total sample indicator skewness.}
-#'   \item{Total.kurt}{ Total sample indicator kurtosis.}
-#' }
+#' including"
+#'  
+#' @return 
+#'  \describe{
+#'   \item{clus.size}{Number of objects within each group.}
+#'   \item{centroids}{Group centroids.}
+#'   \item{var.matrix}{Within group variances.}
+#'   \item{cor.list}{Expected within group correlations.}
+#'   \item{obs.cor}{Observed within group correlations.}
+#'   \item{skew.list}{Expected within group indicator skewness values.}
+#'   \item{obs.skew}{Observed within group indicator skewness values.}
+#'   \item{kurt.list}{Expected within group indicator kurtosis values.}
+#'   \item{obs.kurt}{Observed within group indicator kurtosis values.}
+#'   \item{validities}{Observed indicator validities.}
+#'   \item{Total.cor}{Total sample correlation matrix.}
+#'   \item{Total.skew}{Total sample indicator skewness.}
+#'   \item{Total.kurt}{Total sample indicator kurtosis.}
+#'  }
 #' @export
 #' 
 #' @examples
