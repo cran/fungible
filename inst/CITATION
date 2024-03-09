@@ -5,7 +5,7 @@ bibtype = "Manual",
 		 organization = "University of Minnesota",
 		 address = "Minneapolis, Minnesota",
          year = "2024",
-         note = "R package 2.4.3",
+         note = "R package 2.4.4",
 		 url = "https://CRAN.R-project.org/package=fungible"
 )
 

@@ -37,9 +37,9 @@
 #' @examples
 #'
 #' ## Function to compute standardized alpha
-#' Alphaz <- function(R){
-#'   k <- ncol(R)
-#'   k/(k-1) * (1 - (k/sum(R)) ) 
+#' Alphaz <- function(Rxx){
+#'   k <- ncol(Rxx)
+#'   k/(k-1) * (1 - (k/sum(Rxx)) ) 
 #' }# END Alphaz
 #'
 #' ## Example 1
@@ -70,11 +70,16 @@ alphaR <- function(alpha = NULL, k = NULL, Nmats = 5, SEED = NULL){
   if(is.null(SEED)) SEED <- as.integer((as.double(Sys.time())*1000+Sys.getpid()) %% 2^31) 
   set.seed(SEED)
   
+  if(is.null(k)){
+    stop("\n\nFATAL ERROR: k must be specified")
+  }
+  
   Rlist = NULL
   
 # ---- Alphaz: Compute standardized alpha ----
-  Alphaz <- function(R){
-    k/(k-1) * (1 - (k/sum(R)) ) 
+  Alphaz <- function(Rxx){
+    k <- ncol(Rxx)
+    k/(k-1) * (1 - (k/sum(Rxx)) ) 
   }# END Alphaz
 
 ## Case I
@@ -115,12 +120,12 @@ if(alpha < 0){
   if(Nmats > 1){
     Rlist = vector(mode="list", length = Nmats)
     for(i in 1:Nmats){
-      Rlist[[i]] <-  fungible::Ravgr(Ralpha)
+      Rlist[[i]] <-  fungible::Ravgr(Rseed = Ralpha, NVar = k)$R
     }
   }#END if(Nmats > 1)  
  
 ## RETURN VALUES
-list( alpha =  Alphaz(R = Ralpha),
+list( alpha =  Alphaz(Rxx = Ralpha),
       R = Ralpha,
       Rlist = Rlist,
       SEED = SEED)

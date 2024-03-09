@@ -37,9 +37,9 @@ user-defined  (standardized) coefficient \eqn{\alpha}.
 \examples{
 
 ## Function to compute standardized alpha
-Alphaz <- function(R){
-  k <- ncol(R)
-  k/(k-1) * (1 - (k/sum(R)) ) 
+Alphaz <- function(Rxx){
+  k <- ncol(Rxx)
+  k/(k-1) * (1 - (k/sum(Rxx)) ) 
 }# END Alphaz
 
 ## Example 1

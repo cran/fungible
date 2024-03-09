@@ -1,4 +1,4 @@
-f42b3e637c924d66443a6de88d153ee7 *DESCRIPTION
+a52cf04cb1c5d013fdef36a30835cdf9 *DESCRIPTION
 16c2f636a691c0b7229c9c48c59b5547 *NAMESPACE
 d2903f17ba5190dd1c6745ba1b41a4da *R/ACL.R
 4cf72e5840207f3373bc8a610a29a57c *R/AmzBoxes.R
@@ -19,7 +19,7 @@ cdcf58cb4233ca2b99b118d9269cefdf *R/Jackson67.R
 5dc0d732dcdd4e8a82b1d1cfc00e99b8 *R/Malmi79.R
 aabbd89acf9b58629bd41ed875b3915b *R/Omega.R
 2f699c21daf0d8eba9ef856af764c8ee *R/RGen.R
-43cd7cde8e05fcf20f19942efd69bab0 *R/Ravgr.R
+16de1e963f552e010dd59d060061b3f5 *R/Ravgr.R
 6444bc7f4ac68508dc1ec73507b21770 *R/Rbounds.R
 3a3ce4dd422171ca3b5d63537f3e167d *R/RnpdMAP.R
 b5c464b721b920afa8b414774d847e25 *R/SLi.R
@@ -32,7 +32,7 @@ e196a47af6c1df80c5de87a7d8847cac *R/ThurstoneBox20.R
 ecb8f35a4688c9d58ad23adfa1be9099 *R/VolElliptope.R
 ccd00ff429a80a0b44c1efb5e1ef3609 *R/adfCor.R
 05b6d15eb351d7e253eb7d0e68ffe25a *R/adfCov.R
-e08ced584e87a225a75b70c05f2aa6e5 *R/alphaR.R
+044099c43e649822b8571223888e2952 *R/alphaR.R
 576a3d486e38aa86f56ea8d4196da612 *R/bigen.R
 fcf2801f78567e4dd414edfe69c125b2 *R/cb.R
 2d3300d2af2dcd757a908ceb90438ea1 *R/cfi.R
@@ -137,10 +137,10 @@ b808bf912d2b6f11ec688437c9cf41c0 *data/Jackson67.rda
 8b7353cd4f044398ff3168813fcc61ac *data/Thurstone41.rda
 65e3da71a6fbd82df0d93989a25db39d *data/ThurstoneBox20.rda
 8ea91de0ce9cc918830f8b75dd3028b9 *data/ThurstoneBox26.rda
-837219efb84cfd1410e364e91b88228b *inst/CITATION
+c67e102fcd392793b7cbc2c7dc6e390d *inst/CITATION
 3e578551a651a367f271a5f333f55366 *inst/doc/simulate-model-error.R
 af1f958db5b9311241adb48d986a5090 *inst/doc/simulate-model-error.Rmd
-edb283dd10008a63e5a4a1ceebc65044 *inst/doc/simulate-model-error.html
+3b19d672e13e53d8d72426f1490a1aa2 *inst/doc/simulate-model-error.html
 cfb2041ab8c4a15b2a135e2cea3aa756 *man/ACL.Rd
 7c4b2b2cfd9dbc19eb760ecad53e997a *man/AmzBoxes.Rd
 68d4a8022f64dfdbf14c4f5dda5655f4 *man/BadRBY.Rd
@@ -166,7 +166,7 @@ cc4f83b5a87056531b4bcaddff7155b6 *man/CompleteRdev.Rd
 ff6b4f7bb0d21223a8ef7a02c17816d2 *man/Malmi79.Rd
 6b0ac28de102d8d70eb0b1841d1b16da *man/Omega.Rd
 11628f5c9077d3944aa4977bbf94f22f *man/RGen.Rd
-3f6deed565bf409afa2b152a3ec32031 *man/Ravgr.Rd
+dcf0a6377fdd78960a42c066a50d6bba *man/Ravgr.Rd
 17d02b037f731b76bccacf919c1852fc *man/Rbounds.Rd
 94c4e7252ef7c231166560c2d7250759 *man/RnpdMAP.Rd
 fe67d5ca9e4de4860a5759b9e6ab7ac2 *man/SLi.Rd
@@ -179,7 +179,7 @@ fe67d5ca9e4de4860a5759b9e6ab7ac2 *man/SLi.Rd
 7cc0a1ff5c7b5a1ce04884b3e72a9e23 *man/VolElliptope.Rd
 89fbebaa7a3cc0b7aa2f27d81a27dd84 *man/adfCor.Rd
 99fce54cd653731df5f33a9a36781b8f *man/adfCov.Rd
-e92d527685bca711e05f62a242bcfcbd *man/alphaR.Rd
+e322d47208b779ae56a1f16e098aa754 *man/alphaR.Rd
 24ef5e7664b34cec124b7c18d385784f *man/bigen.Rd
 b6e23699588d73bcf608cf53745e37a1 *man/cb.Rd
 f0fcfd6603bbbc1437f9fcf3d7bf4e46 *man/cfi.Rd
