@@ -91,7 +91,9 @@ CB_m1 <- noisemaker(mod, method = "CB", target_rmsea = 0.05)
 CB_m1
 
 ## ----cb-error, error = TRUE---------------------------------------------------
+try({
 CB_m1 <- noisemaker(mod, method = "CB", target_rmsea = 0.5)
+})
 
 ## ----get-wb-mod---------------------------------------------------------------
 wb_mod <- get_wb_mod(

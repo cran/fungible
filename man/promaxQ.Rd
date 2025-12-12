@@ -114,7 +114,7 @@ A list of the following elements are produced:
   varimax rotation does.
   \item \strong{convergence}: (Logical) Whether the varimax rotation
   congerged.
-  \item \strong{Table}: (Matrix) The table returned from \code{\link{GPForth}} 
+  \item \strong{Table}: (Matrix) The table returned from \code{\link[GPArotation]{GPForth}} 
   from the \code{GPArotation} package.
   \item \strong{rotateControl}: (List) A list containing (a) the power 
   parameter used, (b) whether the varimax rotation used Kaiser normalization, 

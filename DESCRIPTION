@@ -1,5 +1,5 @@
 Package: fungible
-Version: 2.4.4
+Version: 2.4.4.1
 Date: 2024-04-05
 Title: Psychometric Functions from the Waller Lab
 Authors@R: c(
@@ -9,7 +9,7 @@ Authors@R: c(
     person("Casey","Giordano", role = "ctb"),
 	person("Hoang V. Nguyen", role="ctb"))
 Maintainer: Niels Waller <nwaller@umn.edu>
-Depends: R (>= 3.5)
+Depends: R (>= 4.1.0)
 Imports: crayon (>= 1.4.1), clue, CVXR, DEoptim, GA (>= 3.2.1),
         GPArotation, lattice, MASS, MBESS (>= 4.8.0), MCMCpack,
         methods, mvtnorm, nleqslv, pbmcapply, Rcsdp, RSpectra, sem (>=
@@ -33,11 +33,11 @@ Suggests: rmarkdown, knitr, covr (>= 3.5.1), testthat (>= 3.0.0),
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 LazyData: true
-Packaged: 2024-03-09 21:01:41 UTC; nielswaller
+Packaged: 2025-12-12 12:50:03 UTC; hornik
 Author: Niels Waller [aut, cre],
   Justin Kracht [ctb],
   Jeff Jones [ctb],
   Casey Giordano [ctb],
   Hoang V. Nguyen [ctb]
 Repository: CRAN
-Date/Publication: 2024-03-09 22:30:08 UTC
+Date/Publication: 2025-12-12 13:00:32 UTC
