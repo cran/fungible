@@ -1,4 +1,4 @@
-# Version March 14, 2023
+# Version June 11, 2025
 # Tips:
 # to debug code -- run in R console:    debugonce(simFA)
 # then step through calculations until error occurs
@@ -323,14 +323,14 @@
 #'        \item \code{IRT} (logical) If \code{IRT = TRUE} then
 #'            user-supplied thresholds will be interpreted as
 #'            item intercepts; defaults to \code{IRT = FALSE}.
-#'        \item \code{Dparam} (scalar).  If \code{Dparam = 1} then item
+#'        \item \code{D} (scalar).  If \code{D = 1} then item
 #'            intercepts should be scaled in the logistic metric.
-#'            If \code{Dparam = 1.702} then intercepts should be
+#'            If \code{D = 1.702} then intercepts should be
 #'            scaled in the probit metric.
 #'        \item \code{Maxh2} (scalar) Rows of the loadings matrix
 #'            will be rescaled to have a maximum communality of
 #'            \code{Maxh2}; defaults to \code{Maxh2 = .98}.
-#'        \item \code{Reflect} (logical) If \code{Reflect =
+#'        \item \code{itemReflect} (logical) If \code{Reflect =
 #'            TRUE} loadings on the common factors will be
 #'            randomly reflected; defaults to
 #'            \code{Reflect = FALSE}.
@@ -1408,15 +1408,19 @@ simFA <- function(Model = list(),
   
     ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~##
     ##            ----_____Add Cross Loadings ---- 
-     
-     if ( (cnCL$ProbCrossLoad == 0) & !is.null(cnCL$CrossLoadPositions) ){
-       if( nrow(cnCL$CrossLoadPositions) != length(cnCL$CrossLoadValues)){
+   
+     if ( !is.null(cnCL$CrossLoadPositions) ){
+      
+        if( nrow(cnCL$CrossLoadPositions) != length(cnCL$CrossLoadValues)){
          stop("\nInsufficient number of cross loadings supplied in CrossLoadValues\n")
-       }
-        
-       Fl[cnCL$CrossLoadPositions] <- cnCL$CrossLoadValues
+        }
+       
+       # code fixed on Jun 11, 2025
+       Fl[as.logical(cnCL$CrossLoadPositions)] <- cnCL$CrossLoadValues
+       
      }     
      
+   
   
     if ( (cnCL$ProbCrossLoad > 0) & (cnCL$ProbCrossLoad < 1) ) {
       for (i in 1:NVar) {

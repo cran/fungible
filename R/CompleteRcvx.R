@@ -53,52 +53,54 @@
 #'
 #'   round(out$R, 3)
 #'}
-#' @importFrom CVXR Variable Maximize Problem solve
+#' @importFrom CVXR Variable Maximize Problem psolve status value
 #' @export
 #'
 CompleteRcvx <- function(Rna, 
-                        Check_Convexity = TRUE, 
-						PRINT = TRUE){
+                         Check_Convexity = TRUE, 
+                         PRINT = TRUE){
+  
+  Nvar <- nrow(Rna)
+  
+  R <- CVXR::Variable(c(Nvar, Nvar), PSD=TRUE)
+  constraints <- list(R[!is.na(Rna)] == Rna[!is.na(Rna)])
+  
+  objective <-  CVXR::Maximize(CVXR::log_det(R))
+  
+  program <- CVXR::Problem(objective, constraints)
+  
+  opt_value <- CVXR::psolve(program)
+  
+  Rcomplete <- as.matrix(CVXR::value(R))
 
-    Nvar <- nrow(Rna)
+  #Assess solution accuracy
+  max_delta <- max(abs(Rcomplete[!is.na(Rna)] - Rna[!is.na(Rna)]))
 
-    R <- CVXR::Variable(Nvar, Nvar, PSD=TRUE)
-    constraints <- list(R[!is.na(Rna)] == Rna[!is.na(Rna)])
+  # clean up matrix
+  diag(Rcomplete) <- 1
 
-    objective <-  CVXR::Maximize(CVXR::log_det(R))
+  # THIS NEXT STATEMENT IS UNNCESSARY
+  # Rcomplete[!is.na(Rna)] <- Rna[!is.na(Rna)]
 
-    program <- CVXR::Problem(objective, constraints)
+  converged <- FALSE
+  
+  # The status of the solution.
+  # Can be "optimal", "optimal_inaccurate",
+  # "infeasible", "infeasible_inaccurate",
+  # "unbounded", "unbounded_inaccurate", or
+  # "solver_error".
+  soln_status <- CVXR::status(program)
+  if(soln_status == "optimal") converged <- TRUE
 
-    soln <- CVXR::solve(program,
-                  ignore_dcp = Check_Convexity)
-
-    Rcomplete <- as.matrix(soln$getValue(R))
-
-    #Assess solution accuracy
-    max_delta <- max(abs(Rcomplete[!is.na(Rna)] - Rna[!is.na(Rna)]))
-
-    # clean up matrix
-    diag(Rcomplete) <- 1
-    Rcomplete[!is.na(Rna)] <- Rna[!is.na(Rna)]
-
-    converged <- FALSE
-
-    # The status of the solution.
-    # Can be "optimal", "optimal_inaccurate",
-    # "infeasible", "infeasible_inaccurate",
-    # "unbounded", "unbounded_inaccurate", or
-    # "solver_error".
-    if(soln$status == "optimal") converged <- TRUE
-
-    if(PRINT){
-        cat("\nConvergence status = ", converged,
-            "\nmax_delta = ", max_delta, "\n\n")
+  if(PRINT){
+    cat("\nConvergence status = ", converged,
+        "\nmax_delta = ", max_delta, "\n\n")
     }
-
-    list (R = Rcomplete,
-          converged = converged,
-          max_delta = max_delta,
-          convergence_status = soln$status )
+  
+  list (R = Rcomplete,
+        converged = converged,
+        max_delta = max_delta,
+        convergence_status = soln_status )
 }#END CompleteCvxR
 
 

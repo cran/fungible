@@ -112,9 +112,8 @@ A list of the following elements are produced:
   \item \strong{vmaxDiscrepancy}: (Scalar) The value of the minimized varimax 
   discrepancy function. promax does not have a rotational criterion but the 
   varimax rotation does.
-  \item \strong{convergence}: (Logical) Whether the varimax rotation
-  congerged.
-  \item \strong{Table}: (Matrix) The table returned from \code{\link[GPArotation]{GPForth}} 
+  \item \strong{convergence}: (Logical) Whether the varimax rotation converged.
+  \item \strong{Table}: (Matrix) The table returned from \code{\link[GPArotation]{GPForth}}
   from the \code{GPArotation} package.
   \item \strong{rotateControl}: (List) A list containing (a) the power 
   parameter used, (b) whether the varimax rotation used Kaiser normalization, 

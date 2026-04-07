@@ -46,7 +46,7 @@ generated seed.}
  element rij.
  \item \strong{Rseed} The input \strong{R} matrix or scalar with the
  desired average rij.
- \item \strong{u} A random number \eqn{\in [0,1]}.
+ \item \strong{u} A user-specified or random number \eqn{\in [0,1]}.
  \item \strong{s} Scaling factor for hollow matrix \code{H}.
  \item \strong{H}  A hollow matrix used to create a fungible \strong{R} matrix.
  \item \strong{alpha}  First argument of the beta distribution. If 

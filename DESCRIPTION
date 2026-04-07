@@ -1,6 +1,6 @@
 Package: fungible
-Version: 2.4.4.1
-Date: 2024-04-05
+Version: 2.4.7
+Date: 2026-04-06
 Title: Psychometric Functions from the Waller Lab
 Authors@R: c(
     person("Niels", "Waller", role = c("aut", "cre"), email="nwaller@umn.edu" ),
@@ -9,11 +9,11 @@ Authors@R: c(
     person("Casey","Giordano", role = "ctb"),
 	person("Hoang V. Nguyen", role="ctb"))
 Maintainer: Niels Waller <nwaller@umn.edu>
-Depends: R (>= 4.1.0)
-Imports: crayon (>= 1.4.1), clue, CVXR, DEoptim, GA (>= 3.2.1),
-        GPArotation, lattice, MASS, MBESS (>= 4.8.0), MCMCpack,
-        methods, mvtnorm, nleqslv, pbmcapply, Rcsdp, RSpectra, sem (>=
-        3.1-11), utils, graphics, grDevices
+Depends: R (>= 4.5.0)
+Imports: crayon (>= 1.4.1), clue, CVXR (>= 1.8.2), DEoptim, GA (>=
+        3.2.1), GPArotation, LaplacesDemon, lattice, MASS, MBESS (>=
+        4.8.0), MCMCpack, methods, mvtnorm, nleqslv, pbmcapply, Rcsdp,
+        RSpectra, sem (>= 3.1-11), utils, graphics, grDevices
 Description: Computes fungible coefficients and Monte Carlo data. Underlying theory for these functions is described in the following publications:
     Waller, N. (2008). Fungible Weights in Multiple Regression. Psychometrika, 73(4), 691-703, <DOI:10.1007/s11336-008-9066-z>.
     Waller, N. & Jones, J. (2009). Locating the Extrema of Fungible Regression Weights.
@@ -28,16 +28,16 @@ Description: Computes fungible coefficients and Monte Carlo data. Underlying the
 License: GPL (>= 2)
 Encoding: UTF-8
 NeedsCompilation: no
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.3
 Suggests: rmarkdown, knitr, covr (>= 3.5.1), testthat (>= 3.0.0),
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 LazyData: true
-Packaged: 2025-12-12 12:50:03 UTC; hornik
+Packaged: 2026-04-06 17:50:48 UTC; nielswaller
 Author: Niels Waller [aut, cre],
   Justin Kracht [ctb],
   Jeff Jones [ctb],
   Casey Giordano [ctb],
   Hoang V. Nguyen [ctb]
 Repository: CRAN
-Date/Publication: 2025-12-12 13:00:32 UTC
+Date/Publication: 2026-04-07 05:10:50 UTC
