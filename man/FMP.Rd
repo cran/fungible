@@ -49,7 +49,7 @@ is a quasi-parametric IRT model in which the IRF is a composition of a
 logistic function and a polynomial function, \eqn{m(\theta)}, of degree 2k +
 1.  When k = 0, \eqn{m(\theta) = b_0 + b_1 \theta} (the slope intercept form
 of the 2PL). When k = 1, 2k + 1 equals 3 resulting in \eqn{m(\theta) = b_0 +
-b_1 \theta + b_2 \theta^2 + b_3 \theta^3}. Acceptable values of k = 0,1,2,3.
+b_1 \theta + b_2 \theta^2 + b_3 \theta^3}. Acceptable values of k = (0,1,2,3).
 According to Liang and Browne, the "FMP IRF may be used to approximate any
 IRF with a continuous derivative arbitrarily closely by increasing the
 number of parameters in the monotonic polynomial" (2015, p. 2) The FMP model

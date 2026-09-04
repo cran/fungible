@@ -4,8 +4,8 @@ bibtype = "Manual",
          author = "Niels G. Waller",
 		 organization = "University of Minnesota",
 		 address = "Minneapolis, Minnesota",
-         year = "2025",
-         note = "R package 2.4.6",
+         year = "2026",
+         note = "R package 2.4.8",
 		 url = "https://CRAN.R-project.org/package=fungible"
 )
 

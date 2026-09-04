@@ -2,6 +2,7 @@
 # programmed by Niels Waller 
 # January 27, 2016
 # bugs in T2 T3 fixed on February 8, 2016
+# help file bug fixed Sept 2026
 
 
 
@@ -17,7 +18,7 @@
 #' logistic function and a polynomial function, \eqn{m(\theta)}, of degree 2k +
 #' 1.  When k = 0, \eqn{m(\theta) = b_0 + b_1 \theta} (the slope intercept form
 #' of the 2PL). When k = 1, 2k + 1 equals 3 resulting in \eqn{m(\theta) = b_0 +
-#' b_1 \theta + b_2 \theta^2 + b_3 \theta^3}. Acceptable values of k = 0,1,2,3.
+#' b_1 \theta + b_2 \theta^2 + b_3 \theta^3}. Acceptable values of k = (0,1,2,3).
 #' According to Liang and Browne, the "FMP IRF may be used to approximate any
 #' IRF with a continuous derivative arbitrarily closely by increasing the
 #' number of parameters in the monotonic polynomial" (2015, p. 2) The FMP model

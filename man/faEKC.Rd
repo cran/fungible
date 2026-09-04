@@ -41,32 +41,32 @@ Braeken, J. & Van Assen, M. A.  (2017).  An empirical Kaiser criterion.
 \emph{Psychological Methods, 22}(3), 450-466.
 }
 \seealso{
-Other Factor Analysis Routines: 
-\code{\link{BiFAD}()},
+Other Factor Analysis Routines:
+\code{\link[=BiFAD]{BiFAD()}},
 \code{\link{Box26}},
-\code{\link{GenerateBoxData}()},
-\code{\link{Ledermann}()},
-\code{\link{SLi}()},
-\code{\link{SchmidLeiman}()},
-\code{\link{faAlign}()},
-\code{\link{faIB}()},
-\code{\link{faLocalMin}()},
-\code{\link{faMB}()},
-\code{\link{faMain}()},
-\code{\link{faScores}()},
-\code{\link{faSort}()},
-\code{\link{faStandardize}()},
-\code{\link{faX}()},
-\code{\link{fals}()},
-\code{\link{fapa}()},
-\code{\link{fareg}()},
-\code{\link{fsIndeterminacy}()},
-\code{\link{orderFactors}()},
-\code{\link{print.faMB}()},
-\code{\link{print.faMain}()},
-\code{\link{promaxQ}()},
-\code{\link{summary.faMB}()},
-\code{\link{summary.faMain}()}
+\code{\link[=GenerateBoxData]{GenerateBoxData()}},
+\code{\link[=Ledermann]{Ledermann()}},
+\code{\link[=SLi]{SLi()}},
+\code{\link[=SchmidLeiman]{SchmidLeiman()}},
+\code{\link[=faAlign]{faAlign()}},
+\code{\link[=faIB]{faIB()}},
+\code{\link[=faLocalMin]{faLocalMin()}},
+\code{\link[=faMB]{faMB()}},
+\code{\link[=faMain]{faMain()}},
+\code{\link[=faScores]{faScores()}},
+\code{\link[=faSort]{faSort()}},
+\code{\link[=faStandardize]{faStandardize()}},
+\code{\link[=faX]{faX()}},
+\code{\link[=fals]{fals()}},
+\code{\link[=fapa]{fapa()}},
+\code{\link[=fareg]{fareg()}},
+\code{\link[=fsIndeterminacy]{fsIndeterminacy()}},
+\code{\link[=orderFactors]{orderFactors()}},
+\code{\link[=print.faMB]{print.faMB()}},
+\code{\link[=print.faMain]{print.faMain()}},
+\code{\link[=promaxQ]{promaxQ()}},
+\code{\link[=summary.faMB]{summary.faMB()}},
+\code{\link[=summary.faMain]{summary.faMain()}}
 }
 \author{
 Niels Waller

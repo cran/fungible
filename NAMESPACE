@@ -120,29 +120,39 @@ import(nleqslv)
 import(parallel)
 import(pbmcapply)
 import(stats)
-importFrom(CVXR,Maximize)
-importFrom(CVXR,Problem)
-importFrom(CVXR,Variable)
-importFrom(CVXR,psolve)
-importFrom(CVXR,status)
-importFrom(CVXR,value)
-importFrom(LaplacesDemon,rinvbeta)
-importFrom(LaplacesDemon,rinvchisq)
-importFrom(LaplacesDemon,rinvgamma)
+importFrom(CVXR,
+  Maximize,
+  Problem,
+  Variable,
+  psolve,
+  status,
+  value
+)
+importFrom(LaplacesDemon,
+  rinvbeta,
+  rinvchisq,
+  rinvgamma
+)
 importFrom(grDevices,recordPlot)
-importFrom(graphics,abline)
-importFrom(graphics,axis)
-importFrom(graphics,lines)
-importFrom(graphics,plot)
-importFrom(graphics,points)
+importFrom(graphics,
+  abline,
+  axis,
+  lines,
+  plot,
+  points
+)
 importFrom(methods,is)
-importFrom(stats,cov2cor)
-importFrom(stats,factanal)
-importFrom(stats,lm)
-importFrom(stats,rchisq)
-importFrom(stats,resid)
-importFrom(stats,rnorm)
-importFrom(stats,runif)
-importFrom(utils,setTxtProgressBar)
-importFrom(utils,tail)
-importFrom(utils,txtProgressBar)
+importFrom(stats,
+  cov2cor,
+  factanal,
+  lm,
+  rchisq,
+  resid,
+  rnorm,
+  runif
+)
+importFrom(utils,
+  setTxtProgressBar,
+  tail,
+  txtProgressBar
+)
